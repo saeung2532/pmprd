@@ -8,7 +8,7 @@ import {
   BrowserRouter as Router,
   Route,
   Redirect,
-  Switch,
+  Switch
 } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import Header from "./components/layouts/Header";
@@ -19,48 +19,69 @@ import LoginPage from "./components/pages/LoginPage/LoginPage";
 import PlanPRPage from "./components/pages/PlanPRPage/PlanPRPage";
 import PRStockPage from "./components/pages/PRStockPage/PRStockPage";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    display: "flex",
+    display: "flex"
   },
   toolbar: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
+    ...theme.mixins.toolbar
   },
   content: {
     flexGrow: 1,
     display: "flex",
     justifyContent: "center",
-    padding: theme.spacing(3),
-  },
+    padding: theme.spacing(3)
+  }
 }));
 
 const theme = createMuiTheme({
   palette: {
-    primary: { 500: "#1E88E5" },
+    primary: { 500: "#1E88E5" }
   },
   status: {
-    danger: "orange",
-  },
+    danger: "orange"
+  }
 });
 
 export default function App() {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
-  const loginReducer = useSelector(({ loginReducer }) => loginReducer);
+  const [render, setRender] = useState(null);
+  // const loginReducer = useSelector(({ loginReducer }) => loginReducer);
+  // const companyReducer = useSelector(({ companyReducer }) => companyReducer);
+
+  useEffect(() => {
+    console.log("App useEffect");
+  }, [render]);
 
   const handleDrawerOpen = () => {
     setOpen(!open);
   };
 
+  // Login Route
+  const LoginRoute = ({ component: Component, ...rest }) => (
+    <Route
+      {...rest}
+      render={props =>
+        // ternary condition
+        loginActions.isLoggedIn() ? (
+          <Redirect to="/" />
+        ) : (
+          <Component {...props} />
+        )
+      }
+    />
+  );
+
   // Protected Route
   const SecuredRoute = ({ component: Component, ...rest }) => (
     <Route
       {...rest}
-      render={(props) =>
+      render={props =>
         // ternary condition
         loginActions.isLoggedIn() ? (
           <Component {...props} />
@@ -71,20 +92,23 @@ export default function App() {
     />
   );
 
-  // Login Route
-  const LoginRoute = ({ component: Component, ...rest }) => (
-    <Route
-      {...rest}
-      render={(props) =>
-        // ternary condition
-        loginActions.isLoggedIn() ? (
-          <Redirect to="/main" />
-        ) : (
-          <Component {...props} />
-        )
-      }
-    />
-  );
+  //Private Route
+  const PrivateRoute = ({ component: Component, ...rest }) => {
+    return (
+      <Route
+        {...rest}
+        render={props =>
+          LoginPage.fakeAuth.isAuthenticated === true ? (
+            <Component {...props} />
+          ) : (
+            <Redirect
+              to={{ pathname: "/login", state: { from: props.location } }}
+            />
+          )
+        }
+      />
+    );
+  };
 
   return (
     <Router basename={process.env.REACT_APP_IS_PRODUCTION == 1 ? "/demo" : ""}>
@@ -95,7 +119,7 @@ export default function App() {
           )}
           {loginActions.isLoggedIn() && <Menu open={open} />}
           <Container className={classes.content} maxWidth={false}>
-            <LoginRoute path="/login" component={LoginPage} />
+            <LoginRoute exact={true} path="/" component={LoginPage} />
             <SecuredRoute exact={true} path="/plan_pr" component={PlanPRPage} />
             <SecuredRoute
               exact={true}
@@ -107,13 +131,8 @@ export default function App() {
             <SecuredRoute path="/shop" component={ShopPage} />
             <SecuredRoute path="/report" component={ReportPage} />
             <SecuredRoute path="/transaction" component={TransactionPage} /> */}
-            <Route
-              exact={true}
-              path="/"
-              component={() => <Redirect to="/login" />}
-            />
             {/* The Default not found component */}
-            {/* <Route render={props => <Redirect to="/login" />} /> */}
+            <Route render={props => <Redirect to="/" />} />
           </Container>
         </div>
       </Switch>

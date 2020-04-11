@@ -29,15 +29,15 @@ const useStyles = makeStyles(theme => ({
     backgroundSize: "auto"
   },
   formControl: {
-    margin: theme.spacing(1),
+    // margin: theme.spacing(1),
     minWidth: 120
   },
   selectEmpty: {
-    marginTop: theme.spacing(2)
+    // marginTop: theme.spacing(2)
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    // marginLeft: theme.spacing.unit,
+    // marginRight: theme.spacing.unit,
     width: 200
   },
   menu: {
@@ -268,6 +268,15 @@ const LoginPage = props => {
       </CardContent>
     </Card>
   );
+};
+
+/* A fake authentication function */
+export const fakeAuth = {
+  isAuthenticated: false,
+  authenticate(cb) {
+    this.isAuthenticated = true;
+    setTimeout(cb, 100);
+  }
 };
 
 export default LoginPage;

@@ -7,6 +7,9 @@ import {
 import { server } from "../constants";
 import { httpClient } from "./../utils/HttpClient";
 import jwt from "jsonwebtoken";
+import { useSelector } from "react-redux";
+
+// const loginReducer = useSelector(({ loginReducer }) => loginReducer);
 
 // Information being sent to Reducer
 export const setLoginStateToFetching = () => ({
@@ -27,6 +30,7 @@ export const setLoginStateToLogout = () => ({
 });
 
 // Called by Login Component
+
 // export const login = (value, history) => {
 //   return async dispatch => {
 //     try {
@@ -50,7 +54,6 @@ export const setLoginStateToLogout = () => ({
 //     }
 //   };
 // };
-
 export const login = (value, history) => {
   return async dispatch => {
     dispatch(setLoginStateToFetching()); // fetching
@@ -62,11 +65,11 @@ const doGetLogins = async (dispatch, value, history) => {
   try {
     let result = await httpClient.post(server.HTTP_LOGIN_URL, value);
     // console.log(JSON.stringify(result));
-    if (result.data.result == "ok") {
+    if (result.data.result === "ok") {
       localStorage.setItem(server.TOKEN_KEY, result.data.token);
       localStorage.setItem(server.REFRESH_TOKEN_KEY, result.data.refreshToken);
       dispatch(setLoginStateToSuccess(result));
-      history.push("/main");
+      history.push("/");
     } else {
       dispatch(setLoginStateToFailed());
     }
@@ -80,9 +83,13 @@ export const logout = history => {
   return dispatch => {
     localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setLoginStateToLogout());
-    history.push("/login");
+    history.push("/");
   };
 };
+
+// export const isLoggedIn = () => {
+//   return true;
+// };
 
 export const isLoggedIn = () => {
   try {
@@ -91,10 +98,12 @@ export const isLoggedIn = () => {
     if (token) {
       var decodedToken = jwt.decode(token, { complete: true });
       var dateNow = new Date();
-
+      console.log("decodedToken: " + JSON.stringify(decodedToken));
       if (decodedToken.exp < dateNow.getTime()) {
+        console.log("return false");
         return false;
       } else {
+        console.log("return true");
         return true;
       }
     } else {

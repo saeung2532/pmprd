@@ -1403,7 +1403,7 @@ export default props => {
     <div className={classes.root}>
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
-      <p>#Debug prhead {JSON.stringify(prhead)}</p>
+      {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
       {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}

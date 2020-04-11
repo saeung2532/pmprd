@@ -23,7 +23,7 @@ export default (state = initialState, { type, payload }) => {
         ...state,
         result: payload,
         isFetching: false,
-        isError: true,
+        isError: false,
       });
     case HTTP_LOGIN_LOGOUT:
       return { ...state, result: "", isFetching: false, isError: false };
