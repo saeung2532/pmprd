@@ -69,7 +69,7 @@ const doGetLogins = async (dispatch, value, history) => {
       localStorage.setItem(server.TOKEN_KEY, result.data.token);
       localStorage.setItem(server.REFRESH_TOKEN_KEY, result.data.refreshToken);
       dispatch(setLoginStateToSuccess(result));
-      history.push("/");
+      history.push("/plan_pr");
     } else {
       dispatch(setLoginStateToFailed());
     }
@@ -81,6 +81,7 @@ const doGetLogins = async (dispatch, value, history) => {
 
 export const logout = history => {
   return dispatch => {
+    console.log(history);
     localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setLoginStateToLogout());
     history.push("/");

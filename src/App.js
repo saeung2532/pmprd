@@ -11,8 +11,7 @@ import {
   Switch
 } from "react-router-dom";
 import Container from "@material-ui/core/Container";
-import Header from "./components/layouts/Header";
-import Menu from "./components/layouts/Menu";
+import Drawer from "./components/layouts/Drawer";
 import PrivateRoute from "./components/PrivateRoute";
 import * as loginActions from "./actions/login.action";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
@@ -38,103 +37,54 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const theme = createMuiTheme({
-  palette: {
-    primary: { 500: "#1E88E5" }
-  },
-  status: {
-    danger: "orange"
-  }
-});
-
 export default function App() {
   const classes = useStyles();
-  const [open, setOpen] = useState(true);
-  const [render, setRender] = useState(null);
-  // const loginReducer = useSelector(({ loginReducer }) => loginReducer);
-  // const companyReducer = useSelector(({ companyReducer }) => companyReducer);
-
-  useEffect(() => {
-    console.log("App useEffect");
-  }, [render]);
-
-  const handleDrawerOpen = () => {
-    setOpen(!open);
-  };
 
   // Login Route
   const LoginRoute = ({ component: Component, ...rest }) => (
     <Route
       {...rest}
       render={props =>
-        // ternary condition
         loginActions.isLoggedIn() ? (
-          <Redirect to="/" />
+          <Redirect to={{ pathname: "/", state: { from: props.location } }} />
         ) : (
-          <Component {...props} />
-        )
-      }
-    />
-  );
-
-  // Protected Route
-  const SecuredRoute = ({ component: Component, ...rest }) => (
-    <Route
-      {...rest}
-      render={props =>
-        // ternary condition
-        loginActions.isLoggedIn() ? (
-          <Component {...props} />
-        ) : (
-          <Redirect to="/login" />
+          <div className={classes.root}>
+            <Container className={classes.content} maxWidth={false}>
+              <Component {...props} />
+            </Container>
+          </div>
         )
       }
     />
   );
 
   //Private Route
-  const PrivateRoute = ({ component: Component, ...rest }) => {
-    return (
-      <Route
-        {...rest}
-        render={props =>
-          LoginPage.fakeAuth.isAuthenticated === true ? (
-            <Component {...props} />
-          ) : (
-            <Redirect
-              to={{ pathname: "/login", state: { from: props.location } }}
-            />
-          )
-        }
-      />
-    );
-  };
+  const PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route
+      {...rest}
+      render={props =>
+        loginActions.isLoggedIn() ? (
+          <div className={classes.root}>
+            <Drawer />
+            <Container className={classes.content} maxWidth={false}>
+              <Component {...props} />
+            </Container>
+          </div>
+        ) : (
+          <Redirect
+            to={{ pathname: "/login", state: { from: props.location } }}
+          />
+        )
+      }
+    />
+  );
 
   return (
-    <Router basename={process.env.REACT_APP_IS_PRODUCTION == 1 ? "/demo" : ""}>
+    <Router basename={process.env.REACT_APP_IS_PRODUCTION === 1 ? "/demo" : ""}>
       <Switch>
-        <div className={classes.root}>
-          {loginActions.isLoggedIn() && (
-            <Header handleDrawerOpen={handleDrawerOpen} />
-          )}
-          {loginActions.isLoggedIn() && <Menu open={open} />}
-          <Container className={classes.content} maxWidth={false}>
-            <LoginRoute exact={true} path="/" component={LoginPage} />
-            <SecuredRoute exact={true} path="/plan_pr" component={PlanPRPage} />
-            <SecuredRoute
-              exact={true}
-              path="/pr_stock"
-              component={PRStockPage}
-            />
-            {/* <SecuredRoute path="/stock/create" component={StockCreatePage} />
-            <SecuredRoute path="/stock/edit/:id" component={StockEditPage} />
-            <SecuredRoute path="/shop" component={ShopPage} />
-            <SecuredRoute path="/report" component={ReportPage} />
-            <SecuredRoute path="/transaction" component={TransactionPage} /> */}
-            {/* The Default not found component */}
-            <Route render={props => <Redirect to="/" />} />
-          </Container>
-        </div>
+        <PrivateRoute exact path="/" component={PlanPRPage} />
+        <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
+        <LoginRoute path="/login" component={LoginPage} />
       </Switch>
     </Router>
   );

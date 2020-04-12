@@ -260,7 +260,7 @@ const LoginPage = props => {
             dispatch(loginActions.login(values, props.history));
             setInterval(() => {
               setSubmitting(false);
-            }, 1000);
+            }, 3000);
           }}
         >
           {props => showForm(props)}

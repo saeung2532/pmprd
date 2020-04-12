@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
@@ -98,7 +98,7 @@ const useStyles = makeStyles(theme => ({
 
 const Header = props => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const isMenuOpen = Boolean(anchorEl);
 
@@ -155,6 +155,7 @@ const Header = props => {
           >
             <MenuIcon />
           </IconButton>
+
           <Typography variant="h6" noWrap>
             ePR Systems - Ver 1.0 {process.env.REACT_APP_VERSION}
             <Typography variant="body1"> Bangkok ranch </Typography>
