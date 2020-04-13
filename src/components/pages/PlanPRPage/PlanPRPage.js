@@ -153,8 +153,6 @@ export default props => {
   useEffect(() => {
     const prheads = prheadReducer.result ? prheadReducer.result : [];
     prheads.map(item => {
-      setEditDisable(false);
-      setNewDisable(true);
       setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
     });
     prheads.map(item =>
@@ -228,21 +226,21 @@ export default props => {
 
   const handleSearch = () => {
     // console.log(prnumber.vPRSelectNumber);
-
-    if (prnumber.vPRSelectNumber == 0) {
+    if (prnumber.vPRSelectNumber === "") {
       setEditDisable(true);
       setCreateDisable(true);
       setPRHead({
         ...initialStatePRHead
       });
+      dispatch(prdetailActions.getPRDetails("0"));
     } else {
       setNewDisable(true);
       setEditDisable(false);
       setCreateDisable(false);
+      let status = "00";
+      dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
+      dispatch(prdetailActions.getPRDetails(prnumber.vPRSelectNumber));
     }
-    let status = "00";
-    dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
-    dispatch(prdetailActions.getPRDetails(prnumber.vPRSelectNumber));
   };
 
   const handleNew = event => {
@@ -271,7 +269,7 @@ export default props => {
     setCreateDisable(true);
     setPRNumber({ ...prnumber, vPRSelectNumber: "" });
     setPRHead({ ...initialStatePRHead });
-    dispatch(prdetailActions.getPRDetails(""));
+    dispatch(prdetailActions.getPRDetails("0"));
   };
 
   const handleDeleteConfirm = () => {
@@ -711,7 +709,7 @@ export default props => {
                   value={prhead.vApprove1}
                   onChange={event => {
                     // console.log(event.target.value);
-
+                    values.vDeptHead = event.target.value;
                     setPRHead({
                       ...prhead,
                       vApprove1: event.target.value
@@ -743,7 +741,7 @@ export default props => {
                   value={prhead.vApprove2}
                   onChange={event => {
                     // console.log(event.target.value);
-
+                    values.vApprove1 = event.target.value;
                     setPRHead({
                       ...prhead,
                       vApprove2: event.target.value
@@ -761,7 +759,7 @@ export default props => {
                   ))}
                 </TextField>
 
-                <TextField
+                {/* <TextField
                   className={classes.margin}
                   style={{ width: "200px" }}
                   disabled={editdisable}
@@ -823,7 +821,7 @@ export default props => {
                       {option.US_LOGIN}
                     </option>
                   ))}
-                </TextField>
+                </TextField> */}
               </Grid>
             </Paper>
           </Grid>
@@ -1409,9 +1407,9 @@ export default props => {
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
       <Formik
-        // initialValues={{ username: "", password: "", company: "" }}
+        initialValues={{ username: "", password: "", company: "" }}
         onSubmit={(values, { setSubmitting }) => {
-          // alert(JSON.stringify(values));
+          alert(JSON.stringify(values));
           // dispatch(loginActions.login(values, props.history));
           // dispatch(companyActions.getCompanys());
         }}

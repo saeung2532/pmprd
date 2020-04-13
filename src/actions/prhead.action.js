@@ -37,8 +37,8 @@ const doGetPRHeads = async (dispatch, prno, status) => {
     let result = await httpClient.get(
       `${server.PRSTOCKHEAD_URL}/${prno}/${status}`
     );
-    dispatch(setStatePRHeadToSuccess(result.data));
     // alert(JSON.stringify(result.data));
+    dispatch(setStatePRHeadToSuccess(result.data));
   } catch (err) {
     // alert(JSON.stringify(err));
     dispatch(setStatePRHeadToFailed());

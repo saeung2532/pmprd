@@ -69,7 +69,7 @@ const doGetLogins = async (dispatch, value, history) => {
       localStorage.setItem(server.TOKEN_KEY, result.data.token);
       localStorage.setItem(server.REFRESH_TOKEN_KEY, result.data.refreshToken);
       dispatch(setLoginStateToSuccess(result));
-      history.push("/plan_pr");
+      history.push("/");
     } else {
       dispatch(setLoginStateToFailed());
     }
@@ -84,7 +84,7 @@ export const logout = history => {
     console.log(history);
     localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setLoginStateToLogout());
-    history.push("/");
+    history.push("/login");
   };
 };
 
@@ -99,12 +99,12 @@ export const isLoggedIn = () => {
     if (token) {
       var decodedToken = jwt.decode(token, { complete: true });
       var dateNow = new Date();
-      console.log("decodedToken: " + JSON.stringify(decodedToken));
+      // console.log("decodedToken: " + JSON.stringify(decodedToken));
       if (decodedToken.exp < dateNow.getTime()) {
-        console.log("return false");
+        // console.log("return false");
         return false;
       } else {
-        console.log("return true");
+        // console.log("return true");
         return true;
       }
     } else {

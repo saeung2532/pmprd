@@ -15,6 +15,7 @@ import Drawer from "./components/layouts/Drawer";
 import PrivateRoute from "./components/PrivateRoute";
 import * as loginActions from "./actions/login.action";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
+import HomePage from "./components/pages/HomePage/HomePage";
 import PlanPRPage from "./components/pages/PlanPRPage/PlanPRPage";
 import PRStockPage from "./components/pages/PRStockPage/PRStockPage";
 
@@ -82,9 +83,12 @@ export default function App() {
   return (
     <Router basename={process.env.REACT_APP_IS_PRODUCTION === 1 ? "/demo" : ""}>
       <Switch>
-        <PrivateRoute exact path="/" component={PlanPRPage} />
+        <LoginRoute exact path="/login" component={LoginPage} />
+        <PrivateRoute exact path="/" component={HomePage} />
         <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
-        <LoginRoute path="/login" component={LoginPage} />
+        <PrivateRoute exact path="/pr_stock" component={PRStockPage} />
+        {/* The Default not found component */}
+        <Route render={props => <Redirect to="/" />} />
       </Switch>
     </Router>
   );
