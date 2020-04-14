@@ -44,3 +44,42 @@ const doGetPRHeads = async (dispatch, prno, status) => {
     dispatch(setStatePRHeadToFailed());
   }
 };
+
+export const addPRHead = (formData, history) => {
+  return async dispatch => {
+    try {
+      // console.log(formData);
+      let result = await httpClient.post(server.PRSTOCKHEAD_URL, formData);
+      alert("Save Complete: " + JSON.stringify(result.data));
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};
+
+export const updatePRHead = (formData, history) => {
+  return async dispatch => {
+    try {
+      // console.log(formData);
+      await httpClient.put(server.PRSTOCKHEAD_URL, formData);
+      alert("Update Complete");
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};
+
+export const deletePRHead = (formData, history) => {
+  return async dispatch => {
+    try {
+      // console.log(formData);
+      await httpClient.delete(server.PRSTOCKHEAD_URL, formData);
+      alert("delete Complete");
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};

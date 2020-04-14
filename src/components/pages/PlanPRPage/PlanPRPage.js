@@ -70,7 +70,6 @@ const useStyles = makeStyles(theme => ({
 export default props => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const loginReducer = useSelector(({ loginReducer }) => loginReducer);
   const prnumberReducer = useSelector(({ prnumberReducer }) => prnumberReducer);
   const prheadReducer = useSelector(({ prheadReducer }) => prheadReducer);
   const prdetailReducer = useSelector(({ prdetailReducer }) => prdetailReducer);
@@ -96,7 +95,7 @@ export default props => {
     vDate: moment(new Date()).format("YYYY-MM-DD"),
     vWarehouse: "",
     vDepartment: "",
-    vMount: "",
+    vMonth: "",
     vPlanUnPlan: "",
     vBU: "",
     vBuyer: "",
@@ -131,9 +130,9 @@ export default props => {
   const [headdept, setHeadDept] = useState();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedRow, setSelectedRow] = useState(null);
+  const [searchdisable, setSearchDisable] = useState(false);
+  const [newdisable, setNewDisable] = useState(false);
   const [editdisable, setEditDisable] = useState(true);
-  const [searchdisable, setSearchDisable] = useState(null);
-  const [newdisable, setNewDisable] = useState(null);
   const [createdisable, setCreateDisable] = useState(true);
   const [showbuttonsave, setShowButtonSave] = useState(null);
   const [showbuttoncancel, setShowButtoncancel] = useState(null);
@@ -162,12 +161,12 @@ export default props => {
         vDate: moment(item.HD_PURCDT).format("YYYY-MM-DD"),
         vWarehouse: item.HD_IBWHLO,
         vDepartment: item.HD_IBCOCE,
-        vMount: item.HD_IBMTH,
+        vMonth: item.HD_IBMTH,
         vPlanUnPlan: item.HD_IBPRIP,
         vBU: item.HD_BU,
         vBuyer: item.HD_IBBUYE,
         vGroup: item.HD_IBMODL,
-        vCAPNo: item.CAPNO,
+        vCAPNo: item.HD_CAPNO,
         vRequestor: item.HD_IBPURC,
         vRemark: item.HD_REM1,
         vApprove1: item.HD_APP1,
@@ -201,8 +200,6 @@ export default props => {
       })
     );
   }, [itemdetailReducer]);
-
-  const logins = loginReducer.result ? loginReducer.result : [];
 
   const prnumbers = useMemo(() =>
     prnumberReducer.result ? prnumberReducer.result : []
@@ -251,7 +248,7 @@ export default props => {
 
     setPRHead({
       ...initialStatePRHead,
-      vMount: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
+      vMonth: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
       vPlanUnPlan: 5
     });
 
@@ -259,8 +256,6 @@ export default props => {
     //   setPRHead({ ...prhead, vRequestor: item.username });
     // });
   };
-
-  const handleSave = event => {};
 
   const handleCancel = event => {
     setSearchDisable(false);
@@ -311,8 +306,7 @@ export default props => {
                     disabled={searchdisable}
                     value={prnumber.vPRSelectNumber}
                     onChange={event => {
-                      console.log(event.target.value);
-
+                      // console.log(event.target.value);
                       setPRNumber({
                         ...prnumber,
                         vPRSelectNumber: event.target.value
@@ -348,7 +342,7 @@ export default props => {
                   <Button
                     fullWidth
                     size="medium"
-                    id="vSearch"
+                    id="vNew"
                     variant="contained"
                     color="secondary"
                     disabled={newdisable}
@@ -377,13 +371,12 @@ export default props => {
                   <Button
                     fullWidth
                     size="medium"
-                    id="vSearch"
+                    id="vSave"
                     variant="contained"
                     color="primary"
                     type="submit"
                     startIcon={<SaveIcon />}
                     disabled={editdisable}
-                    // onClick={handleSave}
                     onSubmit={event => {
                       console.log("submit");
                     }}
@@ -395,7 +388,7 @@ export default props => {
                   <Button
                     fullWidth
                     size="medium"
-                    id="vSearch"
+                    id="vCancel"
                     variant="contained"
                     color="secondary"
                     startIcon={<DeleteIcon />}
@@ -417,6 +410,8 @@ export default props => {
                   label="PR Number"
                   placeholder="Placeholder"
                   variant="outlined"
+                  value={prhead.vPRNumber}
+                  values={(values.vPRNumber = prhead.vPRNumber)}
                   onChange={event => {
                     // console.log(event.target.value);
                     setPRHead({
@@ -424,7 +419,6 @@ export default props => {
                       vPRNumber: event.target.value
                     });
                   }}
-                  value={prhead.vPRNumber}
                 />
                 <TextField
                   className={classes.margin}
@@ -438,13 +432,14 @@ export default props => {
                   variant="outlined"
                   defaultValue={prhead.vDate}
                   value={prhead.vDate}
+                  values={(values.vDate = prhead.vDate)}
                   onChange={event => {
                     // console.log("onChange: " + event.target.value.substr(2, 2) +
                     // event.target.value.substr(5, 2));
                     setPRHead({
                       ...prhead,
                       vDate: event.target.value,
-                      vMount:
+                      vMonth:
                         event.target.value.substr(2, 2) +
                         event.target.value.substr(5, 2)
                     });
@@ -463,6 +458,7 @@ export default props => {
                   id="vWarehouse"
                   label="Warehouse"
                   value={prhead.vWarehouse}
+                  values={(values.vWarehouse = prhead.vWarehouse)}
                   onChange={event => {
                     // console.log(event.target.value);
                     setPRHead({
@@ -494,6 +490,7 @@ export default props => {
                   id="vDepartment"
                   label="Department"
                   value={prhead.vDepartment}
+                  values={(values.vDepartment = prhead.vDepartment)}
                   onChange={event => {
                     // console.log(event.target.value);
                     setPRHead({
@@ -524,14 +521,15 @@ export default props => {
                   label="Month"
                   placeholder="Placeholder"
                   variant="outlined"
+                  value={prhead.vMonth}
+                  values={(values.vMonth = prhead.vMonth)}
                   onChange={event => {
                     // console.log(event.target.value);
-                    setPRHead({
-                      ...prhead,
-                      vMount: event.target.value
-                    });
+                    // setPRHead({
+                    //   ...prhead,
+                    //   vMonth: event.target.value
+                    // });
                   }}
-                  value={prhead.vMount}
                 />
 
                 <TextField
@@ -545,14 +543,15 @@ export default props => {
                   label="Plan / UnPlan"
                   placeholder="Placeholder"
                   variant="outlined"
+                  value={prhead.vPlanUnPlan}
+                  values={(values.vPlanUnPlan = prhead.vPlanUnPlan)}
                   onChange={event => {
                     // console.log(event.target.value);
-                    setPRHead({
-                      ...prhead,
-                      vPlanUnPlan: event.target.value
-                    });
+                    // setPRHead({
+                    //   ...prhead,
+                    //   vPlanUnPlan: event.target.value
+                    // });
                   }}
-                  value={prhead.vPlanUnPlan}
                 />
 
                 <TextField
@@ -565,15 +564,15 @@ export default props => {
                   label="Bu"
                   placeholder="Placeholder"
                   variant="outlined"
+                  value={prhead.vBU}
+                  values={(values.vBU = prhead.vBU)}
                   onChange={event => {
                     // console.log(event.target.value);
-
                     setPRHead({
                       ...prhead,
                       vBU: event.target.value
                     });
                   }}
-                  value={prhead.vBU}
                 />
 
                 {/* <FormControl
@@ -640,15 +639,15 @@ export default props => {
                   label="CAP No"
                   placeholder="Placeholder"
                   variant="outlined"
+                  value={prhead.vCAPNo}
+                  values={(values.vCAPNo = prhead.vCAPNo)}
                   onChange={event => {
                     // console.log(event.target.value);
-
                     setPRHead({
                       ...prhead,
                       vCAPNo: event.target.value
                     });
                   }}
-                  value={prhead.vCAPNo}
                 />
 
                 <TextField
@@ -662,15 +661,15 @@ export default props => {
                   label="Requestor"
                   placeholder="Placeholder"
                   variant="outlined"
-                  // onChange={(event) => {
-                  //   // console.log(event.target.value);
-                  //
-                  //   setPRHead({
-                  //     ...prhead,
-                  //     vRequestor: event.target.value,
-                  //   });
-                  // }}
                   value={prhead.vRequestor}
+                  values={(values.vRequestor = prhead.vRequestor)}
+                  onChange={event => {
+                    // console.log(event.target.value);
+                    // setPRHead({
+                    //   ...prhead,
+                    //   vRequestor: event.target.value,
+                    // });
+                  }}
                 />
 
                 <TextField
@@ -683,15 +682,15 @@ export default props => {
                   label="Remark"
                   placeholder="Placeholder"
                   variant="outlined"
+                  value={prhead.vRemark}
+                  values={(values.vRemark = prhead.vRemark)}
                   onChange={event => {
                     // console.log(event.target.value);
-
                     setPRHead({
                       ...prhead,
                       vRemark: event.target.value
                     });
                   }}
-                  value={prhead.vRemark}
                 />
               </Grid>
               <Grid container item xs className={classes.margin}>
@@ -707,9 +706,9 @@ export default props => {
                   id="vDeptHead"
                   label="Dept of Head"
                   value={prhead.vApprove1}
+                  values={(values.vApprove1 = prhead.vApprove1)}
                   onChange={event => {
                     // console.log(event.target.value);
-                    values.vDeptHead = event.target.value;
                     setPRHead({
                       ...prhead,
                       vApprove1: event.target.value
@@ -739,9 +738,9 @@ export default props => {
                   id="vApprove1"
                   label="Approve1"
                   value={prhead.vApprove2}
+                  values={(values.vApprove2 = prhead.vApprove2)}
                   onChange={event => {
                     // console.log(event.target.value);
-                    values.vApprove1 = event.target.value;
                     setPRHead({
                       ...prhead,
                       vApprove2: event.target.value
@@ -1401,17 +1400,55 @@ export default props => {
     <div className={classes.root}>
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
-      {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
+      <p>#Debug prhead {JSON.stringify(prhead)}</p>
       {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
       <Formik
-        initialValues={{ username: "", password: "", company: "" }}
+        initialValues={{
+          vPRNumber: "",
+          vDate: "",
+          vWarehouse: "",
+          vDepartment: "",
+          vMonth: "",
+          vPlanUnPlan: "",
+          vBU: "",
+          vCAPNo: "",
+          vRequestor: "",
+          vRemark: "",
+          vApprove1: "",
+          vApprove2: ""
+        }}
         onSubmit={(values, { setSubmitting }) => {
-          alert(JSON.stringify(values));
-          // dispatch(loginActions.login(values, props.history));
-          // dispatch(companyActions.getCompanys());
+          // alert(JSON.stringify(values));
+          let formData = new FormData();
+          formData.append("vPRNumber", values.vPRNumber);
+          formData.append("vDate", values.vDate);
+          formData.append("vWarehouse", values.vWarehouse);
+          formData.append("vDepartment", values.vDepartment);
+          formData.append("vMonth", values.vMonth);
+          formData.append("vPlanUnPlan", values.vPlanUnPlan);
+          formData.append("vBU", values.vBU);
+          formData.append("vCAPNo", values.vCAPNo);
+          formData.append("vRequestor", values.vRequestor);
+          formData.append("vRemark", values.vRemark);
+          formData.append("vApprove1", values.vApprove1);
+          formData.append("vApprove2", values.vApprove2);
+
+          if (newdisable === false) {
+            dispatch(prheadActions.addPRHead(formData, props.history));
+            setTimeout(() => {
+              setSearchDisable(false);
+              setNewDisable(false);
+              setEditDisable(true);
+              setCreateDisable(true);
+              setPRNumber({ ...prnumber, vPRSelectNumber: "" });
+              setPRHead({ ...initialStatePRHead });
+              dispatch(prnumberActions.getPRNumbers("00"));
+            }, 1000);
+          } else {
+          }
         }}
       >
         {props => showForm(props)}
