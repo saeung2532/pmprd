@@ -40,7 +40,7 @@ import * as departmentActions from "./../../../actions/department.action";
 import * as approveActions from "./../../../actions/approve.action";
 import * as buyerActions from "./../../../actions/buyer.action";
 import * as itemActions from "./../../../actions/item.action";
-import * as itemdetailActions from "./../../../actions/itemdetail.action";
+import * as itemprdetailActions from "./../../../actions/itemprdetail.action";
 import * as itemunitActions from "./../../../actions/itemunit.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
 import * as phbuyerActions from "./../../../actions/phbuyer.action";
@@ -331,7 +331,7 @@ export default (props) => {
                     });
                     dispatch(itemunitActions.getItemUnits(values.MMITNO));
                     dispatch(
-                      itemdetailActions.getItems(
+                      itemprdetailActions.getItems(
                         prhead.vWarehouse,
                         values.MMITNO
                       )

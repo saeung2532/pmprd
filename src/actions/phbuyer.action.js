@@ -26,7 +26,7 @@ const HTTP_PHBUYERToClear = () => ({
 
 export const getPHBuyers = (dept, group) => {
   return async (dispatch) => {
-    // console.log("dept: " + dept);
+    console.log("dept: " + dept + " group: " + group);
     dispatch(HTTP_PHBUYERToFetching());
     doGetPHBuyers(dispatch, dept, group);
   };

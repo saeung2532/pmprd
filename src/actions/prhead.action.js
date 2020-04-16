@@ -71,12 +71,12 @@ export const updatePRHead = (formData, history) => {
   };
 };
 
-export const deletePRHead = (formData, history) => {
+export const cancelPRHead = (prno, status) => {
   return async dispatch => {
     try {
       // console.log(formData);
-      await httpClient.delete(server.PRSTOCKHEAD_URL, formData);
-      alert("delete Complete");
+      await httpClient.delete(`${server.PRSTOCKHEAD_URL}/${prno}/${status}`);
+      alert("Cancel Complete");
       // history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));

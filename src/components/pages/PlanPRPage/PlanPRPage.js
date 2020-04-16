@@ -1,21 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
 import moment from "moment";
 import NumberFormat from "react-number-format";
 import MaterialTable, { MTableToolbar } from "material-table";
 import { makeStyles, withStyles } from "@material-ui/core/styles";
-import {
-  Typography,
-  Grid,
-  Paper,
-  Select,
-  MenuItem,
-  TextField,
-  InputLabel,
-  FormControl,
-  Button
-} from "@material-ui/core";
+import { Typography, Grid, Paper, TextField, Button } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -26,11 +15,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker
-} from "@material-ui/pickers";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Formik } from "formik";
 import * as prnumberActions from "./../../../actions/prnumber.action";
@@ -41,33 +25,33 @@ import * as departmentActions from "./../../../actions/department.action";
 import * as approveActions from "./../../../actions/approve.action";
 import * as buyerActions from "./../../../actions/buyer.action";
 import * as itemActions from "./../../../actions/item.action";
-import * as itemdetailActions from "./../../../actions/itemdetail.action";
+import * as itemprdetailActions from "./../../../actions/itemprdetail.action";
 import * as itemunitActions from "./../../../actions/itemunit.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
 import * as phbuyerActions from "./../../../actions/phbuyer.action";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    marginTop: 60
+    marginTop: 60,
   },
   paper: {
     padding: theme.spacing(2),
     // textAlign: "center",
-    color: theme.palette.text.secondary
+    color: theme.palette.text.secondary,
   },
   margin: {
     marginTop: "0.4rem",
     marginRight: "0.4rem",
-    margin: theme.spacing(0.3)
+    margin: theme.spacing(0.3),
   },
   extendedIcon: {
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
-  table: { borderTopWidth: 1, borderColor: "red", borderStyle: "solid" } // or borderTop: '1px solid red'
+  table: { borderTopWidth: 1, borderColor: "red", borderStyle: "solid" }, // or borderTop: '1px solid red'
 }));
 
-export default props => {
+export default (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const prnumberReducer = useSelector(({ prnumberReducer }) => prnumberReducer);
@@ -82,8 +66,8 @@ export default props => {
   const approveReducer = useSelector(({ approveReducer }) => approveReducer);
   const buyerReducer = useSelector(({ buyerReducer }) => buyerReducer);
   const itemReducer = useSelector(({ itemReducer }) => itemReducer);
-  const itemdetailReducer = useSelector(
-    ({ itemdetailReducer }) => itemdetailReducer
+  const itemprdetailReducer = useSelector(
+    ({ itemprdetailReducer }) => itemprdetailReducer
   );
   const itemunitReducer = useSelector(({ itemunitReducer }) => itemunitReducer);
   const phgroupReducer = useSelector(({ phgroupReducer }) => phgroupReducer);
@@ -107,23 +91,29 @@ export default props => {
     vApprove2: "",
     vApprove3: "",
     vApprove4: "",
-    vStatus: ""
+    vStatus: "",
   };
   const [prhead, setPRHead] = useState(initialStatePRHead);
-  const initialStateItemDetail = {
-    vItemNo: "", //1805884
-    vItemDesc1: "", //1805884
-    vItemDesc2: "", //1805884
-    vQty: "", //1805884
-    vUnit: "", //1805884
-    vDeliDate: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
+  const initialStateItemPRDetail = {
+    vItemLine: "",
+    vItemNo: "",
+    vItemDesc1: "",
+    vItemDesc2: "",
+    vQty: "",
+    vUnit: "",
+    vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
     vSupplierNo: "",
     vSupplierName: "",
-    vPrice: "0",
+    vPrice: "",
     vCurrency: "",
-    vOrdertype: ""
+    vOrdertype: "",
+    vCostcenterDetail: "",
+    vPHGroupDetail: "",
+    vBuyerDetail: "",
+    vRemarkDetail: "",
   };
-  const [itemdetail, setItemDetail] = useState(initialStateItemDetail);
+  const [itemprdetail, setItemPRDetail] = useState(initialStateItemPRDetail);
+  const [itemdetail, setItemDetail] = useState({ MMITNO: "" });
   const [warehouse, setWarehouse] = useState({ vWarehouse: "" });
   const [department, setDepartment] = useState({ vDepartment: "" });
   const [approve, setApprove] = useState({ vApprove1: "" });
@@ -134,6 +124,7 @@ export default props => {
   const [newdisable, setNewDisable] = useState(false);
   const [editdisable, setEditDisable] = useState(true);
   const [createdisable, setCreateDisable] = useState(true);
+  const [cancelprdisable, setCancelPRDisable] = useState(true);
   const [showbuttonsave, setShowButtonSave] = useState(null);
   const [showbuttoncancel, setShowButtoncancel] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -151,10 +142,10 @@ export default props => {
 
   useEffect(() => {
     const prheads = prheadReducer.result ? prheadReducer.result : [];
-    prheads.map(item => {
+    prheads.map((item) => {
       setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
     });
-    prheads.map(item =>
+    prheads.map((item) =>
       setPRHead({
         ...prhead,
         vPRNumber: item.HD_IBPLPN,
@@ -173,33 +164,33 @@ export default props => {
         vApprove2: item.HD_APP2,
         vApprove3: item.HD_APP3,
         vApprove4: item.HD_APP4,
-        vStatus: item.HD_STATUS
+        vStatus: item.HD_STATUS,
       })
     );
   }, [prheadReducer]);
 
   useEffect(() => {
-    const itemdetails = itemdetailReducer.result
-      ? itemdetailReducer.result
+    const itemprdetails = itemprdetailReducer.result
+      ? itemprdetailReducer.result
       : [];
     // console.log(JSON.stringify("itemdetails: " + JSON.stringify(itemdetails)));
-    itemdetails.map(item =>
-      setItemDetail({
-        ...itemdetail,
-        vItemNo: item.MMITNO, //1805884
-        vItemDesc1: item.MMITDS, //1805884
-        vItemDesc2: item.MMFUDS, //1805884
-        // vQty: item.MMUNMS, //1805884
-        vUnit: item.MMUNMS, //1805884
-        vDeliDate: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
+    itemprdetails.map((item) =>
+      setItemPRDetail({
+        ...itemprdetail,
+        vItemLine: "",
+        vItemNo: item.MMITNO,
+        vItemDesc1: item.MMITDS,
+        vItemDesc2: item.MMFUDS,
+        vUnit: item.MMUNMS,
+        vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
         vSupplierNo: item.MMSUNO,
         vSupplierName: item.SASUNM,
-        vPrice: item.MMPUPR, //1805884
+        vPrice: item.MMPUPR,
         vCurrency: item.MMCUCD,
-        vOrdertype: item.MBORTY
+        vOrdertype: item.MBORTY,
       })
     );
-  }, [itemdetailReducer]);
+  }, [itemprdetailReducer]);
 
   const prnumbers = useMemo(() =>
     prnumberReducer.result ? prnumberReducer.result : []
@@ -227,20 +218,21 @@ export default props => {
       setEditDisable(true);
       setCreateDisable(true);
       setPRHead({
-        ...initialStatePRHead
+        ...initialStatePRHead,
       });
-      dispatch(prdetailActions.getPRDetails("0"));
+      dispatch(prdetailActions.getPRDetails("00"));
     } else {
       setNewDisable(true);
       setEditDisable(false);
       setCreateDisable(false);
+      setCancelPRDisable(false);
       let status = "00";
       dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
       dispatch(prdetailActions.getPRDetails(prnumber.vPRSelectNumber));
     }
   };
 
-  const handleNew = event => {
+  const handleNew = (event) => {
     // console.log(prnumber.vPRSelectNumber);
     setSearchDisable(true);
     setEditDisable(false);
@@ -249,7 +241,7 @@ export default props => {
     setPRHead({
       ...initialStatePRHead,
       vMonth: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
-      vPlanUnPlan: 5
+      vPlanUnPlan: 5,
     });
 
     // logins.map((item) => {
@@ -257,24 +249,37 @@ export default props => {
     // });
   };
 
-  const handleCancel = event => {
+  const handleCancel = (event) => {
     setSearchDisable(false);
     setNewDisable(false);
     setEditDisable(true);
     setCreateDisable(true);
+    setCancelPRDisable(true);
     setPRNumber({ ...prnumber, vPRSelectNumber: "" });
     setPRHead({ ...initialStatePRHead });
-    dispatch(prdetailActions.getPRDetails("0"));
-  };
-
-  const handleDeleteConfirm = () => {
-    // dispatch(stockActions.deleteProduct(selectedProduct.product_id));
-    // dispatch(stockActions.getProducts());
-    setOpenDialog(false);
+    dispatch(prdetailActions.getPRDetails("00"));
   };
 
   const handleClose = () => {
+    setItemPRDetail(initialStateItemPRDetail);
     setOpenDialog(false);
+  };
+
+  const handleDeleteConfirm = () => {
+    setItemPRDetail(initialStateItemPRDetail);
+    setOpenDialog(false);
+  };
+
+  const handleCancelPR = (event) => {
+    let status = "99";
+    dispatch(prheadActions.cancelPRHead(prhead.vPRNumber, status));
+    setTimeout(() => {
+      setCancelPRDisable(true);
+      setPRNumber({ ...prnumber, vPRSelectNumber: "" });
+      setPRHead({ ...initialStatePRHead });
+      dispatch(prnumberActions.getPRNumbers("00"));
+      dispatch(prdetailActions.getPRDetails("00"));
+    }, 1000);
   };
 
   const handleeditdisable = () => {
@@ -286,7 +291,7 @@ export default props => {
     handleChange,
     handleSubmit,
     setFieldValue,
-    isSubmitting
+    isSubmitting,
   }) => {
     return (
       <form onSubmit={handleSubmit}>
@@ -305,19 +310,19 @@ export default props => {
                     label="PR Number"
                     disabled={searchdisable}
                     value={prnumber.vPRSelectNumber}
-                    onChange={event => {
+                    onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
                         ...prnumber,
-                        vPRSelectNumber: event.target.value
+                        vPRSelectNumber: event.target.value,
                       });
                     }}
                     SelectProps={{
-                      native: true
+                      native: true,
                     }}
                   >
                     <option />
-                    {prnumbers.map(option => (
+                    {prnumbers.map((option) => (
                       <option key={option.ID} value={option.HD_IBPLPN}>
                         {option.HD_IBPLPN}
                       </option>
@@ -377,7 +382,7 @@ export default props => {
                     type="submit"
                     startIcon={<SaveIcon />}
                     disabled={editdisable}
-                    onSubmit={event => {
+                    onSubmit={(event) => {
                       console.log("submit");
                     }}
                   >
@@ -398,6 +403,20 @@ export default props => {
                     Cancel
                   </Button>
                 </Grid>
+                <Grid item xs sm={1} className={classes.margin}>
+                  <Button
+                    fullWidth
+                    size="medium"
+                    id="vCancelPR"
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<DeleteIcon />}
+                    disabled={cancelprdisable}
+                    onClick={handleCancelPR}
+                  >
+                    Cancel PR
+                  </Button>
+                </Grid>
               </Grid>
               <Grid container item xs className={classes.margin}>
                 <TextField
@@ -412,11 +431,11 @@ export default props => {
                   variant="outlined"
                   value={prhead.vPRNumber}
                   values={(values.vPRNumber = prhead.vPRNumber)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vPRNumber: event.target.value
+                      vPRNumber: event.target.value,
                     });
                   }}
                 />
@@ -433,7 +452,7 @@ export default props => {
                   defaultValue={prhead.vDate}
                   value={prhead.vDate}
                   values={(values.vDate = prhead.vDate)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log("onChange: " + event.target.value.substr(2, 2) +
                     // event.target.value.substr(5, 2));
                     setPRHead({
@@ -441,7 +460,7 @@ export default props => {
                       vDate: event.target.value,
                       vMonth:
                         event.target.value.substr(2, 2) +
-                        event.target.value.substr(5, 2)
+                        event.target.value.substr(5, 2),
                     });
                   }}
                   InputLabelProps={{ shrink: true, required: true }}
@@ -459,19 +478,19 @@ export default props => {
                   label="Warehouse"
                   value={prhead.vWarehouse}
                   values={(values.vWarehouse = prhead.vWarehouse)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vWarehouse: event.target.value
+                      vWarehouse: event.target.value,
                     });
                   }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {warehouses.map(option => (
+                  {warehouses.map((option) => (
                     <option key={option.ID} value={option.MWWHLO}>
                       {option.WAREHOUSE}
                     </option>
@@ -491,19 +510,19 @@ export default props => {
                   label="Department"
                   value={prhead.vDepartment}
                   values={(values.vDepartment = prhead.vDepartment)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vDepartment: event.target.value
+                      vDepartment: event.target.value,
                     });
                   }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {departments.map(option => (
+                  {departments.map((option) => (
                     <option key={option.ID} value={option.EAAITM}>
                       {option.DEPARTMENT}
                     </option>
@@ -523,7 +542,7 @@ export default props => {
                   variant="outlined"
                   value={prhead.vMonth}
                   values={(values.vMonth = prhead.vMonth)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     // setPRHead({
                     //   ...prhead,
@@ -545,7 +564,7 @@ export default props => {
                   variant="outlined"
                   value={prhead.vPlanUnPlan}
                   values={(values.vPlanUnPlan = prhead.vPlanUnPlan)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     // setPRHead({
                     //   ...prhead,
@@ -566,11 +585,11 @@ export default props => {
                   variant="outlined"
                   value={prhead.vBU}
                   values={(values.vBU = prhead.vBU)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vBU: event.target.value
+                      vBU: event.target.value,
                     });
                   }}
                 />
@@ -641,11 +660,11 @@ export default props => {
                   variant="outlined"
                   value={prhead.vCAPNo}
                   values={(values.vCAPNo = prhead.vCAPNo)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vCAPNo: event.target.value
+                      vCAPNo: event.target.value,
                     });
                   }}
                 />
@@ -663,7 +682,7 @@ export default props => {
                   variant="outlined"
                   value={prhead.vRequestor}
                   values={(values.vRequestor = prhead.vRequestor)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     // setPRHead({
                     //   ...prhead,
@@ -684,11 +703,11 @@ export default props => {
                   variant="outlined"
                   value={prhead.vRemark}
                   values={(values.vRemark = prhead.vRemark)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vRemark: event.target.value
+                      vRemark: event.target.value,
                     });
                   }}
                 />
@@ -707,19 +726,19 @@ export default props => {
                   label="Dept of Head"
                   value={prhead.vApprove1}
                   values={(values.vApprove1 = prhead.vApprove1)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vApprove1: event.target.value
+                      vApprove1: event.target.value,
                     });
                   }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {approves.map(option => (
+                  {approves.map((option) => (
                     <option key={option.ID} value={option.US_LOGIN}>
                       {option.US_LOGIN}
                     </option>
@@ -739,19 +758,19 @@ export default props => {
                   label="Approve1"
                   value={prhead.vApprove2}
                   values={(values.vApprove2 = prhead.vApprove2)}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
                     setPRHead({
                       ...prhead,
-                      vApprove2: event.target.value
+                      vApprove2: event.target.value,
                     });
                   }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {approves.map(option => (
+                  {approves.map((option) => (
                     <option key={option.ID} value={option.US_LOGIN}>
                       {option.US_LOGIN}
                     </option>
@@ -849,8 +868,11 @@ export default props => {
       >
         <DialogTitle id="alert-dialog-slide-title">
           PR Number : {prhead.vPRNumber}
-          {prhead.vPRNumber && " Line: "}
+          {itemprdetail.vItemLine ? ` - Line : ${itemprdetail.vItemLine}` : ""}
         </DialogTitle>
+        {/* <DialogContentText>
+        {itemprdetail.vItemLine ? `Line: ${itemprdetail.vItemLine}` : ""}
+        </DialogContentText> */}
         <DialogContent>
           <Grid container item xs={12} spacing={2}>
             <Grid item xs={5}>
@@ -862,25 +884,32 @@ export default props => {
                 size="small"
                 id="vItemNoAuto"
                 options={items}
-                getOptionLabel={option => option.MMITNO}
+                getOptionLabel={(option) => option.MMITNO}
+                value={itemdetail}
                 onChange={(event, values) => {
                   // console.log(values);
                   if (values) {
-                    setItemDetail({
-                      ...itemdetail,
-                      vItemNo: values.MMITNO
+                    setItemDetail({ ...itemdetail, MMITNO: values.MMITNO });
+                    setItemPRDetail({
+                      ...itemprdetail,
+                      vItemNo: values.MMITNO,
                     });
                     dispatch(itemunitActions.getItemUnits(values.MMITNO));
                     dispatch(
-                      itemdetailActions.getItems(
+                      itemprdetailActions.getItems(
                         prhead.vWarehouse,
                         values.MMITNO
                       )
                     );
                   }
                 }}
-                renderInput={params => (
-                  <TextField {...params} id="vItemNo" label="Item No" />
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    id="vItemNo"
+                    label="Item No"
+                    // value={itemprdetail.vItemNo}
+                  />
                 )}
               />
             </Grid>
@@ -893,7 +922,7 @@ export default props => {
                 id="vItemName"
                 label="Item Name"
                 type="text"
-                value={itemdetail.vItemDesc1}
+                value={itemprdetail.vItemDesc1}
               />
             </Grid>
           </Grid>
@@ -907,13 +936,12 @@ export default props => {
                 id="vQty"
                 label="Qty"
                 type="number"
-                value={itemdetail.vQty}
-                onChange={event => {
+                value={itemprdetail.vQty}
+                onChange={(event) => {
                   // console.log(event.target.value);
-
-                  setItemDetail({
-                    ...itemdetail,
-                    vQty: event.target.value
+                  setItemPRDetail({
+                    ...itemprdetail,
+                    vQty: event.target.value,
                   });
                 }}
               />
@@ -931,20 +959,20 @@ export default props => {
                 required
                 id="vUnit"
                 label="Unit"
-                value={itemdetail.vUnit}
-                onChange={event => {
+                value={itemprdetail.vUnit}
+                onChange={(event) => {
                   // console.log(event.target.value);
-                  // setPRHead({
-                  //   ...prhead,
-                  //   vApprove4: event.target.value
-                  // });
+                  setItemPRDetail({
+                    ...itemprdetail,
+                    vUnit: event.target.value,
+                  });
                 }}
                 SelectProps={{
-                  native: true
+                  native: true,
                 }}
               >
                 <option />
-                {itemunits.map(option => (
+                {itemunits.map((option) => (
                   <option key={option.ID} value={option.MMUNMS}>
                     {option.MMUNMS}
                   </option>
@@ -962,13 +990,12 @@ export default props => {
             label="Delivery Date"
             variant="standard"
             defaultValue={prhead.vDate}
-            value={itemdetail.vDeliDate}
-            onChange={event => {
+            value={itemprdetail.vDateDetail}
+            onChange={(event) => {
               // console.log(event.target.value);
-
-              setItemDetail({
-                ...itemdetail,
-                vDeliDate: event.target.value
+              setItemPRDetail({
+                ...itemprdetail,
+                vDateDetail: event.target.value,
               });
             }}
             InputLabelProps={{ shrink: true, required: true }}
@@ -983,7 +1010,7 @@ export default props => {
                 id="vSupplierNo"
                 label="Supplier No"
                 type="text"
-                value={itemdetail.vSupplierNo}
+                value={itemprdetail.vSupplierNo}
               />
             </Grid>
             <Grid item xs>
@@ -995,7 +1022,7 @@ export default props => {
                 id="vSupplierName"
                 label="Supplier Name"
                 type="text"
-                value={itemdetail.vSupplierName}
+                value={itemprdetail.vSupplierName}
               />
             </Grid>
           </Grid>
@@ -1009,7 +1036,7 @@ export default props => {
                 id="vPrice"
                 label="Price"
                 type="number"
-                value={itemdetail.vPrice}
+                value={itemprdetail.vPrice}
               />
             </Grid>
             <Grid item xs>
@@ -1021,7 +1048,7 @@ export default props => {
                 id="vCurrency"
                 label="Currency"
                 type="text"
-                value={itemdetail.vCurrency}
+                value={itemprdetail.vCurrency}
               />
             </Grid>
             <Grid item xs>
@@ -1033,7 +1060,7 @@ export default props => {
                 id="vOrderType"
                 label="Order Type"
                 type="text"
-                value={itemdetail.vOrdertype}
+                value={itemprdetail.vOrdertype}
               />
             </Grid>
           </Grid>
@@ -1051,24 +1078,24 @@ export default props => {
                 required
                 id="vPHGroup"
                 label="PH Group"
-                value={itemdetail.vPHGroup}
-                onChange={event => {
+                value={itemprdetail.vPHGroupDetail}
+                onChange={(event) => {
                   // console.log(event.target.value);
                   let phgroup = "PH";
-                  setPRHead({
-                    ...prhead,
-                    vBuyer: event.target.value
+                  setItemPRDetail({
+                    ...itemprdetail,
+                    vPHGroupDetail: event.target.value,
                   });
                   dispatch(
                     phbuyerActions.getPHBuyers(phgroup, event.target.value)
                   );
                 }}
                 SelectProps={{
-                  native: true
+                  native: true,
                 }}
               >
                 <option />
-                {phgroups.map(option => (
+                {phgroups.map((option) => (
                   <option key={option.ID} value={option.US_GRP}>
                     {option.US_GRP}
                   </option>
@@ -1088,20 +1115,20 @@ export default props => {
                 required
                 id="vBuyer"
                 label="Buyer"
-                // value={prhead.vBuyer}
-                onChange={event => {
+                value={itemprdetail.vBuyerDetail}
+                onChange={(event) => {
                   // console.log(event.target.value);
-                  setPRHead({
-                    ...prhead,
-                    vBuyer: event.target.value
+                  setItemPRDetail({
+                    ...itemprdetail,
+                    vBuyerDetail: event.target.value,
                   });
                 }}
                 SelectProps={{
-                  native: true
+                  native: true,
                 }}
               >
                 <option />
-                {phbuyers.map(option => (
+                {phbuyers.map((option) => (
                   <option key={option.ID} value={option.US_LOGIN}>
                     {option.US_LOGIN}
                   </option>
@@ -1122,20 +1149,20 @@ export default props => {
             required
             id="vCostcenter"
             label="Cost center"
-            // value={prhead.vBuyer}
-            onChange={event => {
+            value={itemprdetail.vCostcenterDetail}
+            onChange={(event) => {
               // console.log(event.target.value);
-              // setPRHead({
-              //   ...prhead,
-              //   vBuyer: event.target.value
-              // });
+              setItemPRDetail({
+                ...itemprdetail,
+                vCostcenterDetail: event.target.value,
+              });
             }}
             SelectProps={{
-              native: true
+              native: true,
             }}
           >
             <option />
-            {departments.map(option => (
+            {departments.map((option) => (
               <option key={option.ID} value={option.EAAITM}>
                 {option.DEPARTMENT}
               </option>
@@ -1147,10 +1174,17 @@ export default props => {
             fullWidth
             // disabled="true"
             margin="dense"
-            id="vDetailRemark"
+            id="vRemarkDetail"
             label="Remark"
             type="text"
-            value={itemdetail.vDetailRemark}
+            value={itemprdetail.vRemarkDetail}
+            onChange={(event) => {
+              // console.log(event.target.value);
+              setItemPRDetail({
+                ...itemprdetail,
+                vRemarkDetail: event.target.value,
+              });
+            }}
           />
         </DialogContent>
         <DialogActions>
@@ -1171,11 +1205,11 @@ export default props => {
       field: "PR_IBPLPS",
       headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: { maxWidth: 50, textAlign: "center" },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPLPS}
         </Typography>
-      )
+      ),
     },
     {
       title: "Item No",
@@ -1191,33 +1225,33 @@ export default props => {
       //     renderInput={params => <TextField {...params} />}
       //   />
       // ),
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBITNO}
         </Typography>
-      )
+      ),
     },
     {
       title: "Item Name",
       field: "PR_IBPITT",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: { maxWidth: 150 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" display="block" noWrap>
           {item.PR_IBPITT}
         </Typography>
-      )
+      ),
     },
     {
       title: "Unit",
       field: "PR_IBPUUN",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: { maxWidth: 100, textAlign: "center" },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPUUN}
         </Typography>
-      )
+      ),
     },
     {
       title: "Stk Rem.",
@@ -1225,11 +1259,11 @@ export default props => {
       type: "numeric",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: { maxWidth: 100, textAlign: "right" },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.MBSTQT}
         </Typography>
-      )
+      ),
     },
     {
       title: "Qty",
@@ -1237,11 +1271,11 @@ export default props => {
       type: "numeric",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: { maxWidth: 100, textAlign: "right" },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBORQA}
         </Typography>
-      )
+      ),
     },
     {
       title: "U/P",
@@ -1249,11 +1283,11 @@ export default props => {
       type: "numeric",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: { maxWidth: 100, textAlign: "right" },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPUPR}
         </Typography>
-      )
+      ),
     },
     {
       title: "Deli. Date",
@@ -1261,61 +1295,61 @@ export default props => {
       type: "date",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 150 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {moment(item.PR_IBDWDT).format("DD/MM/YYYY")}
         </Typography>
-      )
+      ),
     },
     {
       title: "Supp No",
       field: "PR_IBSUNO",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 150 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBSUNO}
         </Typography>
-      )
+      ),
     },
     {
       title: "Supp Name",
       field: "SASUNM",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 150 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.SASUNM}
         </Typography>
-      )
+      ),
     },
     {
       title: "Ord. Type",
       field: "PR_IBORTY",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 100 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBORTY}
         </Typography>
-      )
+      ),
     },
     {
       title: "Vat.",
       field: "PR_IBVTCD",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 100 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPLPN}
         </Typography>
-      )
+      ),
     },
     {
       title: "Total",
       field: "",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
-      cellStyle: { maxWidth: 100 }
+      cellStyle: { maxWidth: 100 },
       // render: item => <Typography variant="body1" noWrap>{item.PR_IBPLPN}</Typography>
     },
     {
@@ -1323,56 +1357,67 @@ export default props => {
       field: "PR_IBCUCD",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 100 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBCUCD}
         </Typography>
-      )
+      ),
     },
     {
       title: "Cost Center",
-      field: "PR_REM5",
+      field: "PR_IBCOCE",
+      headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
+      cellStyle: { maxWidth: 150 },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBCOCE}
+        </Typography>
+      ),
+    },
+    {
+      title: "Group",
+      field: "PR_IBMODL",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 100 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_REM5}
+          {item.PR_IBMODL}
         </Typography>
-      )
+      ),
     },
     {
       title: "Buyer",
-      field: "PR_REM5",
+      field: "PR_IBBUYE",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
-      cellStyle: { maxWidth: 100 },
-      render: item => (
+      cellStyle: { maxWidth: 150 },
+      render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_REM5}
+          {item.PR_IBBUYE}
         </Typography>
-      )
+      ),
     },
     {
       title: "PR Rem3",
       field: "PR_REM3",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 100 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_REM3}
         </Typography>
-      )
+      ),
     },
     {
       title: "PR Rem5",
       field: "PR_REM5",
       headerStyle: { maxWidth: 0, whiteSpace: "nowrap" },
       cellStyle: { maxWidth: 100 },
-      render: item => (
+      render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_REM5}
         </Typography>
-      )
-    }
+      ),
+    },
   ];
 
   const actions = [
@@ -1382,26 +1427,27 @@ export default props => {
       tooltip: "Edit",
       onClick: (event, rowData) => {
         console.log(JSON.stringify(rowData));
-      }
+      },
       // props.history.push("/stock/edit/" + rowData.product_id),
     },
-    {
-      icon: "delete",
-      iconProps: { color: "action" },
-      tooltip: "Delete",
-      onClick: (event, rowData) => {
-        setSelectedProduct(rowData);
-        setOpenDialog(true);
-      }
-    }
+    // {
+    //   icon: "delete",
+    //   iconProps: { color: "action" },
+    //   tooltip: "Delete",
+    //   onClick: (event, rowData) => {
+    //     setSelectedProduct(rowData);
+    //     setOpenDialog(true);
+    //   }
+    // }
   ];
 
   return (
     <div className={classes.root}>
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
-      <p>#Debug prhead {JSON.stringify(prhead)}</p>
-      {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
+      {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
+      <p>{JSON.stringify(itemdetail)}</p>
+      <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
@@ -1418,7 +1464,7 @@ export default props => {
           vRequestor: "",
           vRemark: "",
           vApprove1: "",
-          vApprove2: ""
+          vApprove2: "",
         }}
         onSubmit={(values, { setSubmitting }) => {
           // alert(JSON.stringify(values));
@@ -1435,8 +1481,9 @@ export default props => {
           formData.append("vRemark", values.vRemark);
           formData.append("vApprove1", values.vApprove1);
           formData.append("vApprove2", values.vApprove2);
+          formData.append("vStatus", prhead.vStatus ? prhead.vStatus : "00");
 
-          if (newdisable === false) {
+          if (newdisable === false && cancelprdisable === true) {
             dispatch(prheadActions.addPRHead(formData, props.history));
             setTimeout(() => {
               setSearchDisable(false);
@@ -1445,13 +1492,15 @@ export default props => {
               setCreateDisable(true);
               setPRNumber({ ...prnumber, vPRSelectNumber: "" });
               setPRHead({ ...initialStatePRHead });
-              dispatch(prnumberActions.getPRNumbers("00"));
+              let status = "00";
+              dispatch(prnumberActions.getPRNumbers(status));
             }, 1000);
-          } else {
+          } else if (searchdisable === false) {
+            dispatch(prheadActions.updatePRHead(formData, props.history));
           }
         }}
       >
-        {props => showForm(props)}
+        {(props) => showForm(props)}
       </Formik>
 
       {/* Plan PR Table */}
@@ -1460,10 +1509,10 @@ export default props => {
         id="root_prstock"
         title={`Plan PR : ${prhead.vStatus}`}
         columns={columns}
-        actions={actions}
+        // actions={actions}
         data={prdetailReducer.result ? prdetailReducer.result : []}
         components={{
-          Toolbar: props => (
+          Toolbar: (props) => (
             <div>
               <MTableToolbar {...props} />
               <div style={{ padding: "0px 10px" }}>
@@ -1487,7 +1536,7 @@ export default props => {
                 </Button>
               </div>
             </div>
-          )
+          ),
         }}
         options={{
           exportButton: true,
@@ -1509,7 +1558,7 @@ export default props => {
           //cellStyle: {},
           fixedColumns: {
             // left: 2
-          }
+          },
         }}
         localization={
           {
@@ -1524,49 +1573,95 @@ export default props => {
             // },
           }
         }
-        editable={
-          {
-            // onRowAdd: newData =>
-            //   new Promise((resolve, reject) => {
-            //     console.log("onRowAdd");
-            //     setTimeout(() => {
-            //       {
-            //         const data = this.state.data;
-            //         data.push(newData);
-            //         this.setState({ data }, () => resolve());
-            //       }
-            //       resolve();
-            //     }, 1000);
-            //   }),
-            // onRowUpdate: (newData, oldData) =>
-            //   new Promise((resolve, reject) => {
-            //     // console.log("onRowUpdate: " + JSON.stringify(newData));
-            //     props.history.push("/stock/edit/" + newData.product_id);
-            //     // setTimeout(() => {
-            //     //   const data = [newData];
-            //     //   data.map(item => {
-            //     //     // dispatch(prdetailActions.getPRDetails(item.PR_IBPLPN, "00"));
-            //     //   });
-            //     //   resolve();
-            //     // }, 1000);
-            //   }),
-            // onRowDelete: oldData =>
-            //   new Promise((resolve, reject) => {
-            //     // console.log("onRowDelete: " + JSON.stringify(oldData));
-            //     setTimeout(() => {
-            //       {
-            //         let data = prdetailReducer.result;
-            //         console.log(data);
-            //         const index = data.indexOf(oldData);
-            //         data.splice(index, 1);
-            //         this.setState({ data }, () => resolve());
-            //       }
-            //       resolve();
-            //     }, 1000);
-            //   })
-          }
-        }
-        // onRowClick={(evt, selectedRow) => setSelectedRow({ selectedRow })}
+        editable={{
+          //Edit data in line
+          // isEditable: rowData => rowData.name === "a", // only name(a) rows would be editable
+          // isDeletable: rowData => rowData.name === "b", // only name(a) rows would be deletable
+          // onRowAdd: newData =>
+          //   new Promise((resolve, reject) => {
+          //     console.log("onRowAdd");
+          //     setTimeout(() => {
+          //       {
+          //         const data = this.state.data;
+          //         data.push(newData);
+          //         this.setState({ data }, () => resolve());
+          //       }
+          //       resolve();
+          //     }, 1000);
+          //   }),
+          // onRowUpdate: (newData, oldData) =>
+          //   new Promise((resolve, reject) => {
+          //     console.log("onRowUpdate: " + JSON.stringify(newData));
+          //     props.history.push("/stock/edit/" + newData.product_id);
+          //     setTimeout(() => {
+          //       const data = [newData];
+          //       data.map((item) => {
+          //         // dispatch(prdetailActions.getPRDetails(item.PR_IBPLPN, "00"));
+          //       });
+          //       resolve();
+          //     }, 1000);
+          //   }),
+          onRowDelete: (oldData) =>
+            new Promise((resolve, reject) => {
+              // console.log("onRowDelete: " + JSON.stringify(oldData));
+              setTimeout(() => {
+                {
+                  let data = prdetailReducer.result;
+                  console.log(data);
+                  const index = data.indexOf(oldData);
+                  console.log(index);
+                  // data.splice(index, 1);
+                  // this.setState({ data }, () => resolve());
+                }
+                resolve();
+              }, 1000);
+            }),
+        }}
+        actions={[
+          (rowData) => ({
+            icon: "edit",
+            tooltip: "Edit row",
+            onClick: (event, rowData) => {
+              // console.log("rowData: " + JSON.stringify([rowData]));
+
+              let data = [rowData];
+              let phgroup = "PH";
+              data.map((item) => {
+                setItemDetail({ ...itemdetail, MMITNO: item.PR_IBITNO });
+                dispatch(itemActions.getItems(prhead.vWarehouse));
+                dispatch(itemunitActions.getItemUnits(item.PR_IBITNO));
+                dispatch(phgroupActions.getPHGroups(phgroup));
+                dispatch(phbuyerActions.getPHBuyers(phgroup, item.PR_IBMODL));
+              });
+
+              setTimeout(() => {
+                data.map((item) =>
+                  setItemPRDetail({
+                    ...itemprdetail,
+                    vItemLine: item.PR_IBPLPS,
+                    vItemNo: item.PR_IBITNO,
+                    vItemDesc1: item.PR_IBPITT,
+                    vQty: item.PR_IBORQA,
+                    vUnit: item.PR_IBPUUN,
+                    vDateDetail: item.PR_IBDWDT,
+                    vSupplierNo: item.PR_IBSUNO,
+                    vSupplierName: item.SASUNM,
+                    vPrice: item.PR_IBPUPR,
+                    vCurrency: item.PR_IBCUCD,
+                    vOrdertype: item.PR_IBORTY,
+                    vCostcenterDetail: item.PR_IBCOCE,
+                    vPHGroupDetail: item.PR_IBMODL,
+                    vBuyerDetail: item.PR_IBBUYE,
+                    vRemarkDetail: item.PR_REM3,
+                  })
+                );
+              }, 1000);
+
+              setSelectedProduct("rowData");
+              setOpenDialog(true);
+            },
+          }),
+        ]}
       />
 
       {/* Dialog */}
