@@ -4,28 +4,28 @@ import {
   HTTP_PRDETAIL_FETCHING,
   HTTP_PRDETAIL_FAILED,
   HTTP_PRDETAIL_CLEAR,
-  server
+  server,
 } from "../constants";
 
-export const setStatePRDetailToSuccess = payload => ({
+export const setStatePRDetailToSuccess = (payload) => ({
   type: HTTP_PRDETAIL_SUCCESS,
-  payload
+  payload,
 });
 
 const setStatePRDetailToFetching = () => ({
-  type: HTTP_PRDETAIL_FETCHING
+  type: HTTP_PRDETAIL_FETCHING,
 });
 
 const setStatePRDetailToFailed = () => ({
-  type: HTTP_PRDETAIL_FAILED
+  type: HTTP_PRDETAIL_FAILED,
 });
 
 const setStatePRDetailToClear = () => ({
-  type: HTTP_PRDETAIL_CLEAR
+  type: HTTP_PRDETAIL_CLEAR,
 });
 
-export const getPRDetails = prno => {
-  return async dispatch => {
+export const getPRDetails = (prno) => {
+  return async (dispatch) => {
     console.log("PR: " + prno);
     dispatch(setStatePRDetailToFetching());
     doGetPRDetails(dispatch, prno);
@@ -41,4 +41,17 @@ const doGetPRDetails = async (dispatch, prno) => {
     // alert(JSON.stringify(err));
     dispatch(setStatePRDetailToFailed());
   }
+};
+
+export const addPRDetail = (formData, history) => {
+  return async (dispatch) => {
+    try {
+      // console.log(formData);
+      let result = await httpClient.post(server.PRSTOCKDETAIL_URL, formData);
+      alert("Save Complete: " + JSON.stringify(result.data));
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
 };

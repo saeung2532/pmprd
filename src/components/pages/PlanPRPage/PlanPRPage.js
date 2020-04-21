@@ -17,6 +17,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Formik, Form, Field } from "formik";
+import * as loginActions from "./../../../actions/login.action";
 import * as prnumberActions from "./../../../actions/prnumber.action";
 import * as prheadActions from "./../../../actions/prhead.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
@@ -882,7 +883,7 @@ export default (props) => {
                   getOptionLabel={(option) => option.MMITNO}
                   value={itemprdetail.vItemNo}
                   values={(values.vItemLine = itemprdetail.vItemLine)}
-                  values={(values.vItemNo = itemprdetail.vItemNo)}
+                  values={(values.vItemNo = itemprdetail.vItemNo.MMITNO)}
                   onChange={(event, values) => {
                     // console.log(values);
                     if (values) {
@@ -920,6 +921,7 @@ export default (props) => {
                   label="Item Name"
                   type="text"
                   value={itemprdetail.vItemDesc1}
+                  values={(values.vItemDesc1 = itemprdetail.vItemDesc1)}
                 />
               </Grid>
             </Grid>
@@ -934,6 +936,7 @@ export default (props) => {
                   label="Qty"
                   type="number"
                   value={itemprdetail.vQty}
+                  values={(values.vQty = itemprdetail.vQty)}
                   onChange={(event) => {
                     // console.log(event.target.value);
                     setItemPRDetail({
@@ -958,6 +961,7 @@ export default (props) => {
                   id="vUnit"
                   label="Unit"
                   value={itemprdetail.vUnit}
+                  values={(values.vUnit = itemprdetail.vUnit)}
                   onChange={(event) => {
                     // console.log(event.target.value);
                     setItemPRDetail({
@@ -989,6 +993,7 @@ export default (props) => {
               variant="standard"
               defaultValue={prhead.vDate}
               value={itemprdetail.vDateDetail}
+              values={(values.vDateDetail = itemprdetail.vDateDetail)}
               onChange={(event) => {
                 // console.log(event.target.value);
                 setItemPRDetail({
@@ -1009,6 +1014,7 @@ export default (props) => {
                   label="Supplier No"
                   type="text"
                   value={itemprdetail.vSupplierNo}
+                  values={(values.vSupplierNo = itemprdetail.vSupplierNo)}
                 />
               </Grid>
               <Grid item xs>
@@ -1021,6 +1027,7 @@ export default (props) => {
                   label="Supplier Name"
                   type="text"
                   value={itemprdetail.vSupplierName}
+                  values={(values.vSupplierName = itemprdetail.vSupplierName)}
                 />
               </Grid>
             </Grid>
@@ -1035,6 +1042,7 @@ export default (props) => {
                   label="Price"
                   type="number"
                   value={itemprdetail.vPrice}
+                  values={(values.vPrice = itemprdetail.vPrice)}
                 />
               </Grid>
               <Grid item xs>
@@ -1047,6 +1055,7 @@ export default (props) => {
                   label="Currency"
                   type="text"
                   value={itemprdetail.vCurrency}
+                  values={(values.vCurrency = itemprdetail.vCurrency)}
                 />
               </Grid>
               <Grid item xs>
@@ -1059,6 +1068,7 @@ export default (props) => {
                   label="Order Type"
                   type="text"
                   value={itemprdetail.vOrdertype}
+                  values={(values.vOrdertype = itemprdetail.vOrdertype)}
                 />
               </Grid>
             </Grid>
@@ -1077,6 +1087,7 @@ export default (props) => {
                   id="vPHGroup"
                   label="PH Group"
                   value={itemprdetail.vPHGroupDetail}
+                  values={(values.vPHGroupDetail = itemprdetail.vPHGroupDetail)}
                   onChange={(event) => {
                     // console.log(event.target.value);
                     let phgroup = "PH";
@@ -1114,6 +1125,7 @@ export default (props) => {
                   id="vBuyer"
                   label="Buyer"
                   value={itemprdetail.vBuyerDetail}
+                  values={(values.vBuyerDetail = itemprdetail.vBuyerDetail)}
                   onChange={(event) => {
                     // console.log(event.target.value);
                     setItemPRDetail({
@@ -1148,6 +1160,9 @@ export default (props) => {
               id="vCostcenter"
               label="Cost center"
               value={itemprdetail.vCostcenterDetail}
+              values={
+                (values.vCostcenterDetail = itemprdetail.vCostcenterDetail)
+              }
               onChange={(event) => {
                 // console.log(event.target.value);
                 setItemPRDetail({
@@ -1176,6 +1191,7 @@ export default (props) => {
               label="Remark"
               type="text"
               value={itemprdetail.vRemarkDetail}
+              values={(values.vRemarkDetail = itemprdetail.vRemarkDetail)}
               onChange={(event) => {
                 // console.log(event.target.value);
                 setItemPRDetail({
@@ -1464,7 +1480,12 @@ export default (props) => {
           formData.append("vPlanUnPlan", values.vPlanUnPlan);
           formData.append("vBU", values.vBU);
           formData.append("vCAPNo", values.vCAPNo);
-          formData.append("vRequestor", values.vRequestor);
+          formData.append(
+            "vRequestor",
+            prhead.vRequestor
+              ? prhead.vRequestor
+              : loginActions.getTokenUsername()
+          );
           formData.append("vRemark", values.vRemark);
           formData.append("vApprove1", values.vApprove1);
           formData.append("vApprove2", values.vApprove2);
@@ -1496,7 +1517,6 @@ export default (props) => {
         id="root_prstock"
         title={`Plan PR : ${prhead.vStatus}`}
         columns={columns}
-        // actions={actions}
         data={prdetailReducer.result ? prdetailReducer.result : []}
         components={{
           Toolbar: (props) => (
@@ -1658,8 +1678,10 @@ export default (props) => {
       {/* Dialog */}
       <Formik
         initialValues={{
+          vPRNumber: prhead.vPRNumber,
+          vPlanUnPlan: prhead.vPlanUnPlan,
           vItemLine: "",
-          vItemNo: { MMITNO: "" },
+          vItemNo: "", //{ MMITNO: "" },
           vItemDesc1: "",
           vItemDesc2: "",
           vQty: "",
@@ -1668,6 +1690,7 @@ export default (props) => {
           vSupplierNo: "",
           vSupplierName: "",
           vPrice: "",
+          vVat: "",
           vCurrency: "",
           vOrdertype: "",
           vCostcenterDetail: "",
@@ -1676,7 +1699,32 @@ export default (props) => {
           vRemarkDetail: "",
         }}
         onSubmit={(values, { setSubmitting }) => {
-          alert(JSON.stringify(values));
+          // alert(JSON.stringify(values));
+          let formData = new FormData();
+          formData.append("vPRNumber", values.vPRNumber);
+          formData.append("vPlanUnPlan", values.vPlanUnPlan);
+          formData.append("vItemLine", values.vItemLine);
+          formData.append("vItemNo", values.vItemNo);
+          formData.append("vItemDesc1", values.vItemDesc1);
+          formData.append("vQty", values.vQty);
+          formData.append("vUnit", values.vUnit);
+          formData.append("vDateDetail", values.vDateDetail);
+          formData.append("vSupplierNo", values.vSupplierNo);
+          formData.append("vPrice", values.vPrice);
+          formData.append("vVat", values.vVat);
+          formData.append("vCurrency", values.vCurrency);
+          formData.append("vOrdertype", values.vOrdertype);
+          formData.append("vCostcenterDetail", values.vCostcenterDetail);
+          formData.append("vPHGroupDetail", values.vPHGroupDetail);
+          formData.append("vBuyerDetail", values.vBuyerDetail);
+          formData.append("vRemarkDetail", values.vRemarkDetail);
+
+          dispatch(prdetailActions.addPRDetail(formData, props.history));
+          setTimeout(() => {
+            setItemPRDetail({ ...initialStateItemPRDetail });
+            dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+            setOpenDialog(false);
+          }, 1000);
         }}
       >
         {(props) => showDialog(props)}

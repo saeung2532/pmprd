@@ -4,12 +4,12 @@ import {
   server,
   apiUrl,
   NOT_CONNECT_NETWORK,
-  NETWORK_CONNECTION_MESSAGE
+  NETWORK_CONNECTION_MESSAGE,
 } from "../constants";
 
 const isAbsoluteURLRegex = /^(?:\w+:)\/\//;
 
-axios.interceptors.request.use(async config => {
+axios.interceptors.request.use(async (config) => {
   if (!isAbsoluteURLRegex.test(config.url)) {
     const userToken = localStorage.getItem(server.TOKEN_KEY);
     if (userToken) {
@@ -18,20 +18,21 @@ axios.interceptors.request.use(async config => {
     config.url = join(apiUrl, config.url);
   }
   config.timeout = 10000; // 10 Second
+  // console.log("config: " + JSON.stringify(config));
   return config;
 });
 
 axios.interceptors.response.use(
-  response => {
+  (response) => {
     return response;
   },
-  error => {
+  (error) => {
     if (axios.isCancel(error)) {
       return Promise.reject(error);
     } else if (!error.response) {
       return Promise.reject({
         code: NOT_CONNECT_NETWORK,
-        message: NETWORK_CONNECTION_MESSAGE
+        message: NETWORK_CONNECTION_MESSAGE,
       });
     }
     return Promise.reject(error);
