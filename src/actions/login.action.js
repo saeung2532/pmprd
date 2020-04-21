@@ -2,7 +2,7 @@ import {
   HTTP_LOGIN_SUCCESS,
   HTTP_LOGIN_FETCHING,
   HTTP_LOGIN_FAILED,
-  HTTP_LOGIN_LOGOUT
+  HTTP_LOGIN_LOGOUT,
 } from "../constants";
 import { server } from "../constants";
 import { httpClient } from "./../utils/HttpClient";
@@ -13,20 +13,20 @@ import { useSelector } from "react-redux";
 
 // Information being sent to Reducer
 export const setLoginStateToFetching = () => ({
-  type: HTTP_LOGIN_FETCHING
+  type: HTTP_LOGIN_FETCHING,
 });
 
 export const setLoginStateToFailed = () => ({
-  type: HTTP_LOGIN_FAILED
+  type: HTTP_LOGIN_FAILED,
 });
 
-export const setLoginStateToSuccess = payload => ({
+export const setLoginStateToSuccess = (payload) => ({
   type: HTTP_LOGIN_SUCCESS,
-  payload
+  payload,
 });
 
 export const setLoginStateToLogout = () => ({
-  type: HTTP_LOGIN_LOGOUT
+  type: HTTP_LOGIN_LOGOUT,
 });
 
 // Called by Login Component
@@ -55,7 +55,7 @@ export const setLoginStateToLogout = () => ({
 //   };
 // };
 export const login = (value, history) => {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch(setLoginStateToFetching()); // fetching
     doGetLogins(dispatch, value, history);
   };
@@ -79,8 +79,8 @@ const doGetLogins = async (dispatch, value, history) => {
   }
 };
 
-export const logout = history => {
-  return dispatch => {
+export const logout = (history) => {
+  return (dispatch) => {
     console.log(history);
     localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setLoginStateToLogout());
@@ -100,16 +100,35 @@ export const isLoggedIn = () => {
       var decodedToken = jwt.decode(token, { complete: true });
       var dateNow = new Date();
       // console.log("decodedToken: " + JSON.stringify(decodedToken));
-      if (decodedToken.exp < dateNow.getTime()) {
-        // console.log("return false");
+      // console.log(decodedToken.payload.exp + " : " + dateNow.getTime());
+      if (decodedToken.payload.exp < decodedToken.payload.exp) {
         return false;
       } else {
-        // console.log("return true");
         return true;
       }
     } else {
       return false;
     }
+  } catch (e) {
+    return false;
+  }
+};
+
+export const getTokenCompany = () => {
+  try {
+    let token = localStorage.getItem(server.TOKEN_KEY);
+    var decodedToken = jwt.decode(token, { complete: true });
+    return decodedToken.payload.role;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const getTokenUsername = () => {
+  try {
+    let token = localStorage.getItem(server.TOKEN_KEY);
+    var decodedToken = jwt.decode(token, { complete: true });
+    return decodedToken.payload.aud;
   } catch (e) {
     return false;
   }

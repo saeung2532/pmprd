@@ -8,7 +8,7 @@ import {
   BrowserRouter as Router,
   Route,
   Redirect,
-  Switch
+  Switch,
 } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import Drawer from "./components/layouts/Drawer";
@@ -19,23 +19,23 @@ import HomePage from "./components/pages/HomePage/HomePage";
 import PlanPRPage from "./components/pages/PlanPRPage/PlanPRPage";
 import PRStockPage from "./components/pages/PRStockPage/PRStockPage";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: "flex",
   },
   toolbar: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar
+    ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
     display: "flex",
     justifyContent: "center",
-    padding: theme.spacing(3)
-  }
+    padding: theme.spacing(3),
+  },
 }));
 
 export default function App() {
@@ -45,7 +45,7 @@ export default function App() {
   const LoginRoute = ({ component: Component, ...rest }) => (
     <Route
       {...rest}
-      render={props =>
+      render={(props) =>
         loginActions.isLoggedIn() ? (
           <Redirect to={{ pathname: "/", state: { from: props.location } }} />
         ) : (
@@ -63,10 +63,10 @@ export default function App() {
   const PrivateRoute = ({ component: Component, ...rest }) => (
     <Route
       {...rest}
-      render={props =>
+      render={(props) =>
         loginActions.isLoggedIn() ? (
           <div className={classes.root}>
-            <Drawer />
+            <Drawer company={loginActions.getTokenCompany()} />
             <Container className={classes.content} maxWidth={false}>
               <Component {...props} />
             </Container>
@@ -88,7 +88,7 @@ export default function App() {
         <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
         <PrivateRoute exact path="/pr_stock" component={PRStockPage} />
         {/* The Default not found component */}
-        <Route render={props => <Redirect to="/" />} />
+        <Route render={(props) => <Redirect to="/" />} />
       </Switch>
     </Router>
   );

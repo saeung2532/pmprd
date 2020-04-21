@@ -16,7 +16,7 @@ import AddCircleIcon from "@material-ui/icons/AddCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { Formik } from "formik";
+import { Formik, Form, Field } from "formik";
 import * as prnumberActions from "./../../../actions/prnumber.action";
 import * as prheadActions from "./../../../actions/prhead.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
@@ -29,7 +29,6 @@ import * as itemprdetailActions from "./../../../actions/itemprdetail.action";
 import * as itemunitActions from "./../../../actions/itemunit.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
 import * as phbuyerActions from "./../../../actions/phbuyer.action";
-
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -96,7 +95,7 @@ export default (props) => {
   const [prhead, setPRHead] = useState(initialStatePRHead);
   const initialStateItemPRDetail = {
     vItemLine: "",
-    vItemNo: "",
+    vItemNo: { MMITNO: "" },
     vItemDesc1: "",
     vItemDesc2: "",
     vQty: "",
@@ -113,7 +112,7 @@ export default (props) => {
     vRemarkDetail: "",
   };
   const [itemprdetail, setItemPRDetail] = useState(initialStateItemPRDetail);
-  const [itemdetail, setItemDetail] = useState({ MMITNO: "" });
+  // const [itemdetail, setItemDetail] = useState({ MMITNO: "" });
   const [warehouse, setWarehouse] = useState({ vWarehouse: "" });
   const [department, setDepartment] = useState({ vDepartment: "" });
   const [approve, setApprove] = useState({ vApprove1: "" });
@@ -178,7 +177,7 @@ export default (props) => {
       setItemPRDetail({
         ...itemprdetail,
         vItemLine: "",
-        vItemNo: item.MMITNO,
+        vItemNo: { MMITNO: item.MMITNO },
         vItemDesc1: item.MMITDS,
         vItemDesc2: item.MMFUDS,
         vUnit: item.MMUNMS,
@@ -237,16 +236,11 @@ export default (props) => {
     setSearchDisable(true);
     setEditDisable(false);
     setCreateDisable(true);
-
     setPRHead({
       ...initialStatePRHead,
       vMonth: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
       vPlanUnPlan: 5,
     });
-
-    // logins.map((item) => {
-    //   setPRHead({ ...prhead, vRequestor: item.username });
-    // });
   };
 
   const handleCancel = (event) => {
@@ -280,10 +274,6 @@ export default (props) => {
       dispatch(prnumberActions.getPRNumbers("00"));
       dispatch(prdetailActions.getPRDetails("00"));
     }, 1000);
-  };
-
-  const handleeditdisable = () => {
-    // setEditDisable(false);
   };
 
   const showForm = ({
@@ -848,7 +838,13 @@ export default (props) => {
     );
   };
 
-  const showDialog = () => {
+  const showDialog = ({
+    values,
+    handleChange,
+    handleSubmit,
+    setFieldValue,
+    isSubmitting,
+  }) => {
     if (selectedProduct == null) {
       return "";
     }
@@ -857,7 +853,6 @@ export default (props) => {
     const itemunits = itemunitReducer.result ? itemunitReducer.result : [];
     const phgroups = phgroupReducer.result ? phgroupReducer.result : [];
     const phbuyers = phbuyerReducer.result ? phbuyerReducer.result : [];
-
     return (
       <Dialog
         open={openDialog}
@@ -866,335 +861,348 @@ export default (props) => {
         aria-labelledby="alert-dialog-slide-title"
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle id="alert-dialog-slide-title">
-          PR Number : {prhead.vPRNumber}
-          {itemprdetail.vItemLine ? ` - Line : ${itemprdetail.vItemLine}` : ""}
-        </DialogTitle>
-        {/* <DialogContentText>
-        {itemprdetail.vItemLine ? `Line: ${itemprdetail.vItemLine}` : ""}
-        </DialogContentText> */}
-        <DialogContent>
-          <Grid container item xs={12} spacing={2}>
-            <Grid item xs={5}>
-              <Autocomplete
-                className={classes.margin}
-                autoFocus
-                required
-                fullWidth
-                size="small"
-                id="vItemNoAuto"
-                options={items}
-                getOptionLabel={(option) => option.MMITNO}
-                value={itemdetail}
-                onChange={(event, values) => {
-                  // console.log(values);
-                  if (values) {
-                    setItemDetail({ ...itemdetail, MMITNO: values.MMITNO });
+        <form onSubmit={handleSubmit}>
+          <DialogTitle id="alert-dialog-slide-title">
+            PR Number : {prhead.vPRNumber}
+            {itemprdetail.vItemLine
+              ? ` - Line : ${itemprdetail.vItemLine}`
+              : ""}
+          </DialogTitle>
+          <DialogContent>
+            <Grid container item xs={12} spacing={2}>
+              <Grid item xs={5}>
+                <Autocomplete
+                  className={classes.margin}
+                  autoFocus
+                  required
+                  fullWidth
+                  size="small"
+                  id="vItemNoAuto"
+                  options={items}
+                  getOptionLabel={(option) => option.MMITNO}
+                  value={itemprdetail.vItemNo}
+                  values={(values.vItemLine = itemprdetail.vItemLine)}
+                  values={(values.vItemNo = itemprdetail.vItemNo)}
+                  onChange={(event, values) => {
+                    // console.log(values);
+                    if (values) {
+                      setItemPRDetail({
+                        ...itemprdetail,
+                        vItemNo: { MMITNO: values.MMITNO },
+                      });
+                      dispatch(itemunitActions.getItemUnits(values.MMITNO));
+                      dispatch(
+                        itemprdetailActions.getItems(
+                          prhead.vWarehouse,
+                          values.MMITNO
+                        )
+                      );
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      id="vItemNo"
+                      label="Item No"
+                      required
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  className={classes.margin}
+                  // required
+                  fullWidth
+                  disabled="true"
+                  margin="dense"
+                  id="vItemName"
+                  label="Item Name"
+                  type="text"
+                  value={itemprdetail.vItemDesc1}
+                />
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} spacing={2}>
+              <Grid item xs={5}>
+                <TextField
+                  required
+                  fullWidth
+                  // disabled="true"
+                  margin="dense"
+                  id="vQty"
+                  label="Qty"
+                  type="number"
+                  value={itemprdetail.vQty}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
                     setItemPRDetail({
                       ...itemprdetail,
-                      vItemNo: values.MMITNO,
+                      vQty: event.target.value,
                     });
-                    dispatch(itemunitActions.getItemUnits(values.MMITNO));
+                  }}
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  className={classes.margin}
+                  disabled={editdisable}
+                  fullWidth
+                  disabled="true"
+                  required
+                  select
+                  margin="dense"
+                  variant="standard"
+                  size="small"
+                  required
+                  id="vUnit"
+                  label="Unit"
+                  value={itemprdetail.vUnit}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
+                    setItemPRDetail({
+                      ...itemprdetail,
+                      vUnit: event.target.value,
+                    });
+                  }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option />
+                  {itemunits.map((option) => (
+                    <option key={option.ID} value={option.MMUNMS}>
+                      {option.MMUNMS}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+            </Grid>
+            <TextField
+              required
+              fullWidth
+              margin="dense"
+              type="date"
+              size="small"
+              id="vDeliveryDate"
+              label="Delivery Date"
+              variant="standard"
+              defaultValue={prhead.vDate}
+              value={itemprdetail.vDateDetail}
+              onChange={(event) => {
+                // console.log(event.target.value);
+                setItemPRDetail({
+                  ...itemprdetail,
+                  vDateDetail: event.target.value,
+                });
+              }}
+              InputLabelProps={{ shrink: true, required: true }}
+            />
+            <Grid container item xs={12} spacing={2}>
+              <Grid item xs={5}>
+                <TextField
+                  required
+                  fullWidth
+                  disabled="true"
+                  margin="dense"
+                  id="vSupplierNo"
+                  label="Supplier No"
+                  type="text"
+                  value={itemprdetail.vSupplierNo}
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  // required
+                  fullWidth
+                  disabled="true"
+                  margin="dense"
+                  id="vSupplierName"
+                  label="Supplier Name"
+                  type="text"
+                  value={itemprdetail.vSupplierName}
+                />
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} spacing={2}>
+              <Grid item xs={6}>
+                <TextField
+                  required
+                  fullWidth
+                  disabled="true"
+                  margin="dense"
+                  id="vPrice"
+                  label="Price"
+                  type="number"
+                  value={itemprdetail.vPrice}
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  required
+                  fullWidth
+                  disabled="true"
+                  margin="dense"
+                  id="vCurrency"
+                  label="Currency"
+                  type="text"
+                  value={itemprdetail.vCurrency}
+                />
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  required
+                  fullWidth
+                  disabled="true"
+                  margin="dense"
+                  id="vOrderType"
+                  label="Order Type"
+                  type="text"
+                  value={itemprdetail.vOrdertype}
+                />
+              </Grid>
+            </Grid>
+            <Grid container item xs={12} spacing={2}>
+              <Grid item xs={8}>
+                <TextField
+                  className={classes.margin}
+                  disabled={editdisable}
+                  fullWidth
+                  required
+                  select
+                  margin="dense"
+                  variant="standard"
+                  size="small"
+                  required
+                  id="vPHGroup"
+                  label="PH Group"
+                  value={itemprdetail.vPHGroupDetail}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
+                    let phgroup = "PH";
+                    setItemPRDetail({
+                      ...itemprdetail,
+                      vPHGroupDetail: event.target.value,
+                    });
                     dispatch(
-                      itemprdetailActions.getItems(
-                        prhead.vWarehouse,
-                        values.MMITNO
-                      )
+                      phbuyerActions.getPHBuyers(phgroup, event.target.value)
                     );
-                  }
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    id="vItemNo"
-                    label="Item No"
-                    // value={itemprdetail.vItemNo}
-                  />
-                )}
-              />
+                  }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option />
+                  {phgroups.map((option) => (
+                    <option key={option.ID} value={option.US_GRP}>
+                      {option.US_GRP}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
+              <Grid item xs>
+                <TextField
+                  className={classes.margin}
+                  disabled={editdisable}
+                  fullWidth
+                  required
+                  select
+                  margin="dense"
+                  variant="standard"
+                  size="small"
+                  required
+                  id="vBuyer"
+                  label="Buyer"
+                  value={itemprdetail.vBuyerDetail}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
+                    setItemPRDetail({
+                      ...itemprdetail,
+                      vBuyerDetail: event.target.value,
+                    });
+                  }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option />
+                  {phbuyers.map((option) => (
+                    <option key={option.ID} value={option.US_LOGIN}>
+                      {option.US_LOGIN}
+                    </option>
+                  ))}
+                </TextField>
+              </Grid>
             </Grid>
-            <Grid item xs>
-              <TextField
-                className={classes.margin}
-                fullWidth
-                disabled="true"
-                margin="dense"
-                id="vItemName"
-                label="Item Name"
-                type="text"
-                value={itemprdetail.vItemDesc1}
-              />
-            </Grid>
-          </Grid>
-          <Grid container item xs={12} spacing={2}>
-            <Grid item xs={5}>
-              <TextField
-                required
-                fullWidth
-                // disabled="true"
-                margin="dense"
-                id="vQty"
-                label="Qty"
-                type="number"
-                value={itemprdetail.vQty}
-                onChange={(event) => {
-                  // console.log(event.target.value);
-                  setItemPRDetail({
-                    ...itemprdetail,
-                    vQty: event.target.value,
-                  });
-                }}
-              />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                className={classes.margin}
-                disabled={editdisable}
-                fullWidth
-                required
-                select
-                margin="dense"
-                variant="standard"
-                size="small"
-                required
-                id="vUnit"
-                label="Unit"
-                value={itemprdetail.vUnit}
-                onChange={(event) => {
-                  // console.log(event.target.value);
-                  setItemPRDetail({
-                    ...itemprdetail,
-                    vUnit: event.target.value,
-                  });
-                }}
-                SelectProps={{
-                  native: true,
-                }}
-              >
-                <option />
-                {itemunits.map((option) => (
-                  <option key={option.ID} value={option.MMUNMS}>
-                    {option.MMUNMS}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-          </Grid>
-          <TextField
-            required
-            fullWidth
-            margin="dense"
-            type="date"
-            size="small"
-            id="vDeliveryDate"
-            label="Delivery Date"
-            variant="standard"
-            defaultValue={prhead.vDate}
-            value={itemprdetail.vDateDetail}
-            onChange={(event) => {
-              // console.log(event.target.value);
-              setItemPRDetail({
-                ...itemprdetail,
-                vDateDetail: event.target.value,
-              });
-            }}
-            InputLabelProps={{ shrink: true, required: true }}
-          />
-          <Grid container item xs={12} spacing={2}>
-            <Grid item xs={5}>
-              <TextField
-                required
-                fullWidth
-                // disabled="true"
-                margin="dense"
-                id="vSupplierNo"
-                label="Supplier No"
-                type="text"
-                value={itemprdetail.vSupplierNo}
-              />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                required
-                fullWidth
-                disabled="true"
-                margin="dense"
-                id="vSupplierName"
-                label="Supplier Name"
-                type="text"
-                value={itemprdetail.vSupplierName}
-              />
-            </Grid>
-          </Grid>
-          <Grid container item xs={12} spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                required
-                fullWidth
-                // disabled="true"
-                margin="dense"
-                id="vPrice"
-                label="Price"
-                type="number"
-                value={itemprdetail.vPrice}
-              />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                required
-                fullWidth
-                // disabled="true"
-                margin="dense"
-                id="vCurrency"
-                label="Currency"
-                type="text"
-                value={itemprdetail.vCurrency}
-              />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                required
-                fullWidth
-                // disabled="true"
-                margin="dense"
-                id="vOrderType"
-                label="Order Type"
-                type="text"
-                value={itemprdetail.vOrdertype}
-              />
-            </Grid>
-          </Grid>
-          <Grid container item xs={12} spacing={2}>
-            <Grid item xs={8}>
-              <TextField
-                className={classes.margin}
-                disabled={editdisable}
-                fullWidth
-                required
-                select
-                margin="dense"
-                variant="standard"
-                size="small"
-                required
-                id="vPHGroup"
-                label="PH Group"
-                value={itemprdetail.vPHGroupDetail}
-                onChange={(event) => {
-                  // console.log(event.target.value);
-                  let phgroup = "PH";
-                  setItemPRDetail({
-                    ...itemprdetail,
-                    vPHGroupDetail: event.target.value,
-                  });
-                  dispatch(
-                    phbuyerActions.getPHBuyers(phgroup, event.target.value)
-                  );
-                }}
-                SelectProps={{
-                  native: true,
-                }}
-              >
-                <option />
-                {phgroups.map((option) => (
-                  <option key={option.ID} value={option.US_GRP}>
-                    {option.US_GRP}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-            <Grid item xs>
-              <TextField
-                className={classes.margin}
-                disabled={editdisable}
-                fullWidth
-                required
-                select
-                margin="dense"
-                variant="standard"
-                size="small"
-                required
-                id="vBuyer"
-                label="Buyer"
-                value={itemprdetail.vBuyerDetail}
-                onChange={(event) => {
-                  // console.log(event.target.value);
-                  setItemPRDetail({
-                    ...itemprdetail,
-                    vBuyerDetail: event.target.value,
-                  });
-                }}
-                SelectProps={{
-                  native: true,
-                }}
-              >
-                <option />
-                {phbuyers.map((option) => (
-                  <option key={option.ID} value={option.US_LOGIN}>
-                    {option.US_LOGIN}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
-          </Grid>
 
-          <TextField
-            className={classes.margin}
-            disabled={editdisable}
-            fullWidth
-            required
-            select
-            margin="dense"
-            variant="standard"
-            size="small"
-            required
-            id="vCostcenter"
-            label="Cost center"
-            value={itemprdetail.vCostcenterDetail}
-            onChange={(event) => {
-              // console.log(event.target.value);
-              setItemPRDetail({
-                ...itemprdetail,
-                vCostcenterDetail: event.target.value,
-              });
-            }}
-            SelectProps={{
-              native: true,
-            }}
-          >
-            <option />
-            {departments.map((option) => (
-              <option key={option.ID} value={option.EAAITM}>
-                {option.DEPARTMENT}
-              </option>
-            ))}
-          </TextField>
+            <TextField
+              className={classes.margin}
+              disabled={editdisable}
+              fullWidth
+              required
+              select
+              margin="dense"
+              variant="standard"
+              size="small"
+              required
+              id="vCostcenter"
+              label="Cost center"
+              value={itemprdetail.vCostcenterDetail}
+              onChange={(event) => {
+                // console.log(event.target.value);
+                setItemPRDetail({
+                  ...itemprdetail,
+                  vCostcenterDetail: event.target.value,
+                });
+              }}
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option />
+              {departments.map((option) => (
+                <option key={option.ID} value={option.EAAITM}>
+                  {option.DEPARTMENT}
+                </option>
+              ))}
+            </TextField>
 
-          <TextField
-            required
-            fullWidth
-            // disabled="true"
-            margin="dense"
-            id="vRemarkDetail"
-            label="Remark"
-            type="text"
-            value={itemprdetail.vRemarkDetail}
-            onChange={(event) => {
-              // console.log(event.target.value);
-              setItemPRDetail({
-                ...itemprdetail,
-                vRemarkDetail: event.target.value,
-              });
-            }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="default">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteConfirm} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
+            <TextField
+              // required
+              fullWidth
+              // disabled="true"
+              margin="dense"
+              id="vRemarkDetail"
+              label="Remark"
+              type="text"
+              value={itemprdetail.vRemarkDetail}
+              onChange={(event) => {
+                // console.log(event.target.value);
+                setItemPRDetail({
+                  ...itemprdetail,
+                  vRemarkDetail: event.target.value,
+                });
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="default">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              onSubmit={(event) => {
+                console.log("submit");
+              }}
+            >
+              Save
+            </Button>
+            <Button type="submit" color="secondary" style={{ display: "none" }}>
+              Comfirm
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     );
   };
@@ -1420,33 +1428,12 @@ export default (props) => {
     },
   ];
 
-  const actions = [
-    {
-      icon: "edit",
-      iconProps: { color: "primary" },
-      tooltip: "Edit",
-      onClick: (event, rowData) => {
-        console.log(JSON.stringify(rowData));
-      },
-      // props.history.push("/stock/edit/" + rowData.product_id),
-    },
-    // {
-    //   icon: "delete",
-    //   iconProps: { color: "action" },
-    //   tooltip: "Delete",
-    //   onClick: (event, rowData) => {
-    //     setSelectedProduct(rowData);
-    //     setOpenDialog(true);
-    //   }
-    // }
-  ];
-
   return (
     <div className={classes.root}>
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
-      <p>{JSON.stringify(itemdetail)}</p>
+      {/* <p>{JSON.stringify(itemdetail)}</p> */}
       <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
@@ -1627,7 +1614,11 @@ export default (props) => {
               let data = [rowData];
               let phgroup = "PH";
               data.map((item) => {
-                setItemDetail({ ...itemdetail, MMITNO: item.PR_IBITNO });
+                // setItemDetail({ ...itemdetail, MMITNO: item.PR_IBITNO });
+                setItemPRDetail({
+                  ...itemprdetail,
+                  vItemNo: { MMITNO: item.PR_IBITNO },
+                });
                 dispatch(itemActions.getItems(prhead.vWarehouse));
                 dispatch(itemunitActions.getItemUnits(item.PR_IBITNO));
                 dispatch(phgroupActions.getPHGroups(phgroup));
@@ -1639,7 +1630,7 @@ export default (props) => {
                   setItemPRDetail({
                     ...itemprdetail,
                     vItemLine: item.PR_IBPLPS,
-                    vItemNo: item.PR_IBITNO,
+                    vItemNo: { MMITNO: item.PR_IBITNO },
                     vItemDesc1: item.PR_IBPITT,
                     vQty: item.PR_IBORQA,
                     vUnit: item.PR_IBPUUN,
@@ -1665,7 +1656,31 @@ export default (props) => {
       />
 
       {/* Dialog */}
-      {showDialog()}
+      <Formik
+        initialValues={{
+          vItemLine: "",
+          vItemNo: { MMITNO: "" },
+          vItemDesc1: "",
+          vItemDesc2: "",
+          vQty: "",
+          vUnit: "",
+          vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
+          vSupplierNo: "",
+          vSupplierName: "",
+          vPrice: "",
+          vCurrency: "",
+          vOrdertype: "",
+          vCostcenterDetail: "",
+          vPHGroupDetail: "",
+          vBuyerDetail: "",
+          vRemarkDetail: "",
+        }}
+        onSubmit={(values, { setSubmitting }) => {
+          alert(JSON.stringify(values));
+        }}
+      >
+        {(props) => showDialog(props)}
+      </Formik>
     </div>
   );
 };

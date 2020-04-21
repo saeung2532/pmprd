@@ -20,8 +20,6 @@ const setStateItemDetailToFailed = () => ({
   type: HTTP_ITEMDETAIL_FAILED,
 });
 
-
-
 const setStateItemDetailToClear = () => ({
   type: HTTP_ITEMDETAIL_CLEAR,
 });

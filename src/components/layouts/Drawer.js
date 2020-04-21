@@ -32,55 +32,55 @@ import * as loginActions from "./../../actions/login.action";
 
 const drawerWidth = 240;
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: "flex",
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   appBarShift: {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   menuButton: {
-    marginRight: 36
+    marginRight: 36,
   },
   hide: {
-    display: "none"
+    display: "none",
   },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
   },
   drawerOpen: {
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   drawerClose: {
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
+      duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
     // width: theme.spacing(7) + 1,
     width: 0,
     [theme.breakpoints.up("sm")]: {
       // width: theme.spacing(9) + 1
-      width: 0
-    }
+      width: 0,
+    },
   },
   toolbar: {
     display: "flex",
@@ -88,34 +88,34 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
-    ...theme.mixins.toolbar
+    ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
   },
   isActive: {
     backgroundColor: "#e0f5fd",
-    color: "#0080ff"
+    color: "#0080ff",
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
   grow: {
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 }));
 
-const MiniDrawer = props => {
+const MiniDrawer = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
@@ -135,7 +135,7 @@ const MiniDrawer = props => {
     setAnchorEl(null);
   };
 
-  const handleProfileMenuOpen = event => {
+  const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -171,7 +171,7 @@ const MiniDrawer = props => {
         }
         position="fixed"
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: open
+          [classes.appBarShift]: open,
         })}
       >
         <Toolbar>
@@ -181,15 +181,16 @@ const MiniDrawer = props => {
             onClick={handleDrawerOpen}
             edge="start"
             className={clsx(classes.menuButton, {
-              [classes.hide]: open
+              [classes.hide]: open,
             })}
           >
             <MenuIcon />
           </IconButton>
 
           <Typography variant="h6" noWrap>
-            ePR Systems - Ver 1.0 {process.env.REACT_APP_VERSION}
-            <Typography variant="body1"> Bangkok ranch </Typography>
+            Smart Purchase : Monthly Plan - Ver 1.0
+            {process.env.REACT_APP_VERSION}
+            <Typography variant="body1">{props.company} </Typography>
           </Typography>
 
           <div className={classes.grow} />
@@ -211,7 +212,7 @@ const MiniDrawer = props => {
               aria-controls={menuId}
               aria-haspopup="true"
               color="inherit"
-              onClick={event => setAnchorEl(event.currentTarget)}
+              onClick={(event) => setAnchorEl(event.currentTarget)}
             >
               <AccountCircle />
             </IconButton>
@@ -223,13 +224,13 @@ const MiniDrawer = props => {
         variant="permanent"
         className={clsx(classes.drawer, {
           [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open
+          [classes.drawerClose]: !open,
         })}
         classes={{
           paper: clsx({
             [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open
-          })
+            [classes.drawerClose]: !open,
+          }),
         }}
       >
         <div className={classes.toolbar}>
