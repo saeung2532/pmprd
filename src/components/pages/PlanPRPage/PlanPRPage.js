@@ -1590,7 +1590,7 @@ export default (props) => {
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
       {/* <p>{JSON.stringify(itemdetail)}</p> */}
-      {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
+      <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
@@ -1850,8 +1850,8 @@ export default (props) => {
           let formData = new FormData();
           formData.append("vPRNumber", prhead.vPRNumber);
           formData.append("vPlanUnPlan", prhead.vPlanUnPlan);
-          formData.append("vItemLine", values.vItemLine);
-          formData.append("vItemNo", values.vItemNo);
+          formData.append("vItemLine", itemprdetail.vItemLine);
+          formData.append("vItemNo", values.vItemNo.MMITNO);
           formData.append("vItemDesc1", values.vItemDesc1);
           formData.append("vQty", values.vQty);
           formData.append("vUnit", values.vUnit);
@@ -1868,8 +1868,8 @@ export default (props) => {
           formData.append("vRemarkDetail", values.vRemarkDetail);
           formData.append("vStatus", "10");
 
-          if (values.vItemLine === "") {
-            // console.log("true");
+          if (itemprdetail.vItemLine === "") {
+            console.log("true");
             dispatch(prdetailActions.addPRDetail(formData, props.history));
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });
@@ -1877,7 +1877,7 @@ export default (props) => {
               setOpenDialog(false);
             }, 500);
           } else {
-            // console.log("false");
+            console.log("false");
             dispatch(prdetailActions.updatePRDetail(formData, props.history));
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });
