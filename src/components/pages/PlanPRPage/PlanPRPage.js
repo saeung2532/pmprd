@@ -1846,7 +1846,7 @@ export default (props) => {
           vRemarkDetail: "",
         }}
         onSubmit={(values, { setSubmitting }) => {
-          alert(JSON.stringify(values));
+          // alert(JSON.stringify(values));
           let formData = new FormData();
           formData.append("vPRNumber", prhead.vPRNumber);
           formData.append("vPlanUnPlan", prhead.vPlanUnPlan);
@@ -1868,23 +1868,23 @@ export default (props) => {
           formData.append("vRemarkDetail", values.vRemarkDetail);
           formData.append("vStatus", "10");
 
-          // if (values.vItemLine === "") {
-          //   // console.log("true");
-          //   dispatch(prdetailActions.addPRDetail(formData, props.history));
-          //   setTimeout(() => {
-          //     setItemPRDetail({ ...initialStateItemPRDetail });
-          //     dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
-          //     setOpenDialog(false);
-          //   }, 500);
-          // } else {
-          //   // console.log("false");
-          //   dispatch(prdetailActions.updatePRDetail(formData, props.history));
-          //   setTimeout(() => {
-          //     setItemPRDetail({ ...initialStateItemPRDetail });
-          //     dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
-          //     setOpenDialog(false);
-          //   }, 500);
-          // }
+          if (values.vItemLine === "") {
+            // console.log("true");
+            dispatch(prdetailActions.addPRDetail(formData, props.history));
+            setTimeout(() => {
+              setItemPRDetail({ ...initialStateItemPRDetail });
+              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              setOpenDialog(false);
+            }, 500);
+          } else {
+            // console.log("false");
+            dispatch(prdetailActions.updatePRDetail(formData, props.history));
+            setTimeout(() => {
+              setItemPRDetail({ ...initialStateItemPRDetail });
+              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              setOpenDialog(false);
+            }, 500);
+          }
         }}
       >
         {(props) => showDialog(props)}
