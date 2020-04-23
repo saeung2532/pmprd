@@ -4,28 +4,28 @@ import {
   HTTP_PRNUMBER_FETCHING,
   HTTP_PRNUMBER_FAILED,
   HTTP_PRNUMBER_CLEAR,
-  server
+  server,
 } from "../constants";
 
-export const setStatePRNumberToSuccess = payload => ({
+export const setStatePRNumberToSuccess = (payload) => ({
   type: HTTP_PRNUMBER_SUCCESS,
-  payload
+  payload,
 });
 
 const setStatePRNumberToFetching = () => ({
-  type: HTTP_PRNUMBER_FETCHING
+  type: HTTP_PRNUMBER_FETCHING,
 });
 
 const setStatePRNumberToFailed = () => ({
-  type: HTTP_PRNUMBER_FAILED
+  type: HTTP_PRNUMBER_FAILED,
 });
 
 const setStatePRNumberToClear = () => ({
-  type: HTTP_PRNUMBER_CLEAR
+  type: HTTP_PRNUMBER_CLEAR,
 });
 
-export const getPRNumbers = status => {
-  return async dispatch => {
+export const getPRNumbers = (status) => {
+  return async (dispatch) => {
     dispatch(setStatePRNumberToFetching());
     doGetPRNumbers(dispatch, status);
   };

@@ -15,6 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import AddCircleIcon from "@material-ui/icons/AddCircle";
 import EditIcon from "@material-ui/icons/Edit";
 import SaveIcon from "@material-ui/icons/Save";
+import PublishIcon from '@material-ui/icons/Publish';
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Formik, Form, Field } from "formik";
 import * as loginActions from "./../../../actions/login.action";
@@ -113,22 +114,24 @@ export default (props) => {
     vRemarkDetail: "",
   };
   const [itemprdetail, setItemPRDetail] = useState(initialStateItemPRDetail);
-  // const [itemdetail, setItemDetail] = useState({ MMITNO: "" });
-  const [warehouse, setWarehouse] = useState({ vWarehouse: "" });
-  const [department, setDepartment] = useState({ vDepartment: "" });
-  const [approve, setApprove] = useState({ vApprove1: "" });
-  const [headdept, setHeadDept] = useState();
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedRow, setSelectedRow] = useState(null);
+  // const [warehouse, setWarehouse] = useState({ vWarehouse: "" });
+  // const [department, setDepartment] = useState({ vDepartment: "" });
+  // const [approve, setApprove] = useState({ vApprove1: "" });
+  // const [headdept, setHeadDept] = useState();
+  // const [selectedDate, setSelectedDate] = useState(new Date());
+  // const [selectedRow, setSelectedRow] = useState(null);
   const [searchdisable, setSearchDisable] = useState(false);
   const [newdisable, setNewDisable] = useState(false);
   const [editdisable, setEditDisable] = useState(true);
   const [createdisable, setCreateDisable] = useState(true);
   const [cancelprdisable, setCancelPRDisable] = useState(true);
-  const [showbuttonsave, setShowButtonSave] = useState(null);
-  const [showbuttoncancel, setShowButtoncancel] = useState(null);
+  const [whsdisable, setWhsDisable] = useState(true);
+  // const [showbuttonsave, setShowButtonSave] = useState(null);
+  // const [showbuttoncancel, setShowButtoncancel] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  // const [savedisable, setSaveDisable] = useState(null);
+  // const [confirmdisable, setConfirmDisable] = useState(null);
 
   useEffect(() => {
     // console.log("dispatch prnumberActions");
@@ -145,7 +148,10 @@ export default (props) => {
     prheads.map((item) => {
       setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
     });
-    prheads.map((item) =>
+    prheads.map((item) => {
+      dispatch(itemActions.getItems(item.HD_IBWHLO));
+      let phgroup = "PH";
+      dispatch(phgroupActions.getPHGroups(phgroup));
       setPRHead({
         ...prhead,
         vPRNumber: item.HD_IBPLPN,
@@ -165,8 +171,8 @@ export default (props) => {
         vApprove3: item.HD_APP3,
         vApprove4: item.HD_APP4,
         vStatus: item.HD_STATUS,
-      })
-    );
+      });
+    });
   }, [prheadReducer]);
 
   useEffect(() => {
@@ -177,7 +183,6 @@ export default (props) => {
     itemprdetails.map((item) =>
       setItemPRDetail({
         ...itemprdetail,
-        vItemLine: "",
         vItemNo: { MMITNO: item.MMITNO },
         vItemDesc1: item.MMITDS,
         vItemDesc2: item.MMFUDS,
@@ -237,6 +242,7 @@ export default (props) => {
     setSearchDisable(true);
     setEditDisable(false);
     setCreateDisable(true);
+    setWhsDisable(false);
     setPRHead({
       ...initialStatePRHead,
       vMonth: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
@@ -250,17 +256,13 @@ export default (props) => {
     setEditDisable(true);
     setCreateDisable(true);
     setCancelPRDisable(true);
+    setWhsDisable(true);
     setPRNumber({ ...prnumber, vPRSelectNumber: "" });
     setPRHead({ ...initialStatePRHead });
     dispatch(prdetailActions.getPRDetails("00"));
   };
 
   const handleClose = () => {
-    setItemPRDetail(initialStateItemPRDetail);
-    setOpenDialog(false);
-  };
-
-  const handleDeleteConfirm = () => {
     setItemPRDetail(initialStateItemPRDetail);
     setOpenDialog(false);
   };
@@ -275,6 +277,14 @@ export default (props) => {
       dispatch(prnumberActions.getPRNumbers("00"));
       dispatch(prdetailActions.getPRDetails("00"));
     }, 1000);
+  };
+
+  const handleSave = () => {
+    setOpenDialog(false);
+  };
+
+  const handleConfirm = () => {
+    setOpenDialog(false);
   };
 
   const showForm = ({
@@ -394,7 +404,7 @@ export default (props) => {
                     Cancel
                   </Button>
                 </Grid>
-                <Grid item xs sm={1} className={classes.margin}>
+                {/* <Grid item xs sm={1} className={classes.margin}>
                   <Button
                     fullWidth
                     size="medium"
@@ -407,7 +417,7 @@ export default (props) => {
                   >
                     Cancel PR
                   </Button>
-                </Grid>
+                </Grid> */}
               </Grid>
               <Grid container item xs className={classes.margin}>
                 <TextField
@@ -459,7 +469,7 @@ export default (props) => {
                 <TextField
                   className={classes.margin}
                   style={{ width: "150px" }}
-                  disabled={editdisable}
+                  disabled={whsdisable}
                   select
                   size="small"
                   variant="outlined"
@@ -831,6 +841,34 @@ export default (props) => {
                     </option>
                   ))}
                 </TextField> */}
+                <Grid className={classes.margin}>
+                  <Button
+                    // fullWidth
+                    size="medium"
+                    id="vCancelPR"
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<DeleteIcon />}
+                    disabled={cancelprdisable}
+                    onClick={handleCancelPR}
+                  >
+                    Cancel PR
+                  </Button>
+                </Grid>
+                <Grid className={classes.margin}>
+                  <Button
+                    // fullWidth
+                    size="medium"
+                    id="vCancelPR"
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<DeleteIcon />}
+                    disabled={cancelprdisable}
+                    // onClick={handleCancelPR}
+                  >
+                    Submit PH
+                  </Button>
+                </Grid>
               </Grid>
             </Paper>
           </Grid>
@@ -1206,6 +1244,7 @@ export default (props) => {
               Cancel
             </Button>
             <Button
+              disabled=""
               type="submit"
               color="primary"
               onSubmit={(event) => {
@@ -1214,7 +1253,12 @@ export default (props) => {
             >
               Save
             </Button>
-            <Button type="submit" color="secondary" style={{ display: "none" }}>
+            <Button
+              disabled=""
+              type="submit"
+              color="secondary"
+              style={{ display: "none" }}
+            >
               Comfirm
             </Button>
           </DialogActions>
@@ -1450,7 +1494,7 @@ export default (props) => {
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
       {/* <p>{JSON.stringify(itemdetail)}</p> */}
-      <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
+      {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
@@ -1502,7 +1546,7 @@ export default (props) => {
               setPRHead({ ...initialStatePRHead });
               let status = "00";
               dispatch(prnumberActions.getPRNumbers(status));
-            }, 1000);
+            }, 500);
           } else if (searchdisable === false) {
             dispatch(prheadActions.updatePRHead(formData, props.history));
           }
@@ -1532,11 +1576,11 @@ export default (props) => {
                   // to="/stock/create"
                   startIcon={<AddCircleIcon />}
                   onClick={(event, rowData) => {
-                    let phgroup = "PH";
+                    // let phgroup = "PH";
                     setSelectedProduct("rowData");
                     setOpenDialog(true);
-                    dispatch(itemActions.getItems(prhead.vWarehouse));
-                    dispatch(phgroupActions.getPHGroups(phgroup));
+                    // dispatch(itemActions.getItems(prhead.vWarehouse));
+                    // dispatch(phgroupActions.getPHGroups(phgroup));
                   }}
                 >
                   Create
@@ -1611,17 +1655,20 @@ export default (props) => {
           onRowDelete: (oldData) =>
             new Promise((resolve, reject) => {
               // console.log("onRowDelete: " + JSON.stringify(oldData));
+              let data = [oldData];
+              data.map((item) => {
+                dispatch(
+                  prdetailActions.deletePRDetail(item.PR_IBPLPN, item.PR_IBPLPS)
+                );
+              });
+
               setTimeout(() => {
                 {
-                  let data = prdetailReducer.result;
-                  console.log(data);
-                  const index = data.indexOf(oldData);
-                  console.log(index);
-                  // data.splice(index, 1);
-                  // this.setState({ data }, () => resolve());
+                  setItemPRDetail({ ...initialStateItemPRDetail });
+                  dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
                 }
                 resolve();
-              }, 1000);
+              }, 500);
             }),
         }}
         actions={[
@@ -1639,9 +1686,9 @@ export default (props) => {
                   ...itemprdetail,
                   vItemNo: { MMITNO: item.PR_IBITNO },
                 });
-                dispatch(itemActions.getItems(prhead.vWarehouse));
+                // dispatch(itemActions.getItems(prhead.vWarehouse));
                 dispatch(itemunitActions.getItemUnits(item.PR_IBITNO));
-                dispatch(phgroupActions.getPHGroups(phgroup));
+                // dispatch(phgroupActions.getPHGroups(phgroup));
                 dispatch(phbuyerActions.getPHBuyers(phgroup, item.PR_IBMODL));
               });
 
@@ -1701,8 +1748,8 @@ export default (props) => {
         onSubmit={(values, { setSubmitting }) => {
           // alert(JSON.stringify(values));
           let formData = new FormData();
-          formData.append("vPRNumber", values.vPRNumber);
-          formData.append("vPlanUnPlan", values.vPlanUnPlan);
+          formData.append("vPRNumber", prhead.vPRNumber);
+          formData.append("vPlanUnPlan", prhead.vPlanUnPlan);
           formData.append("vItemLine", values.vItemLine);
           formData.append("vItemNo", values.vItemNo);
           formData.append("vItemDesc1", values.vItemDesc1);
@@ -1711,20 +1758,32 @@ export default (props) => {
           formData.append("vDateDetail", values.vDateDetail);
           formData.append("vSupplierNo", values.vSupplierNo);
           formData.append("vPrice", values.vPrice);
-          formData.append("vVat", values.vVat);
+          formData.append("vVat", "7");
           formData.append("vCurrency", values.vCurrency);
           formData.append("vOrdertype", values.vOrdertype);
           formData.append("vCostcenterDetail", values.vCostcenterDetail);
           formData.append("vPHGroupDetail", values.vPHGroupDetail);
           formData.append("vBuyerDetail", values.vBuyerDetail);
           formData.append("vRemarkDetail", values.vRemarkDetail);
+          formData.append("vStatus", "10");
 
-          dispatch(prdetailActions.addPRDetail(formData, props.history));
-          setTimeout(() => {
-            setItemPRDetail({ ...initialStateItemPRDetail });
-            dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
-            setOpenDialog(false);
-          }, 1000);
+          if (values.vItemLine === "") {
+            // console.log("true");
+            dispatch(prdetailActions.addPRDetail(formData, props.history));
+            setTimeout(() => {
+              setItemPRDetail({ ...initialStateItemPRDetail });
+              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              setOpenDialog(false);
+            }, 500);
+          } else {
+            // console.log("false");
+            dispatch(prdetailActions.updatePRDetail(formData, props.history));
+            setTimeout(() => {
+              setItemPRDetail({ ...initialStateItemPRDetail });
+              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              setOpenDialog(false);
+            }, 500);
+          }
         }}
       >
         {(props) => showDialog(props)}

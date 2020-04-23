@@ -46,9 +46,35 @@ const doGetPRDetails = async (dispatch, prno) => {
 export const addPRDetail = (formData, history) => {
   return async (dispatch) => {
     try {
+      await httpClient.post(server.PRSTOCKDETAIL_URL, formData);
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};
+
+export const updatePRDetail = (formData, history) => {
+  return async (dispatch) => {
+    try {
       // console.log(formData);
-      let result = await httpClient.post(server.PRSTOCKDETAIL_URL, formData);
-      alert("Save Complete: " + JSON.stringify(result.data));
+      await httpClient.put(server.PRSTOCKDETAIL_URL, formData);
+      // alert("Update Complete");
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};
+
+export const deletePRDetail = (prno, itemline) => {
+  return async (dispatch) => {
+    try {
+      // console.log(formData);
+      await httpClient.delete(
+        `${server.PRSTOCKDETAIL_URL}/${prno}/${itemline}`
+      );
+      // alert("Delete Complete");
       // history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));

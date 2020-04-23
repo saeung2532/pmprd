@@ -81,7 +81,7 @@ const doGetLogins = async (dispatch, value, history) => {
 
 export const logout = (history) => {
   return (dispatch) => {
-    console.log(history);
+    // console.log(history);
     localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setLoginStateToLogout());
     history.push("/login");
@@ -102,8 +102,10 @@ export const isLoggedIn = () => {
       // console.log("decodedToken: " + JSON.stringify(decodedToken));
       // console.log(decodedToken.payload.exp + " : " + dateNow.getTime());
       if (decodedToken.payload.exp < decodedToken.payload.exp) {
+        // console.log("getToken: " + false);
         return false;
       } else {
+        // console.log("getToken: " + true);
         return true;
       }
     } else {
