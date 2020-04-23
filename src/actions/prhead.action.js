@@ -71,7 +71,7 @@ export const updatePRHead = (formData, history) => {
   };
 };
 
-export const cancelPRHead = (prno, status) => {
+export const updateStsPRHead = (prno, status) => {
   return async dispatch => {
     try {
       // console.log(formData);
