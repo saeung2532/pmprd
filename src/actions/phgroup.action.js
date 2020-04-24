@@ -26,7 +26,7 @@ const setStatePHGroupToClear = () => ({
 
 export const getPHGroups = (dept) => {
   return async (dispatch) => {
-    console.log("dept: " + dept);
+    // console.log("dept: " + dept);
     dispatch(setStatePHGroupToFetching());
     doGetPHGroups(dispatch, dept);
   };

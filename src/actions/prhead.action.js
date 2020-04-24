@@ -26,7 +26,7 @@ const setStatePRHeadToClear = () => ({
 
 export const getPRHeads = (prno, status) => {
   return async dispatch => {
-    console.log("PR: " + prno + " STS: " + status);
+    // console.log("PR: " + prno + " STS: " + status);
     dispatch(setStatePRHeadToFetching());
     doGetPRHeads(dispatch, prno, status);
   };
@@ -76,7 +76,7 @@ export const updateStsPRHead = (prno, status) => {
     try {
       // console.log(formData);
       await httpClient.delete(`${server.PRSTOCKHEAD_URL}/${prno}/${status}`);
-      alert("Cancel Complete");
+      // alert("Update Complete");
       // history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));

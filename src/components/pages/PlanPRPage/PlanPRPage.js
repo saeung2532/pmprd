@@ -117,24 +117,14 @@ export default (props) => {
     vRemarkDetail: "",
   };
   const [itemprdetail, setItemPRDetail] = useState(initialStateItemPRDetail);
-  // const [warehouse, setWarehouse] = useState({ vWarehouse: "" });
-  // const [department, setDepartment] = useState({ vDepartment: "" });
-  // const [approve, setApprove] = useState({ vApprove1: "" });
-  // const [headdept, setHeadDept] = useState();
-  // const [selectedDate, setSelectedDate] = useState(new Date());
-  // const [selectedRow, setSelectedRow] = useState(null);
   const [searchdisable, setSearchDisable] = useState(false);
   const [newdisable, setNewDisable] = useState(false);
   const [editdisable, setEditDisable] = useState(true);
   const [createdisable, setCreateDisable] = useState(true);
   const [cancelprdisable, setCancelPRDisable] = useState(true);
   const [whsdisable, setWhsDisable] = useState(true);
-  // const [showbuttonsave, setShowButtonSave] = useState(null);
-  // const [showbuttoncancel, setShowButtoncancel] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  // const [savedisable, setSaveDisable] = useState(null);
-  // const [confirmdisable, setConfirmDisable] = useState(null);
 
   useEffect(() => {
     // console.log("dispatch prnumberActions");
@@ -217,12 +207,7 @@ export default (props) => {
     approveReducer.result ? approveReducer.result : []
   );
 
-  const buyers = useMemo(() =>
-    buyerReducer.result ? buyerReducer.result : []
-  );
-
   const handleSearch = () => {
-    // console.log(prnumber.vPRSelectNumber);
     if (prnumber.vPRSelectNumber === "") {
       setEditDisable(true);
       setCreateDisable(true);
@@ -241,8 +226,7 @@ export default (props) => {
     }
   };
 
-  const handleNew = (event) => {
-    // console.log(prnumber.vPRSelectNumber);
+  const handleNew = () => {
     setSearchDisable(true);
     setEditDisable(false);
     setCreateDisable(true);
@@ -254,7 +238,7 @@ export default (props) => {
     });
   };
 
-  const handleCancel = (event) => {
+  const handleCancel = () => {
     setSearchDisable(false);
     setNewDisable(false);
     setEditDisable(true);
@@ -271,7 +255,13 @@ export default (props) => {
     setOpenDialog(false);
   };
 
-  const handleCancelPR = (event) => {
+  const handleCancelPR = () => {
+    setSearchDisable(false);
+    setNewDisable(false);
+    setEditDisable(true);
+    setCreateDisable(true);
+    setCancelPRDisable(true);
+    setWhsDisable(true);
     let status = "99";
     dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
     setTimeout(() => {
@@ -280,10 +270,17 @@ export default (props) => {
       setPRHead({ ...initialStatePRHead });
       dispatch(prnumberActions.getPRNumbers("00"));
       dispatch(prdetailActions.getPRDetails("00"));
-    }, 1000);
+      alert("Cancel Complete");
+    }, 500);
   };
 
-  const handleSubmitPH = (event) => {
+  const handleSubmitPH = () => {
+    setSearchDisable(false);
+    setNewDisable(false);
+    setEditDisable(true);
+    setCreateDisable(true);
+    setCancelPRDisable(true);
+    setWhsDisable(true);
     let status = "10";
     dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
     setTimeout(() => {
@@ -292,16 +289,9 @@ export default (props) => {
       setPRHead({ ...initialStatePRHead });
       dispatch(prnumberActions.getPRNumbers("00"));
       dispatch(prdetailActions.getPRDetails("00"));
-    }, 1000);
+      alert("Submit Complete");
+    }, 500);
   };
-
-  // const handleSave = () => {
-  //   setOpenDialog(false);
-  // };
-
-  // const handleConfirm = () => {
-  //   setOpenDialog(false);
-  // };
 
   const NumberFormatCustom = (props) => {
     const { inputRef, onChange, ...other } = props;
@@ -1589,7 +1579,7 @@ export default (props) => {
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
-      {/* <p>{JSON.stringify(itemdetail)}</p> */}
+      {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
       {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
@@ -1735,7 +1725,7 @@ export default (props) => {
           //         this.setState({ data }, () => resolve());
           //       }
           //       resolve();
-          //     }, 1000);
+          //     }, 500);
           //   }),
           // onRowUpdate: (newData, oldData) =>
           //   new Promise((resolve, reject) => {
@@ -1747,7 +1737,7 @@ export default (props) => {
           //         // dispatch(prdetailActions.getPRDetails(item.PR_IBPLPN, "00"));
           //       });
           //       resolve();
-          //     }, 1000);
+          //     }, 500);
           //   }),
           onRowDelete: (oldData) =>
             new Promise((resolve, reject) => {
@@ -1812,7 +1802,7 @@ export default (props) => {
                     vRemarkDetail: item.PR_REM3,
                   })
                 );
-              }, 1000);
+              }, 500);
 
               setSelectedProduct("rowData");
               setOpenDialog(true);
@@ -1869,7 +1859,7 @@ export default (props) => {
           formData.append("vStatus", "10");
 
           if (itemprdetail.vItemLine === "") {
-            console.log("true");
+            // console.log("true");
             dispatch(prdetailActions.addPRDetail(formData, props.history));
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });
@@ -1877,7 +1867,7 @@ export default (props) => {
               setOpenDialog(false);
             }, 500);
           } else {
-            console.log("false");
+            // console.log("false");
             dispatch(prdetailActions.updatePRDetail(formData, props.history));
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });

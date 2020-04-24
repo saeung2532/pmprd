@@ -26,7 +26,7 @@ const setStatePRDetailToClear = () => ({
 
 export const getPRDetails = (prno) => {
   return async (dispatch) => {
-    console.log("PR: " + prno);
+    // console.log("PR: " + prno);
     dispatch(setStatePRDetailToFetching());
     doGetPRDetails(dispatch, prno);
   };

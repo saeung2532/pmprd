@@ -26,7 +26,7 @@ const setStateItemUnitToClear = () => ({
 
 export const getItemUnits = (item) => {
   return async (dispatch) => {
-    console.log("item: " + item);
+    // console.log("item: " + item);
     dispatch(setStateItemUnitToFetching());
     doGetItemUnits(dispatch, item);
   };

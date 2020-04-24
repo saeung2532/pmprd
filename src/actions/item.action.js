@@ -26,7 +26,7 @@ const setStateItemToClear = () => ({
 
 export const getItems = (whs) => {
   return async (dispatch) => {
-    console.log(" whs: " + whs);
+    // console.log(" whs: " + whs);
     dispatch(setStateItemToFetching());
     doGetItems(dispatch, whs);
   };
