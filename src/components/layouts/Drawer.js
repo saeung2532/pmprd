@@ -254,11 +254,11 @@ const MiniDrawer = (props) => {
             <ListItemIcon>
               <StoreIcon />
             </ListItemIcon>
-            <ListItemText primary="Monthly Plan" />
+            <ListItemText primary="Plan Stock" />
           </ListItem>
 
           {/* PR Stock */}
-          <ListItem
+          {/* <ListItem
             component={NavLink}
             to="/pr_stock"
             button
@@ -269,10 +269,10 @@ const MiniDrawer = (props) => {
               <ShopIcon />
             </ListItemIcon>
             <ListItemText primary="PR Stock" />
-          </ListItem>
+          </ListItem> */}
 
           {/* PR NonStock */}
-          <ListItem
+          {/* <ListItem
             component={NavLink}
             to="/pr_nonstock"
             button
@@ -283,7 +283,7 @@ const MiniDrawer = (props) => {
               <LayersIcon />
             </ListItemIcon>
             <ListItemText primary="PR NonStock" />
-          </ListItem>
+          </ListItem> */}
 
           {/* PH Manage */}
           <ListItem
@@ -294,7 +294,7 @@ const MiniDrawer = (props) => {
             activeClassName={classes.isActive}
           >
             <ListItemIcon>
-              <BarChartIcon />
+              <AttachMoneyIcon />
             </ListItemIcon>
             <ListItemText primary="PH Manage" />
           </ListItem>
@@ -308,7 +308,7 @@ const MiniDrawer = (props) => {
             activeClassName={classes.isActive}
           >
             <ListItemIcon>
-              <AttachMoneyIcon />
+              <BarChartIcon />
             </ListItemIcon>
             <ListItemText primary="Monitoring" />
           </ListItem>

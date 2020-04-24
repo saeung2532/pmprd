@@ -59,9 +59,6 @@ const useStyles = makeStyles((theme) => ({
   table: { borderTopWidth: 1, borderColor: "red", borderStyle: "solid" }, // or borderTop: '1px solid red'
 }));
 
-const accent = purple["A200"]; // #E040FB
-// const accent = purple.A200; // #E040FB (alternative method)
-
 const theme = createMuiTheme({
   palette: {
     // primary: {
@@ -72,6 +69,9 @@ const theme = createMuiTheme({
     },
   },
 });
+
+const accent = purple["A200"]; // #E040FB
+// const accent = purple.A200; // #E040FB (alternative method)
 
 export default (props) => {
   const classes = useStyles();
