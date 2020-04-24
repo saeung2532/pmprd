@@ -124,7 +124,8 @@ export const NETWORK_TIMEOUT_MESSAGE =
 export const UPLOAD_PHOTO_FAIL_MESSAGE =
   "An error has occurred. The photo was unable to upload.";
 
-export const apiUrl = "http://localhost:8080/br_api/";
+// export const apiUrl = "http://localhost:8080/br_api/";
+export const apiUrl = "http://192.200.9.106:8080/br_api/";
 export const imageUrl = "http://localhost:8080";
 
 export const server = {

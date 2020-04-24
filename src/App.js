@@ -81,12 +81,14 @@ export default function App() {
   );
 
   return (
-    <Router basename={process.env.REACT_APP_IS_PRODUCTION === 1 ? "/demo" : ""}>
+    <Router
+      basename={process.env.REACT_APP_IS_PRODUCTION == 1 ? "/monthlyplan" : ""}
+    >
       <Switch>
-        <LoginRoute exact path="/login" component={LoginPage} />
-        <PrivateRoute exact path="/" component={HomePage} />
-        <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
-        <PrivateRoute exact path="/pr_stock" component={PRStockPage} />
+        <LoginRoute exact={true} path="/login" component={LoginPage} />
+        <PrivateRoute exact={true} path="/" component={HomePage} />
+        <PrivateRoute exact={true} path="/plan_pr" component={PlanPRPage} />
+        <PrivateRoute exact={true} path="/pr_stock" component={PRStockPage} />
         {/* The Default not found component */}
         <Route render={(props) => <Redirect to="/" />} />
       </Switch>
