@@ -35,8 +35,10 @@ const doGetPRNumbers = async (dispatch, status) => {
   try {
     let result = await httpClient.get(`${server.PRSTOCKNUMBER_URL}/${status}`);
     dispatch(setStatePRNumberToSuccess(result.data));
+    // alert(JSON.stringify(result.data));
   } catch (err) {
     alert(JSON.stringify(err.message));
+    localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setStatePRNumberToFailed());
   }
 };

@@ -37,6 +37,7 @@ const doGetBuyers = async dispatch => {
   try {
     let result = await httpClient.get(server.BUYER_URL);
     dispatch(setStateBuyerToSuccess(result.data));
+    // alert(JSON.stringify(result.data));
   } catch (err) {
     // alert(JSON.stringify(err));
     dispatch(setStateBuyerToFailed());

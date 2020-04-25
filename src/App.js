@@ -16,7 +16,7 @@ import * as loginActions from "./actions/login.action";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import HomePage from "./components/pages/HomePage/HomePage";
 import PlanPRPage from "./components/pages/PlanPRPage/PlanPRPage";
-import PRStockPage from "./components/pages/PRStockPage/PRStockPage";
+import ConfirmPRPage from "./components/pages/ConfirmPRPage/ConfirmPRPage";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -87,9 +87,9 @@ export default function App() {
         <LoginRoute exact path="/login" component={LoginPage} />
         <PrivateRoute exact path="/" component={HomePage} />
         <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
-        <PrivateRoute exact path="/pr_stock" component={PRStockPage} />
+        <PrivateRoute exact path="/confirm_pr" component={ConfirmPRPage} />
         {/* The Default not found component */}
-        <Route render={(props) => <Redirect to="/" />} />
+        {/* <Route render={(props) => <Redirect to="/" />} /> */}
       </Switch>
     </Router>
   );

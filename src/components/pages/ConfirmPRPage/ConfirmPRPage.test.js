@@ -1,10 +1,10 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import PRStockPage from './PRStockPage';
+import ConfirmPRPage from './ConfirmPRPage';
 
-describe('<PRStockPage />', () => {
+describe('<ConfirmPRPage />', () => {
   test('renders', () => {
-    const wrapper = shallow(<PRStockPage />);
+    const wrapper = shallow(<ConfirmPRPage />);
     expect(wrapper).toMatchSnapshot();
   });
 });

@@ -20,6 +20,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import Collapse from "@material-ui/core/Collapse";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -28,6 +29,10 @@ import ShopIcon from "@material-ui/icons/Shop";
 import LayersIcon from "@material-ui/icons/Layers";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
+import InboxIcon from "@material-ui/icons/MoveToInbox";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import StarBorder from "@material-ui/icons/StarBorder";
 import * as loginActions from "./../../actions/login.action";
 
 const drawerWidth = 240;
@@ -62,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
     whiteSpace: "nowrap",
   },
-  drawerOpen: {
+  draweropendrawer: {
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
@@ -118,25 +123,31 @@ const useStyles = makeStyles((theme) => ({
 const MiniDrawer = (props) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
+  const [opendrawer, setOpenDrawer] = useState(false);
+  const [openmenuph, setOpenMenuPH] = useState(false);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
-  const isMenuOpen = Boolean(anchorEl);
+  const isMenuopendrawer = Boolean(anchorEl);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
+  const handleDraweropendrawer = () => {
+    setOpenDrawer(true);
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setOpenDrawer(false);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleProfileMenuOpen = (event) => {
+  const handleProfileMenuopendrawer = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClick = () => {
+    setOpenMenuPH(!openmenuph);
   };
 
   const logout = () => {
@@ -154,7 +165,7 @@ const MiniDrawer = (props) => {
       id={menuId}
       keepMounted
       transformOrigin={{ vertical: "top", horizontal: "right" }}
-      open={isMenuOpen}
+      opendrawer={isMenuopendrawer}
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
@@ -171,17 +182,17 @@ const MiniDrawer = (props) => {
         }
         position="fixed"
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
+          [classes.appBarShift]: opendrawer,
         })}
       >
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            aria-label="opendrawer drawer"
+            onClick={handleDraweropendrawer}
             edge="start"
             className={clsx(classes.menuButton, {
-              [classes.hide]: open,
+              [classes.hide]: opendrawer,
             })}
           >
             <MenuIcon />
@@ -222,13 +233,13 @@ const MiniDrawer = (props) => {
       <Drawer
         variant="permanent"
         className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.draweropendrawer]: opendrawer,
+          [classes.drawerClose]: !opendrawer,
         })}
         classes={{
           paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
+            [classes.draweropendrawer]: opendrawer,
+            [classes.drawerClose]: !opendrawer,
           }),
         }}
       >
@@ -256,6 +267,30 @@ const MiniDrawer = (props) => {
             </ListItemIcon>
             <ListItemText primary="Plan Stock" />
           </ListItem>
+
+          <ListItem button onClick={handleClick}>
+            <ListItemIcon>
+              <AttachMoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary="PH Manage" />
+            {openmenuph ? <ExpandLess /> : <ExpandMore />}
+          </ListItem>
+          <Collapse in={openmenuph} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem
+                component={NavLink}
+                to="/confirm_pr"
+                button
+                key="confirm_pr"
+                activeClassName={classes.isActive}
+              >
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText primary="Confirm PR" />
+              </ListItem>
+            </List>
+          </Collapse>
 
           {/* PR Stock */}
           {/* <ListItem
@@ -286,7 +321,7 @@ const MiniDrawer = (props) => {
           </ListItem> */}
 
           {/* PH Manage */}
-          <ListItem
+          {/* <ListItem
             component={NavLink}
             to="/ph_manage"
             button
@@ -297,7 +332,7 @@ const MiniDrawer = (props) => {
               <AttachMoneyIcon />
             </ListItemIcon>
             <ListItemText primary="PH Manage" />
-          </ListItem>
+          </ListItem> */}
 
           {/* Monitoring */}
           <ListItem
