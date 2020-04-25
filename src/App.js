@@ -12,7 +12,6 @@ import {
 } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import Drawer from "./components/layouts/Drawer";
-import PrivateRoute from "./components/PrivateRoute";
 import * as loginActions from "./actions/login.action";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import HomePage from "./components/pages/HomePage/HomePage";

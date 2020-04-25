@@ -1378,7 +1378,7 @@ export default (props) => {
       title: "Line",
       field: "PR_IBPLPS",
       headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: { maxWidth: 70, textAlign: "center" },
+      cellStyle: { maxWidth: 70, textAlign: "center", borderStyle: "right" },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPLPS}
@@ -1411,7 +1411,7 @@ export default (props) => {
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: { maxWidth: 150 },
       render: (item) => (
-        <Typography variant="body1" display="block" noWrap>
+        <Typography variant="body1" noWrap>
           {item.PR_IBPITT}
         </Typography>
       ),
@@ -1600,315 +1600,310 @@ export default (props) => {
   ];
 
   return (
-    <ThemeProvider theme={theme}>
-      <div className={classes.root}>
-        {/* Grid */}
-        {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
-        {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
-        {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
-        {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
-        {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
-        {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
-        {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
-        <Formik
-          initialValues={{
-            vPRNumber: "",
-            vDate: "",
-            vWarehouse: "",
-            vDepartment: "",
-            vMonth: "",
-            vPlanUnPlan: "",
-            vBU: "",
-            vCAPNo: "",
-            vRequestor: "",
-            vRemark: "",
-            vApprove1: "",
-            vApprove2: "",
-          }}
-          onSubmit={(values, { setSubmitting }) => {
-            // alert(JSON.stringify(values));
-            let formData = new FormData();
-            formData.append("vPRNumber", values.vPRNumber);
-            formData.append("vDate", values.vDate);
-            formData.append("vWarehouse", values.vWarehouse);
-            formData.append("vDepartment", values.vDepartment);
-            formData.append("vMonth", values.vMonth);
-            formData.append("vPlanUnPlan", values.vPlanUnPlan);
-            formData.append("vBU", values.vBU);
-            formData.append("vCAPNo", values.vCAPNo);
-            formData.append(
-              "vRequestor",
-              prhead.vRequestor
-                ? prhead.vRequestor
-                : loginActions.getTokenUsername()
-            );
-            formData.append("vRemark", values.vRemark);
-            formData.append("vApprove1", values.vApprove1);
-            formData.append("vApprove2", values.vApprove2);
-            formData.append("vStatus", prhead.vStatus ? prhead.vStatus : "00");
+    <div className={classes.root}>
+      {/* Grid */}
+      {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
+      {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
+      {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
+      {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
+      {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
+      {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
+      {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
+      <Formik
+        initialValues={{
+          vPRNumber: "",
+          vDate: "",
+          vWarehouse: "",
+          vDepartment: "",
+          vMonth: "",
+          vPlanUnPlan: "",
+          vBU: "",
+          vCAPNo: "",
+          vRequestor: "",
+          vRemark: "",
+          vApprove1: "",
+          vApprove2: "",
+        }}
+        onSubmit={(values, { setSubmitting }) => {
+          // alert(JSON.stringify(values));
+          let formData = new FormData();
+          formData.append("vPRNumber", values.vPRNumber);
+          formData.append("vDate", values.vDate);
+          formData.append("vWarehouse", values.vWarehouse);
+          formData.append("vDepartment", values.vDepartment);
+          formData.append("vMonth", values.vMonth);
+          formData.append("vPlanUnPlan", values.vPlanUnPlan);
+          formData.append("vBU", values.vBU);
+          formData.append("vCAPNo", values.vCAPNo);
+          formData.append(
+            "vRequestor",
+            prhead.vRequestor
+              ? prhead.vRequestor
+              : loginActions.getTokenUsername()
+          );
+          formData.append("vRemark", values.vRemark);
+          formData.append("vApprove1", values.vApprove1);
+          formData.append("vApprove2", values.vApprove2);
+          formData.append("vStatus", prhead.vStatus ? prhead.vStatus : "00");
 
-            if (newdisable === false && cancelprdisable === true) {
-              dispatch(prheadActions.addPRHead(formData, props.history));
-              setTimeout(() => {
-                setSearchDisable(false);
-                setNewDisable(false);
-                setEditDisable(true);
-                setCreateDisable(true);
-                setWhsDisable(true);
-                setPRNumber({ ...prnumber, vPRSelectNumber: "" });
-                setPRHead({ ...initialStatePRHead });
-                let status = "00";
-                dispatch(prnumberActions.getPRNumbers(status));
-              }, 500);
-            } else if (searchdisable === false) {
-              dispatch(prheadActions.updatePRHead(formData, props.history));
-            }
-          }}
-        >
-          {(props) => showForm(props)}
-        </Formik>
-
-        {/* Plan PR Table */}
-        {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
-        <MaterialTable
-          id="root_prstock"
-          title={`Plan PR : ${prhead.vStatus}`}
-          columns={columns}
-          data={prdetailReducer.result ? prdetailReducer.result : []}
-          components={{
-            Toolbar: (props) => (
-              <div>
-                <MTableToolbar {...props} />
-                <div style={{ padding: "0px 10px" }}>
-                  <Button
-                    fullWidth
-                    disabled={createdisable}
-                    variant="contained"
-                    color="primary"
-                    // component={Link}
-                    // to="/stock/create"
-                    startIcon={<AddCircleIcon />}
-                    onClick={(event, rowData) => {
-                      // let phgroup = "PH";
-                      setSelectedProduct("rowData");
-                      setOpenDialog(true);
-                      // dispatch(itemActions.getItems(prhead.vWarehouse));
-                      // dispatch(phgroupActions.getPHGroups(phgroup));
-                    }}
-                  >
-                    Create
-                  </Button>
-                </div>
-              </div>
-            ),
-          }}
-          options={{
-            exportButton: true,
-            // toolbar: false,
-            paging: false,
-            headerStyle: {
-              // backgroundColor: "red",
-              // padding: "5px",
-              // whiteSpace: "normal",
-              // wordWrap: "break-word",
-              // wordBreak: "break-all"
-            },
-            // rowStyle: rowData => ({
-            //   // backgroundColor:
-            //   //   selectedRow && selectedRow.tableData.id === rowData.tableData.id
-            //   //     ? "#EEE"
-            //   //     : "#FFF"
-            // }),
-            //cellStyle: {},
-            fixedColumns: {
-              // left: 2
-            },
-          }}
-          localization={
-            {
-              // body: {
-              //   emptyDataSourceMessage: getMessage('label.no.records.to.display'),
-              //   dateTimePickerLocalization: resolvedLocaleMap,
-              //   muiDatePickerProps: {
-              //     okLabel: getMessage('label.ok'),
-              //     cancelLabel: getMessage('label.cancel'),
-              //     clearLabel: getMessage('label.clear'),
-              //   },
-              // },
-            }
+          if (newdisable === false && cancelprdisable === true) {
+            dispatch(prheadActions.addPRHead(formData, props.history));
+            setTimeout(() => {
+              setSearchDisable(false);
+              setNewDisable(false);
+              setEditDisable(true);
+              setCreateDisable(true);
+              setWhsDisable(true);
+              setPRNumber({ ...prnumber, vPRSelectNumber: "" });
+              setPRHead({ ...initialStatePRHead });
+              let status = "00";
+              dispatch(prnumberActions.getPRNumbers(status));
+            }, 500);
+          } else if (searchdisable === false) {
+            dispatch(prheadActions.updatePRHead(formData, props.history));
           }
-          editable={{
-            //Edit data in line
-            // isEditable: rowData => rowData.name === "a", // only name(a) rows would be editable
-            // isDeletable: rowData => rowData.name === "b", // only name(a) rows would be deletable
-            // onRowAdd: newData =>
-            //   new Promise((resolve, reject) => {
-            //     console.log("onRowAdd");
-            //     setTimeout(() => {
-            //       {
-            //         const data = this.state.data;
-            //         data.push(newData);
-            //         this.setState({ data }, () => resolve());
-            //       }
-            //       resolve();
-            //     }, 500);
-            //   }),
-            // onRowUpdate: (newData, oldData) =>
-            //   new Promise((resolve, reject) => {
-            //     console.log("onRowUpdate: " + JSON.stringify(newData));
-            //     props.history.push("/stock/edit/" + newData.product_id);
-            //     setTimeout(() => {
-            //       const data = [newData];
-            //       data.map((item) => {
-            //         // dispatch(prdetailActions.getPRDetails(item.PR_IBPLPN, "00"));
-            //       });
-            //       resolve();
-            //     }, 500);
-            //   }),
-            onRowDelete: (oldData) =>
-              new Promise((resolve, reject) => {
-                // console.log("onRowDelete: " + JSON.stringify(oldData));
-                let data = [oldData];
-                data.map((item) => {
-                  dispatch(
-                    prdetailActions.deletePRDetail(
-                      item.PR_IBPLPN,
-                      item.PR_IBPLPS
-                    )
-                  );
+        }}
+      >
+        {(props) => showForm(props)}
+      </Formik>
+
+      {/* Plan PR Table */}
+      {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
+      <MaterialTable
+        id="root_prstock"
+        title={`Plan PR : ${prhead.vStatus}`}
+        columns={columns}
+        data={prdetailReducer.result ? prdetailReducer.result : []}
+        components={{
+          Toolbar: (props) => (
+            <div>
+              <MTableToolbar {...props} />
+              <div style={{ padding: "0px 10px" }}>
+                <Button
+                  fullWidth
+                  disabled={createdisable}
+                  variant="contained"
+                  color="primary"
+                  // component={Link}
+                  // to="/stock/create"
+                  startIcon={<AddCircleIcon />}
+                  onClick={(event, rowData) => {
+                    // let phgroup = "PH";
+                    setSelectedProduct("rowData");
+                    setOpenDialog(true);
+                    // dispatch(itemActions.getItems(prhead.vWarehouse));
+                    // dispatch(phgroupActions.getPHGroups(phgroup));
+                  }}
+                >
+                  Create
+                </Button>
+              </div>
+            </div>
+          ),
+        }}
+        options={{
+          exportButton: true,
+          // toolbar: false,
+          paging: false,
+          headerStyle: {
+            // backgroundColor: "red",
+            // padding: "5px",
+            // whiteSpace: "normal",
+            // wordWrap: "break-word",
+            // wordBreak: "break-all"
+          },
+          // rowStyle: rowData => ({
+          //   // backgroundColor:
+          //   //   selectedRow && selectedRow.tableData.id === rowData.tableData.id
+          //   //     ? "#EEE"
+          //   //     : "#FFF"
+          // }),
+          //cellStyle: {},
+          fixedColumns: {
+            // left: 2
+          },
+        }}
+        localization={
+          {
+            // body: {
+            //   emptyDataSourceMessage: getMessage('label.no.records.to.display'),
+            //   dateTimePickerLocalization: resolvedLocaleMap,
+            //   muiDatePickerProps: {
+            //     okLabel: getMessage('label.ok'),
+            //     cancelLabel: getMessage('label.cancel'),
+            //     clearLabel: getMessage('label.clear'),
+            //   },
+            // },
+          }
+        }
+        editable={{
+          //Edit data in line
+          // isEditable: rowData => rowData.name === "a", // only name(a) rows would be editable
+          // isDeletable: rowData => rowData.name === "b", // only name(a) rows would be deletable
+          // onRowAdd: newData =>
+          //   new Promise((resolve, reject) => {
+          //     console.log("onRowAdd");
+          //     setTimeout(() => {
+          //       {
+          //         const data = this.state.data;
+          //         data.push(newData);
+          //         this.setState({ data }, () => resolve());
+          //       }
+          //       resolve();
+          //     }, 500);
+          //   }),
+          // onRowUpdate: (newData, oldData) =>
+          //   new Promise((resolve, reject) => {
+          //     console.log("onRowUpdate: " + JSON.stringify(newData));
+          //     props.history.push("/stock/edit/" + newData.product_id);
+          //     setTimeout(() => {
+          //       const data = [newData];
+          //       data.map((item) => {
+          //         // dispatch(prdetailActions.getPRDetails(item.PR_IBPLPN, "00"));
+          //       });
+          //       resolve();
+          //     }, 500);
+          //   }),
+          onRowDelete: (oldData) =>
+            new Promise((resolve, reject) => {
+              // console.log("onRowDelete: " + JSON.stringify(oldData));
+              let data = [oldData];
+              data.map((item) => {
+                dispatch(
+                  prdetailActions.deletePRDetail(item.PR_IBPLPN, item.PR_IBPLPS)
+                );
+              });
+
+              setTimeout(() => {
+                {
+                  setItemPRDetail({ ...initialStateItemPRDetail });
+                  dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+                }
+                resolve();
+              }, 500);
+            }),
+        }}
+        actions={[
+          (rowData) => ({
+            icon: "edit",
+            tooltip: "Edit row",
+            onClick: (event, rowData) => {
+              // console.log("rowData: " + JSON.stringify([rowData]));
+
+              let data = [rowData];
+              let phgroup = "PH";
+              data.map((item) => {
+                // setItemDetail({ ...itemdetail, MMITNO: item.PR_IBITNO });
+                setItemPRDetail({
+                  ...itemprdetail,
+                  vItemNo: { MMITNO: item.PR_IBITNO },
                 });
+                // dispatch(itemActions.getItems(prhead.vWarehouse));
+                dispatch(itemunitActions.getItemUnits(item.PR_IBITNO));
+                // dispatch(phgroupActions.getPHGroups(phgroup));
+                dispatch(phbuyerActions.getPHBuyers(phgroup, item.PR_IBMODL));
+              });
 
-                setTimeout(() => {
-                  {
-                    setItemPRDetail({ ...initialStateItemPRDetail });
-                    dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
-                  }
-                  resolve();
-                }, 500);
-              }),
-          }}
-          actions={[
-            (rowData) => ({
-              icon: "edit",
-              tooltip: "Edit row",
-              onClick: (event, rowData) => {
-                // console.log("rowData: " + JSON.stringify([rowData]));
-
-                let data = [rowData];
-                let phgroup = "PH";
-                data.map((item) => {
-                  // setItemDetail({ ...itemdetail, MMITNO: item.PR_IBITNO });
+              setTimeout(() => {
+                data.map((item) =>
                   setItemPRDetail({
                     ...itemprdetail,
+                    vItemLine: item.PR_IBPLPS,
                     vItemNo: { MMITNO: item.PR_IBITNO },
-                  });
-                  // dispatch(itemActions.getItems(prhead.vWarehouse));
-                  dispatch(itemunitActions.getItemUnits(item.PR_IBITNO));
-                  // dispatch(phgroupActions.getPHGroups(phgroup));
-                  dispatch(phbuyerActions.getPHBuyers(phgroup, item.PR_IBMODL));
-                });
-
-                setTimeout(() => {
-                  data.map((item) =>
-                    setItemPRDetail({
-                      ...itemprdetail,
-                      vItemLine: item.PR_IBPLPS,
-                      vItemNo: { MMITNO: item.PR_IBITNO },
-                      vItemDesc1: item.PR_IBPITT,
-                      vQty: item.PR_IBORQA,
-                      vUnit: item.PR_IBPUUN,
-                      vDateDetail: item.PR_IBDWDT,
-                      vSupplierNo: item.PR_IBSUNO,
-                      vSupplierName: item.SASUNM,
-                      vPrice: item.PR_IBPUPR,
-                      vVat: item.PR_IBVTCD,
-                      vCurrency: item.PR_IBCUCD,
-                      vOrdertype: item.PR_IBORTY,
-                      vTotal: (item.PR_IBORQA * item.PR_IBPUPR).toFixed(4),
-                      vCostcenterDetail: item.PR_IBCOCE,
-                      vPHGroupDetail: item.PR_IBMODL,
-                      vBuyerDetail: item.PR_IBBUYE,
-                      vRemarkDetail: item.PR_REM3,
-                    })
-                  );
-                }, 500);
-
-                setSelectedProduct("rowData");
-                setOpenDialog(true);
-              },
-            }),
-          ]}
-        />
-
-        {/* Dialog */}
-        <Formik
-          initialValues={{
-            vPRNumber: prhead.vPRNumber,
-            vPlanUnPlan: prhead.vPlanUnPlan,
-            vItemLine: "",
-            vItemNo: "", //{ MMITNO: "" },
-            vItemDesc1: "",
-            vItemDesc2: "",
-            vQty: "",
-            vUnit: "",
-            vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
-            vSupplierNo: "",
-            vSupplierName: "",
-            vPrice: "",
-            vVat: "",
-            vCurrency: "",
-            vOrdertype: "",
-            vTotal: "",
-            vCostcenterDetail: "",
-            vPHGroupDetail: "",
-            vBuyerDetail: "",
-            vRemarkDetail: "",
-          }}
-          onSubmit={(values, { setSubmitting }) => {
-            // alert(JSON.stringify(values));
-            let formData = new FormData();
-            formData.append("vPRNumber", prhead.vPRNumber);
-            formData.append("vPlanUnPlan", prhead.vPlanUnPlan);
-            formData.append("vItemLine", itemprdetail.vItemLine);
-            formData.append("vItemNo", values.vItemNo.MMITNO);
-            formData.append("vItemDesc1", values.vItemDesc1);
-            formData.append("vQty", values.vQty);
-            formData.append("vUnit", values.vUnit);
-            formData.append("vDateDetail", values.vDateDetail);
-            formData.append("vSupplierNo", values.vSupplierNo);
-            formData.append("vPrice", values.vPrice);
-            formData.append("vVat", values.vVat);
-            formData.append("vCurrency", values.vCurrency);
-            formData.append("vOrdertype", values.vOrdertype);
-            formData.append("vTotal", values.vTotal);
-            formData.append("vCostcenterDetail", values.vCostcenterDetail);
-            formData.append("vPHGroupDetail", values.vPHGroupDetail);
-            formData.append("vBuyerDetail", values.vBuyerDetail);
-            formData.append("vRemarkDetail", values.vRemarkDetail);
-            formData.append("vStatus", "10");
-
-            if (itemprdetail.vItemLine === "") {
-              // console.log("true");
-              dispatch(prdetailActions.addPRDetail(formData, props.history));
-              setTimeout(() => {
-                setItemPRDetail({ ...initialStateItemPRDetail });
-                dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
-                setOpenDialog(false);
+                    vItemDesc1: item.PR_IBPITT,
+                    vQty: item.PR_IBORQA,
+                    vUnit: item.PR_IBPUUN,
+                    vDateDetail: item.PR_IBDWDT,
+                    vSupplierNo: item.PR_IBSUNO,
+                    vSupplierName: item.SASUNM,
+                    vPrice: item.PR_IBPUPR,
+                    vVat: item.PR_IBVTCD,
+                    vCurrency: item.PR_IBCUCD,
+                    vOrdertype: item.PR_IBORTY,
+                    vTotal: (item.PR_IBORQA * item.PR_IBPUPR).toFixed(4),
+                    vCostcenterDetail: item.PR_IBCOCE,
+                    vPHGroupDetail: item.PR_IBMODL,
+                    vBuyerDetail: item.PR_IBBUYE,
+                    vRemarkDetail: item.PR_REM3,
+                  })
+                );
               }, 500);
-            } else {
-              // console.log("false");
-              dispatch(prdetailActions.updatePRDetail(formData, props.history));
-              setTimeout(() => {
-                setItemPRDetail({ ...initialStateItemPRDetail });
-                dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
-                setOpenDialog(false);
-              }, 500);
-            }
-          }}
-        >
-          {(props) => showDialog(props)}
-        </Formik>
-      </div>
-    </ThemeProvider>
+
+              setSelectedProduct("rowData");
+              setOpenDialog(true);
+            },
+          }),
+        ]}
+      />
+
+      {/* Dialog */}
+      <Formik
+        initialValues={{
+          vPRNumber: prhead.vPRNumber,
+          vPlanUnPlan: prhead.vPlanUnPlan,
+          vItemLine: "",
+          vItemNo: "", //{ MMITNO: "" },
+          vItemDesc1: "",
+          vItemDesc2: "",
+          vQty: "",
+          vUnit: "",
+          vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
+          vSupplierNo: "",
+          vSupplierName: "",
+          vPrice: "",
+          vVat: "",
+          vCurrency: "",
+          vOrdertype: "",
+          vTotal: "",
+          vCostcenterDetail: "",
+          vPHGroupDetail: "",
+          vBuyerDetail: "",
+          vRemarkDetail: "",
+        }}
+        onSubmit={(values, { setSubmitting }) => {
+          // alert(JSON.stringify(values));
+          let formData = new FormData();
+          formData.append("vPRNumber", prhead.vPRNumber);
+          formData.append("vPlanUnPlan", prhead.vPlanUnPlan);
+          formData.append("vItemLine", itemprdetail.vItemLine);
+          formData.append("vItemNo", values.vItemNo.MMITNO);
+          formData.append("vItemDesc1", values.vItemDesc1);
+          formData.append("vQty", values.vQty);
+          formData.append("vUnit", values.vUnit);
+          formData.append("vDateDetail", values.vDateDetail);
+          formData.append("vSupplierNo", values.vSupplierNo);
+          formData.append("vPrice", values.vPrice);
+          formData.append("vVat", values.vVat);
+          formData.append("vCurrency", values.vCurrency);
+          formData.append("vOrdertype", values.vOrdertype);
+          formData.append("vTotal", values.vTotal);
+          formData.append("vCostcenterDetail", values.vCostcenterDetail);
+          formData.append("vPHGroupDetail", values.vPHGroupDetail);
+          formData.append("vBuyerDetail", values.vBuyerDetail);
+          formData.append("vRemarkDetail", values.vRemarkDetail);
+          formData.append("vStatus", "10");
+
+          if (itemprdetail.vItemLine === "") {
+            // console.log("true");
+            dispatch(prdetailActions.addPRDetail(formData, props.history));
+            setTimeout(() => {
+              setItemPRDetail({ ...initialStateItemPRDetail });
+              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              setOpenDialog(false);
+            }, 500);
+          } else {
+            // console.log("false");
+            dispatch(prdetailActions.updatePRDetail(formData, props.history));
+            setTimeout(() => {
+              setItemPRDetail({ ...initialStateItemPRDetail });
+              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              setOpenDialog(false);
+            }, 500);
+          }
+        }}
+      >
+        {(props) => showDialog(props)}
+      </Formik>
+    </div>
   );
 };

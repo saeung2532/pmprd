@@ -1,15 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Select from "@material-ui/core/Select";
-import MenuItem from "@material-ui/core/MenuItem";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import FormControl from "@material-ui/core/FormControl";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Alert from "@material-ui/lab/Alert";
@@ -20,32 +16,23 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import * as loginActions from "./../../../actions/login.action";
 import * as companyActions from "./../../../actions/company.action";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 540
+    maxWidth: 440,
   },
   media: {
-    height: 340,
-    backgroundSize: "auto"
-  },
-  formControl: {
-    // margin: theme.spacing(1),
-    minWidth: 120
-  },
-  selectEmpty: {
-    // marginTop: theme.spacing(2)
+    height: 290,
+    backgroundSize: "auto",
   },
   textField: {
-    // marginLeft: theme.spacing.unit,
-    // marginRight: theme.spacing.unit,
-    width: 200
+    width: 200,
   },
   menu: {
-    width: 200
-  }
+    width: 200,
+  },
 }));
 
-const LoginPage = props => {
+const LoginPage = (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const loginReducer = useSelector(({ loginReducer }) => loginReducer);
@@ -131,7 +118,7 @@ const LoginPage = props => {
     handleChange,
     handleSubmit,
     setFieldValue,
-    isSubmitting
+    isSubmitting,
   }) => {
     return (
       <form onSubmit={handleSubmit}>
@@ -157,35 +144,6 @@ const LoginPage = props => {
           value={values.password}
           type="password"
         />
-        {/* <FormControl
-          variant="outlined"
-          margin="normal"
-          required
-          fullWidth
-          size="small"
-        >
-          <InputLabel>Company</InputLabel>
-          <Select
-            required
-            id="company"
-            label="Company"
-            onChange={
-              (handleChange = (event) => {
-                // console.log(event.target.value);
-                values.company = event.target.value;
-                setCompany(event.target.value);
-              })
-            }
-            value={company}
-          >
-            {companys.map((item) => (
-              <MenuItem key={item.ID} value={item.COMPANY}>
-                {item.COMPANY}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-         */}
 
         <TextField
           select
@@ -197,18 +155,18 @@ const LoginPage = props => {
           label="Company"
           value={company}
           onChange={
-            (handleChange = event => {
+            (handleChange = (event) => {
               // console.log(event.target.value);
               values.company = event.target.value;
               setCompany(event.target.value);
             })
           }
           SelectProps={{
-            native: true
+            native: true,
           }}
         >
           <option />
-          {companys.map(option => (
+          {companys.map((option) => (
             <option key={option.ID} value={option.COMPANY}>
               {option.COMPANY}
             </option>
@@ -246,7 +204,7 @@ const LoginPage = props => {
       <CardMedia
         className={classes.media}
         image={`${process.env.PUBLIC_URL}/images/duck.png`}
-        title="ePR Systems"
+        title="Smart Purchase"
       />
 
       <CardContent>
@@ -263,20 +221,11 @@ const LoginPage = props => {
             }, 3000);
           }}
         >
-          {props => showForm(props)}
+          {(props) => showForm(props)}
         </Formik>
       </CardContent>
     </Card>
   );
-};
-
-/* A fake authentication function */
-export const fakeAuth = {
-  isAuthenticated: false,
-  authenticate(cb) {
-    this.isAuthenticated = true;
-    setTimeout(cb, 100);
-  }
 };
 
 export default LoginPage;

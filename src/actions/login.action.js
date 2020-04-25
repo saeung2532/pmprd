@@ -99,9 +99,9 @@ export const isLoggedIn = () => {
     if (token) {
       var decodedToken = jwt.decode(token, { complete: true });
       var dateNow = new Date();
-      // console.log("decodedToken: " + JSON.stringify(decodedToken));
-      // console.log(decodedToken.payload.exp + " : " + dateNow.getTime());
-      if (decodedToken.payload.exp < decodedToken.payload.exp) {
+      console.log("decodedToken: " + JSON.stringify(decodedToken));
+      console.log(decodedToken.payload.exp + " : " + dateNow.getTime().toString().substr(0,10));
+      if (decodedToken.payload.exp < dateNow.getTime().toString().substr(0,10)) {
         // console.log("getToken: " + false);
         return false;
       } else {
