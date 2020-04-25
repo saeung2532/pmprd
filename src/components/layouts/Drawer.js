@@ -128,7 +128,7 @@ const MiniDrawer = (props) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
-  const isMenuopendrawer = Boolean(anchorEl);
+  const isMenuOpen = Boolean(anchorEl);
 
   const handleDraweropendrawer = () => {
     setOpenDrawer(true);
@@ -165,7 +165,7 @@ const MiniDrawer = (props) => {
       id={menuId}
       keepMounted
       transformOrigin={{ vertical: "top", horizontal: "right" }}
-      opendrawer={isMenuopendrawer}
+      open={isMenuOpen}
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
