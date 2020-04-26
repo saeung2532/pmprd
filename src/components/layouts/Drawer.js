@@ -125,7 +125,6 @@ const MiniDrawer = (props) => {
   const theme = useTheme();
   const [opendrawer, setOpenDrawer] = useState(false);
   const [openmenuph, setOpenMenuPH] = useState(false);
-
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const isMenuOpen = Boolean(anchorEl);
