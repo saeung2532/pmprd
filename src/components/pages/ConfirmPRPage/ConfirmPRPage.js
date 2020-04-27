@@ -28,7 +28,7 @@ import { red, green, purple } from "@material-ui/core/colors/";
 import * as loginActions from "./../../../actions/login.action";
 import * as prnumberbuyerActions from "./../../../actions/prnumberbuyer.action";
 import * as prheadActions from "./../../../actions/prhead.action";
-import * as prdetailActions from "./../../../actions/prdetail.action";
+import * as prdetailbuyerActions from "./../../../actions/prdetailbuyer.action";
 import * as warehouseActions from "./../../../actions/warehouse.action";
 import * as departmentActions from "./../../../actions/department.action";
 import * as approveActions from "./../../../actions/approve.action";
@@ -38,6 +38,7 @@ import * as itemprdetailActions from "./../../../actions/itemprdetail.action";
 import * as itemunitActions from "./../../../actions/itemunit.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
 import * as phbuyerActions from "./../../../actions/phbuyer.action";
+import * as supplierActions from "./../../../actions/supplier.action";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -45,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    // textAlign: "center",
     color: theme.palette.text.secondary,
   },
   margin: {
@@ -83,9 +83,13 @@ const accent = purple["A200"]; // #E040FB
 export default (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const prnumberbuyerReducer = useSelector(({ prnumberbuyerReducer }) => prnumberbuyerReducer);
+  const prnumberbuyerReducer = useSelector(
+    ({ prnumberbuyerReducer }) => prnumberbuyerReducer
+  );
   const prheadReducer = useSelector(({ prheadReducer }) => prheadReducer);
-  const prdetailReducer = useSelector(({ prdetailReducer }) => prdetailReducer);
+  const prdetailbuyerReducer = useSelector(
+    ({ prdetailbuyerReducer }) => prdetailbuyerReducer
+  );
   const warehouseReducer = useSelector(
     ({ warehouseReducer }) => warehouseReducer
   );
@@ -101,6 +105,7 @@ export default (props) => {
   const itemunitReducer = useSelector(({ itemunitReducer }) => itemunitReducer);
   const phgroupReducer = useSelector(({ phgroupReducer }) => phgroupReducer);
   const phbuyerReducer = useSelector(({ phbuyerReducer }) => phbuyerReducer);
+  const supplierReducer = useSelector(({ supplierReducer }) => supplierReducer);
 
   const [prnumber, setPRNumber] = useState({ vPRSelectNumber: "" });
   const initialStatePRHead = {
@@ -131,7 +136,7 @@ export default (props) => {
     vQty: "",
     vUnit: "",
     vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
-    vSupplierNo: "",
+    vSupplierNo: null,
     vSupplierName: "",
     vPrice: "",
     vVat: "",
@@ -161,6 +166,7 @@ export default (props) => {
     dispatch(departmentActions.getDepartments());
     dispatch(approveActions.getApproves());
     dispatch(buyerActions.getBuyers());
+    dispatch(supplierActions.getSuppliers());
   }, []);
 
   useEffect(() => {
@@ -208,7 +214,7 @@ export default (props) => {
         vItemDesc2: item.MMFUDS,
         vUnit: item.MMUNMS,
         vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
-        vSupplierNo: item.MMSUNO,
+        vSupplierNo:  { IDSUNO: item.IDSUNO },
         vSupplierName: item.SASUNM,
         vPrice: item.MMPUPR,
         vVat: item.MMVTCS,
@@ -241,15 +247,15 @@ export default (props) => {
       setPRHead({
         ...initialStatePRHead,
       });
-      dispatch(prdetailActions.getPRDetails("00"));
+      dispatch(prdetailbuyerActions.getPRDetails("00"));
     } else {
       setNewDisable(true);
       setEditDisable(false);
       setCreateDisable(false);
       setCancelPRDisable(false);
-      let status = "00";
+      let status = "10";
       dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
-      dispatch(prdetailActions.getPRDetails(prnumber.vPRSelectNumber));
+      dispatch(prdetailbuyerActions.getPRDetails(prnumber.vPRSelectNumber));
     }
   };
 
@@ -274,7 +280,7 @@ export default (props) => {
     setWhsDisable(true);
     setPRNumber({ ...prnumber, vPRSelectNumber: "" });
     setPRHead({ ...initialStatePRHead });
-    dispatch(prdetailActions.getPRDetails("00"));
+    dispatch(prdetailbuyerActions.getPRDetails("00"));
   };
 
   const handleClose = () => {
@@ -296,13 +302,13 @@ export default (props) => {
       setPRNumber({ ...prnumber, vPRSelectNumber: "" });
       setPRHead({ ...initialStatePRHead });
       dispatch(prnumberbuyerActions.getPRNumbers("00"));
-      dispatch(prdetailActions.getPRDetails("00"));
+      dispatch(prdetailbuyerActions.getPRDetails("00"));
       alert("Cancel Complete");
     }, 500);
   };
 
   const handleSubmitPH = () => {
-    if (prdetailReducer.result.length > 0) {
+    if (prdetailbuyerReducer.result.length > 0) {
       setSearchDisable(false);
       setNewDisable(false);
       setEditDisable(true);
@@ -316,7 +322,7 @@ export default (props) => {
         setPRNumber({ ...prnumber, vPRSelectNumber: "" });
         setPRHead({ ...initialStatePRHead });
         dispatch(prnumberbuyerActions.getPRNumbers("00"));
-        dispatch(prdetailActions.getPRDetails("00"));
+        dispatch(prdetailbuyerActions.getPRDetails("00"));
         alert("Submit Complete");
       }, 500);
     } else {
@@ -956,6 +962,7 @@ export default (props) => {
     const itemunits = itemunitReducer.result ? itemunitReducer.result : [];
     const phgroups = phgroupReducer.result ? phgroupReducer.result : [];
     const phbuyers = phbuyerReducer.result ? phbuyerReducer.result : [];
+    const suppliers = supplierReducer.result ? supplierReducer.result : [];
     return (
       <Dialog
         open={openDialog}
@@ -1112,7 +1119,7 @@ export default (props) => {
             />
             <Grid container item xs={12} spacing={2}>
               <Grid item xs={5}>
-                <TextField
+                {/* <TextField
                   required
                   fullWidth
                   disabled="true"
@@ -1122,6 +1129,44 @@ export default (props) => {
                   type="text"
                   value={itemprdetail.vSupplierNo}
                   values={(values.vSupplierNo = itemprdetail.vSupplierNo)}
+                /> */}
+
+                <Autocomplete
+                  className={classes.margin}
+                  autoFocus
+                  required
+                  fullWidth
+                  size="small"
+                  id="vSupplierNoAuto"
+                  options={suppliers}
+                  getOptionLabel={(option) => option.IDSUNO}
+                  value={itemprdetail.vSupplierNo}
+                  values={(values.vSupplierNo = itemprdetail.vSupplierNo)}
+                  onChange={(event, values) => {
+                    console.log(values);
+                    if (values) {
+                      setItemPRDetail({
+                        ...itemprdetail,
+                        vSupplierNo: { IDSUNO: values.IDSUNO },
+                        vSupplierName: values.SASUNM,
+                      });
+                      // dispatch(itemunitActions.getItemUnits(values.IDSUNO));
+                      // dispatch(
+                      //   itemprdetailActions.getItems(
+                      //     prhead.vWarehouse,
+                      //     values.MMITNO
+                      //   )
+                      // );
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      id="vSupplierNo"
+                      label="Supplier No"
+                      required
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs>
@@ -1764,7 +1809,7 @@ export default (props) => {
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
       {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
-      {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
+      <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
@@ -1832,7 +1877,7 @@ export default (props) => {
         id="root_prstock"
         title={`Plan PR : ${prhead.vStatus}`}
         columns={columns}
-        data={prdetailReducer.result ? prdetailReducer.result : []}
+        data={prdetailbuyerReducer.result ? prdetailbuyerReducer.result : []}
         components={{
           Toolbar: (props) => (
             <div>
@@ -1944,14 +1989,17 @@ export default (props) => {
               let data = [oldData];
               data.map((item) => {
                 dispatch(
-                  prdetailActions.deletePRDetail(item.PR_IBPLPN, item.PR_IBPLPS)
+                  prdetailbuyerActions.deletePRDetail(
+                    item.PR_IBPLPN,
+                    item.PR_IBPLPS
+                  )
                 );
               });
 
               setTimeout(() => {
                 {
                   setItemPRDetail({ ...initialStateItemPRDetail });
-                  dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+                  dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
                 }
                 resolve();
               }, 500);
@@ -1988,7 +2036,7 @@ export default (props) => {
                     vQty: item.PR_IBORQA,
                     vUnit: item.PR_IBPUUN,
                     vDateDetail: item.PR_IBDWDT,
-                    vSupplierNo: item.PR_IBSUNO,
+                    vSupplierNo: { IDSUNO: item.PR_IBSUNO },
                     vSupplierName: item.SASUNM,
                     vPrice: item.PR_IBPUPR,
                     vVat: item.PR_IBVTCD,
@@ -2059,18 +2107,20 @@ export default (props) => {
 
           if (itemprdetail.vItemLine === "") {
             // console.log("true");
-            dispatch(prdetailActions.addPRDetail(formData, props.history));
+            dispatch(prdetailbuyerActions.addPRDetail(formData, props.history));
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });
-              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
               setOpenDialog(false);
             }, 500);
           } else {
             // console.log("false");
-            dispatch(prdetailActions.updatePRDetail(formData, props.history));
+            dispatch(
+              prdetailbuyerActions.updatePRDetail(formData, props.history)
+            );
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });
-              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
               setOpenDialog(false);
             }, 500);
           }

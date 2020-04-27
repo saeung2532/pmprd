@@ -15,6 +15,7 @@ import prdetailbuyerReducer from "./prdetailbuyer.reducer";
 import itemunitReducer from "./itemunit.reducer";
 import phgroupReducer from "./phgroup.reducer";
 import phbuyerReducer from "./phbuyer.reducer";
+import supplierReducer from "./supplier.reducer";
 
 export default combineReducers({
   companyReducer,
@@ -33,4 +34,5 @@ export default combineReducers({
   prdetailbuyerReducer,
   phgroupReducer,
   phbuyerReducer,
+  supplierReducer,
 });

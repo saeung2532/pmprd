@@ -58,6 +58,12 @@ export const HTTP_PHBUYER_FAILED = "HTTP_PHBUYER_FAILED";
 export const HTTP_PHBUYER_SUCCESS = "HTTP_PHBUYER_SUCCESS";
 export const HTTP_PHBUYER_CLEAR = "HTTP_PHBUYER_CLEAR";
 
+// SUPPLIER
+export const HTTP_SUPPLIER_FETCHING = "HTTP_SUPPLIER_FETCHING";
+export const HTTP_SUPPLIER_FAILED = "HTTP_SUPPLIER_FAILED";
+export const HTTP_SUPPLIER_SUCCESS = "HTTP_SUPPLIER_SUCCESS";
+export const HTTP_SUPPLIER_CLEAR = "HTTP_SUPPLIER_CLEAR";
+
 // Login Page
 export const HTTP_LOGIN_FETCHING = "HTTP_LOGIN_FETCHING";
 export const HTTP_LOGIN_FAILED = "HTTP_LOGIN_FAILED";
@@ -149,6 +155,7 @@ export const server = {
   ITEMUNIT_URL: `api_data/itemunit`,
   PHGROUP_URL: `api_data/phgroup`,
   PHBUYER_URL: `api_data/phbuyer`,
+  SUPPLIER_URL: `api_data/supplier`,
   PRSTOCKNUMBER_URL: `api_data/prnumber`,
   PRSTOCKNUMBERBUYER_URL: `api_data/prnumberbuyer`,
   PRSTOCKHEAD_URL: `api_data/prhead`,
