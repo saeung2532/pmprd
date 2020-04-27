@@ -64,26 +64,35 @@ export const HTTP_LOGIN_FAILED = "HTTP_LOGIN_FAILED";
 export const HTTP_LOGIN_SUCCESS = "HTTP_LOGIN_SUCCESS";
 export const HTTP_LOGIN_LOGOUT = "HTTP_LOGIN_LOGOUT";
 
-// PRStock Page
+// PRNUMBER
 export const HTTP_PRNUMBER_FETCHING = "HTTP_PRNUMBER_FETCHING";
 export const HTTP_PRNUMBER_FAILED = "HTTP_PRNUMBER_FAILED";
 export const HTTP_PRNUMBER_SUCCESS = "HTTP_PRNUMBER_SUCCESS";
 export const HTTP_PRNUMBER_CLEAR = "HTTP_PRNUMBER_CLEAR";
 
+// PRNUMBERBUYER
+export const HTTP_PRNUMBERBUYER_FETCHING = "HTTP_PRNUMBERBUYER_FETCHING";
+export const HTTP_PRNUMBERBUYER_FAILED = "HTTP_PRNUMBERBUYER_FAILED";
+export const HTTP_PRNUMBERBUYER_SUCCESS = "HTTP_PRNUMBERBUYER_SUCCESS";
+export const HTTP_PRNUMBERBUYER_CLEAR = "HTTP_PRNUMBERBUYER_CLEAR";
+
+// PRHEAD
 export const HTTP_PRHEAD_FETCHING = "HTTP_PRHEAD_FETCHING";
 export const HTTP_PRHEAD_FAILED = "HTTP_PRHEAD_FAILED";
 export const HTTP_PRHEAD_SUCCESS = "HTTP_PRHEAD_SUCCESS";
 export const HTTP_PRHEAD_CLEAR = "HTTP_PRHEAD_CLEAR";
 
+// PRDETAIL
 export const HTTP_PRDETAIL_FETCHING = "HTTP_PRDETAIL_FETCHING";
 export const HTTP_PRDETAIL_FAILED = "HTTP_PRDETAIL_FAILED";
 export const HTTP_PRDETAIL_SUCCESS = "HTTP_PRDETAIL_SUCCESS";
 export const HTTP_PRDETAIL_CLEAR = "HTTP_PRDETAIL_CLEAR";
 
-export const HTTP_PRSTOCK_FETCHING = "HTTP_PRSTOCK_FETCHING";
-export const HTTP_PRSTOCK_SUCCESS = "HTTP_PRSTOCK_SUCCESS";
-export const HTTP_PRSTOCK_FAILED = "HTTP_PRSTOCK_FAILED";
-export const HTTP_PRSTOCK_CLEAR = "HTTP_PRSTOCK_CLEAR";
+// PRDETAILBUYER
+export const HTTP_PRDETAILBUYER_FETCHING = "HTTP_PRDETAILBUYER_FETCHING";
+export const HTTP_PRDETAILBUYER_FAILED = "HTTP_PRDETAILBUYER_FAILED";
+export const HTTP_PRDETAILBUYER_SUCCESS = "HTTP_PRDETAILBUYER_SUCCESS";
+export const HTTP_PRDETAILBUYER_CLEAR = "HTTP_PRDETAILBUYER_CLEAR";
 
 // Stock Edit Page
 export const HTTP_STOCK_EDIT_FETCHING = "HTTP_STOCK_EDIT_FETCHING";
@@ -124,8 +133,8 @@ export const NETWORK_TIMEOUT_MESSAGE =
 export const UPLOAD_PHOTO_FAIL_MESSAGE =
   "An error has occurred. The photo was unable to upload.";
 
-// export const apiUrl = "http://localhost:8080/br_api/";
-export const apiUrl = "http://192.200.9.106:8080/br_api/";
+export const apiUrl = "http://localhost:8080/br_api/";
+// export const apiUrl = "http://192.200.9.106:8080/br_api/";
 export const imageUrl = "http://localhost:8080";
 
 export const server = {
@@ -141,8 +150,10 @@ export const server = {
   PHGROUP_URL: `api_data/phgroup`,
   PHBUYER_URL: `api_data/phbuyer`,
   PRSTOCKNUMBER_URL: `api_data/prnumber`,
+  PRSTOCKNUMBERBUYER_URL: `api_data/prnumberbuyer`,
   PRSTOCKHEAD_URL: `api_data/prhead`,
   PRSTOCKDETAIL_URL: `api_data/prdetail`,
+  PRSTOCKDETAILBUYER_URL: `api_data/prdetailbuyer`,
   REFRESH_TOKEN_URL: `refresh/token`,
   REGISTER_URL: `register`,
   PRODUCT_URL: `product`,

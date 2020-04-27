@@ -8,8 +8,10 @@ import itemReducer from "./item.reducer";
 import itemprdetailReducer from "./itemprdetail.reducer";
 import loginReducer from "./login.reducer";
 import prnumberReducer from "./prnumber.reducer";
+import prnumberbuyerReducer from "./prnumberbuyer.reducer";
 import prheadReducer from "./prhead.reducer";
 import prdetailReducer from "./prdetail.reducer";
+import prdetailbuyerReducer from "./prdetailbuyer.reducer";
 import itemunitReducer from "./itemunit.reducer";
 import phgroupReducer from "./phgroup.reducer";
 import phbuyerReducer from "./phbuyer.reducer";
@@ -25,8 +27,10 @@ export default combineReducers({
   itemunitReducer,
   loginReducer,
   prnumberReducer,
+  prnumberbuyerReducer,
   prheadReducer,
   prdetailReducer,
+  prdetailbuyerReducer,
   phgroupReducer,
   phbuyerReducer,
 });

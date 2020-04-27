@@ -6,7 +6,6 @@ import {
 } from "../constants";
 import { server } from "../constants";
 import { httpClient } from "./../utils/HttpClient";
-import jwt from "jsonwebtoken";
 
 // Information being sent to Reducer
 export const setStateCompanyToSuccess = (payload) => ({
@@ -39,7 +38,7 @@ const doGetCompanys = async (dispatch) => {
     dispatch(setStateCompanyToSuccess(result.data));
     // alert(JSON.stringify(result.data));
   } catch (err) {
-    alert(JSON.stringify(err));
+    alert(JSON.stringify(err.message));
     dispatch(setStateCompanyToFailed());
   }
 };

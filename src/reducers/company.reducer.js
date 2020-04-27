@@ -2,13 +2,13 @@ import {
   HTTP_COMPANY_SUCCESS,
   HTTP_COMPANY_FETCHING,
   HTTP_COMPANY_FAILED,
-  HTTP_COMPANY_CLEAR
+  HTTP_COMPANY_CLEAR,
 } from "../constants";
 
 const initialState = {
   result: null,
   isFetching: false,
-  isError: false
+  isError: false,
 };
 
 export default (state = initialState, { type, payload }) => {

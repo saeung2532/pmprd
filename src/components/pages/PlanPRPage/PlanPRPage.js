@@ -1384,7 +1384,7 @@ export default (props) => {
     {
       title: "Line",
       field: "PR_IBPLPS",
-      headerStyle: { maxWidth: 60, whiteSpace: "nowrap", textAlign: "center" },
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "center",
         borderLeft: 1,
@@ -1394,15 +1394,6 @@ export default (props) => {
         borderColor: "#E0E0E0",
         borderStyle: "solid",
       },
-      //cellStyle: { maxWidth: 70, textAlign: "center", borderStyle: "right" },
-      // cellStyle: {
-      //   borderLeft: 1,
-      //   borderRight: 1,
-      //   borderBottom: 1,
-      //   borderTop: 1,
-      //   borderColor: "#E0E0E0",
-      //   borderStyle: "solid",
-      // },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPLPS}
@@ -1412,8 +1403,16 @@ export default (props) => {
     {
       title: "Item No",
       field: "PR_IBITNO",
-      headerStyle: { maxWidth: 200, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 200 },
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       // editComponent: props => (
       //   <Autocomplete
       //     id="combo-box-demo"
@@ -1433,7 +1432,15 @@ export default (props) => {
       title: "Item Name",
       field: "PR_IBPITT",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 150 },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPITT}
@@ -1453,7 +1460,6 @@ export default (props) => {
         borderColor: "#E0E0E0",
         borderStyle: "solid",
       },
-      //cellStyle: { maxWidth: 100, textAlign: "center" },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPUUN}
@@ -1461,10 +1467,10 @@ export default (props) => {
       ),
     },
     {
-      title: "Stk Rem.",
+      title: "Stock Rem.",
       field: "MBSTQT",
-      type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      // type: "numeric",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
       cellStyle: {
         textAlign: "right",
         borderLeft: 1,
@@ -1474,8 +1480,6 @@ export default (props) => {
         borderColor: "#E0E0E0",
         borderStyle: "solid",
       },
-      // cellStyle: {textAlign: "right" },
-      //cellStyle: { maxWidth: 100, textAlign: "right" },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.MBSTQT}
@@ -1485,7 +1489,7 @@ export default (props) => {
     {
       title: "Qty",
       field: "PR_IBORQA",
-      type: "numeric",
+      // type: "numeric",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "right",
@@ -1496,7 +1500,6 @@ export default (props) => {
         borderColor: "#E0E0E0",
         borderStyle: "solid",
       },
-      //cellStyle: { maxWidth: 100, textAlign: "right" },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBORQA}
@@ -1506,10 +1509,17 @@ export default (props) => {
     {
       title: "U/P",
       field: "PR_IBPUPR",
-      type: "numeric",
+      // type: "numeric",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: { textAlign: "right" },
-      //cellStyle: { maxWidth: 100, textAlign: "right" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBPUPR}
@@ -1521,7 +1531,15 @@ export default (props) => {
       field: "PR_IBDWDT",
       type: "date",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 150 },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {moment(item.PR_IBDWDT).format("DD/MM/YYYY")}
@@ -1529,10 +1547,18 @@ export default (props) => {
       ),
     },
     {
-      title: "Supp No",
+      title: "Supp. No",
       field: "PR_IBSUNO",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 150 },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBSUNO}
@@ -1540,10 +1566,18 @@ export default (props) => {
       ),
     },
     {
-      title: "Supp Name",
+      title: "Supp. Name",
       field: "SASUNM",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 150 },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.SASUNM}
@@ -1551,10 +1585,18 @@ export default (props) => {
       ),
     },
     {
-      title: "Ord. Type",
+      title: "Order Typ.",
       field: "PR_IBORTY",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100, textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBORTY}
@@ -1564,8 +1606,16 @@ export default (props) => {
     {
       title: "Vat.",
       field: "PR_IBVTCD",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100, textAlign: "center" },
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBVTCD}
@@ -1576,7 +1626,15 @@ export default (props) => {
       title: "Total",
       field: "PR_IBTOTA",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100, textAlign: "right" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBTOTA}
@@ -1586,8 +1644,16 @@ export default (props) => {
     {
       title: "Curr.",
       field: "PR_IBCUCD",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100, textAlign: "center" },
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBCUCD}
@@ -1595,10 +1661,18 @@ export default (props) => {
       ),
     },
     {
-      title: "Cost Center",
+      title: "Cost Cen.",
       field: "PR_IBCOCE",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100, textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBCOCE}
@@ -1609,7 +1683,15 @@ export default (props) => {
       title: "Group",
       field: "PR_IBMODL",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100, textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBMODL}
@@ -1620,7 +1702,15 @@ export default (props) => {
       title: "Buyer",
       field: "PR_IBBUYE",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 150 },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBBUYE}
@@ -1628,10 +1718,18 @@ export default (props) => {
       ),
     },
     {
-      title: "PR Rem3",
+      title: "PR Rem3.",
       field: "PR_REM3",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100 },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_REM3}
@@ -1639,11 +1737,19 @@ export default (props) => {
       ),
     },
     {
-      title: "PR Rem5",
+      title: "PR Rem5.",
       field: "PR_REM5",
       // type: "numeric",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      //cellStyle: { maxWidth: 100, textAlign: "right" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_REM5}
@@ -1774,7 +1880,6 @@ export default (props) => {
           },
           cellStyle: {
             textAlign: "center",
-            padding: "5px",
             borderLeft: 1,
             borderRight: 1,
             borderBottom: 1,

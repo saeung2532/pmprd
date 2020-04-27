@@ -74,7 +74,7 @@ const doGetLogins = async (dispatch, value, history) => {
       dispatch(setLoginStateToFailed());
     }
   } catch (err) {
-    alert(JSON.stringify(err));
+    alert(JSON.stringify(err.message));
     dispatch(setLoginStateToFailed());
   }
 };
