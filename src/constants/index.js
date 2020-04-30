@@ -16,6 +16,12 @@ export const HTTP_DEPARTMENT_FAILED = "HTTP_DEPARTMENT_FAILED";
 export const HTTP_DEPARTMENT_SUCCESS = "HTTP_DEPARTMENT_SUCCESS";
 export const HTTP_DEPARTMENT_CLEAR = "HTTP_DEPARTMENT_CLEAR";
 
+// COSTCENTER
+export const HTTP_COSTCENTER_FETCHING = "HTTP_COSTCENTER_FETCHING";
+export const HTTP_COSTCENTER_FAILED = "HTTP_COSTCENTER_FAILED";
+export const HTTP_COSTCENTER_SUCCESS = "HTTP_COSTCENTER_SUCCESS";
+export const HTTP_COSTCENTER_CLEAR = "HTTP_COSTCENTER_CLEAR";
+
 // APPROVE
 export const HTTP_APPROVE_FETCHING = "HTTP_APPROVE_FETCHING";
 export const HTTP_APPROVE_FAILED = "HTTP_APPROVE_FAILED";
@@ -148,6 +154,7 @@ export const server = {
   COMPANY_URL: `api_data/company`,
   WAREHOUSE_URL: `api_data/warehouse`,
   DEPARTMENT_URL: `api_data/department`,
+  COSTCENTER_URL: `api_data/costcenter`,
   APPROVE_URL: `api_data/approve`,
   BUYER_URL: `api_data/buyer`,
   ITEM_URL: `api_data/item`,

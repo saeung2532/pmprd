@@ -39,7 +39,7 @@ const doGetPRNumbers = async (dispatch, status) => {
     dispatch(setStatePRNumberBuyerToSuccess(result.data));
     // alert(JSON.stringify(result.data));
   } catch (err) {
-    alert(JSON.stringify(err.message + ", Please try again."));
+    alert(JSON.stringify(err));
     localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setStatePRNumberBuyerToFailed());
   }

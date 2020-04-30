@@ -31,13 +31,14 @@ import * as prheadActions from "./../../../actions/prhead.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
 import * as warehouseActions from "./../../../actions/warehouse.action";
 import * as departmentActions from "./../../../actions/department.action";
+import * as costcenterActions from "./../../../actions/costcenter.action";
 import * as approveActions from "./../../../actions/approve.action";
 import * as buyerActions from "./../../../actions/buyer.action";
 import * as itemActions from "./../../../actions/item.action";
-import * as itemprdetailActions from "./../../../actions/itemprdetail.action";
 import * as itemunitActions from "./../../../actions/itemunit.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
 import * as phbuyerActions from "./../../../actions/phbuyer.action";
+import * as supplierActions from "./../../../actions/supplier.action";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -45,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     padding: theme.spacing(2),
-    // textAlign: "center",
     color: theme.palette.text.secondary,
   },
   margin: {
@@ -92,16 +92,16 @@ export default (props) => {
   const departmentReducer = useSelector(
     ({ departmentReducer }) => departmentReducer
   );
+  const costcenterReducer = useSelector(
+    ({ costcenterReducer }) => costcenterReducer
+  );
   const approveReducer = useSelector(({ approveReducer }) => approveReducer);
   const buyerReducer = useSelector(({ buyerReducer }) => buyerReducer);
   const itemReducer = useSelector(({ itemReducer }) => itemReducer);
-  const itemprdetailReducer = useSelector(
-    ({ itemprdetailReducer }) => itemprdetailReducer
-  );
   const itemunitReducer = useSelector(({ itemunitReducer }) => itemunitReducer);
   const phgroupReducer = useSelector(({ phgroupReducer }) => phgroupReducer);
   const phbuyerReducer = useSelector(({ phbuyerReducer }) => phbuyerReducer);
-
+  const supplierReducer = useSelector(({ supplierReducer }) => supplierReducer);
   const [prnumber, setPRNumber] = useState({ vPRSelectNumber: "" });
   const initialStatePRHead = {
     vPRNumber: "",
@@ -125,14 +125,15 @@ export default (props) => {
   const [prhead, setPRHead] = useState(initialStatePRHead);
   const initialStateItemPRDetail = {
     vItemLine: "",
-    vItemNo: null,
+    vItemNo: "",
     vItemDesc1: "",
-    vItemDesc2: "",
+    vItemDesc2: null,
     vQty: "",
     vUnit: "",
     vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
     vSupplierNo: "",
     vSupplierName: "",
+    vSupplierDesc: null,
     vPrice: "",
     vVat: "",
     vCurrency: "",
@@ -149,7 +150,13 @@ export default (props) => {
   const [editdisable, setEditDisable] = useState(true);
   const [createdisable, setCreateDisable] = useState(true);
   const [cancelprdisable, setCancelPRDisable] = useState(true);
+  const [savedisable, setSaveDisable] = useState(false);
+  const [confirmdisable, setConfirmDisable] = useState(false);
+  const [create, setCreate] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [confirm, setConfirm] = useState(false);
   const [whsdisable, setWhsDisable] = useState(true);
+  const [deptdisable, setDeptDisable] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -161,6 +168,9 @@ export default (props) => {
     dispatch(departmentActions.getDepartments());
     dispatch(approveActions.getApproves());
     dispatch(buyerActions.getBuyers());
+    dispatch(supplierActions.getSuppliers());
+    prheadReducer.result = null;
+    prdetailReducer.result = null;
   }, []);
 
   useEffect(() => {
@@ -171,7 +181,9 @@ export default (props) => {
     prheads.map((item) => {
       dispatch(itemActions.getItems(item.HD_IBWHLO));
       let phgroup = "PH";
+      let department = item.HD_IBCOCE;
       dispatch(phgroupActions.getPHGroups(phgroup));
+      dispatch(costcenterActions.getCostCenters(department));
       setPRHead({
         ...prhead,
         vPRNumber: item.HD_IBPLPN,
@@ -195,29 +207,6 @@ export default (props) => {
     });
   }, [prheadReducer]);
 
-  useEffect(() => {
-    const itemprdetails = itemprdetailReducer.result
-      ? itemprdetailReducer.result
-      : [];
-    // console.log(JSON.stringify("itemdetails: " + JSON.stringify(itemdetails)));
-    itemprdetails.map((item) =>
-      setItemPRDetail({
-        ...itemprdetail,
-        vItemNo: { MMITNO: item.MMITNO },
-        vItemDesc1: item.MMITDS,
-        vItemDesc2: item.MMFUDS,
-        vUnit: item.MMUNMS,
-        vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
-        vSupplierNo: item.MMSUNO,
-        vSupplierName: item.SASUNM,
-        vPrice: item.MMPUPR,
-        vVat: item.MMVTCS,
-        vCurrency: item.MMCUCD,
-        vOrdertype: item.MBORTY,
-      })
-    );
-  }, [itemprdetailReducer]);
-
   const prnumbers = useMemo(() =>
     prnumberReducer.result ? prnumberReducer.result : []
   );
@@ -228,6 +217,10 @@ export default (props) => {
 
   const departments = useMemo(() =>
     departmentReducer.result ? departmentReducer.result : []
+  );
+
+  const costcenters = useMemo(() =>
+    costcenterReducer.result ? costcenterReducer.result : []
   );
 
   const approves = useMemo(() =>
@@ -258,10 +251,11 @@ export default (props) => {
     setEditDisable(false);
     setCreateDisable(true);
     setWhsDisable(false);
+    setDeptDisable(false);
     setPRHead({
       ...initialStatePRHead,
       vMonth: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
-      vPlanUnPlan: 5,
+      vPlanUnPlan: "Plan",
     });
   };
 
@@ -272,6 +266,7 @@ export default (props) => {
     setCreateDisable(true);
     setCancelPRDisable(true);
     setWhsDisable(true);
+    setDeptDisable(true);
     setPRNumber({ ...prnumber, vPRSelectNumber: "" });
     setPRHead({ ...initialStatePRHead });
     dispatch(prdetailActions.getPRDetails("00"));
@@ -280,6 +275,8 @@ export default (props) => {
   const handleClose = () => {
     setItemPRDetail(initialStateItemPRDetail);
     setOpenDialog(false);
+    setSaveDisable(false);
+    setConfirmDisable(false);
   };
 
   const handleCancelPR = () => {
@@ -289,6 +286,7 @@ export default (props) => {
     setCreateDisable(true);
     setCancelPRDisable(true);
     setWhsDisable(true);
+    setDeptDisable(true);
     let status = "99";
     dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
     setTimeout(() => {
@@ -309,6 +307,7 @@ export default (props) => {
       setCreateDisable(true);
       setCancelPRDisable(true);
       setWhsDisable(true);
+      setDeptDisable(true);
       let status = "10";
       dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
       setTimeout(() => {
@@ -418,21 +417,6 @@ export default (props) => {
                     New
                   </Button>
                 </Grid>
-                {/* <Grid item xs sm={1} className={classes.margin}>
-                <Button
-                  fullWidth
-                  size="medium"
-                  id="vSearch"
-                  variant="contained"
-                  color="default"
-                  startIcon={<EditIcon />}
-                  onClick={(event) => {
-                    setEditDisable(false);
-                  }}
-                >
-                  Edit
-                </Button>
-              </Grid> */}
                 <Grid item xs sm={1} className={classes.margin}>
                   <Button
                     fullWidth
@@ -461,27 +445,13 @@ export default (props) => {
                     Cancel
                   </Button>
                 </Grid>
-                {/* <Grid item xs sm={1} className={classes.margin}>
-                  <Button
-                    fullWidth
-                    size="medium"
-                    id="vCancelPR"
-                    variant="contained"
-                    color="secondary"
-                    startIcon={<DeleteIcon />}
-                    disabled={cancelprdisable}
-                    onClick={handleCancelPR}
-                  >
-                    Cancel PR
-                  </Button>
-                </Grid> */}
               </Grid>
               <Grid container item xs className={classes.margin}>
                 <TextField
                   className={classes.margin}
                   style={{ maxWidth: 120 }}
                   required
-                  disabled={true}
+                  disabled="true"
                   size="small"
                   id="vPRNumber"
                   label="PR Number"
@@ -513,13 +483,20 @@ export default (props) => {
                   onChange={(event) => {
                     // console.log("onChange: " + event.target.value.substr(2, 2) +
                     // event.target.value.substr(5, 2));
-                    setPRHead({
-                      ...prhead,
-                      vDate: event.target.value,
-                      vMonth:
-                        event.target.value.substr(2, 2) +
-                        event.target.value.substr(5, 2),
-                    });
+                    var dateNow = new Date();
+                    if (
+                      event.target.value < moment(dateNow).format("YYYY-MM-DD")
+                    ) {
+                      alert("Date not less than present day.");
+                    } else {
+                      setPRHead({
+                        ...prhead,
+                        vDate: event.target.value,
+                        vMonth:
+                          event.target.value.substr(2, 2) +
+                          event.target.value.substr(5, 2),
+                      });
+                    }
                   }}
                   InputLabelProps={{ shrink: true, required: true }}
                 />
@@ -559,7 +536,7 @@ export default (props) => {
                 <TextField
                   className={classes.margin}
                   style={{ width: "150px" }}
-                  disabled={editdisable}
+                  disabled={deptdisable}
                   select
                   size="small"
                   variant="outlined"
@@ -583,7 +560,7 @@ export default (props) => {
                 >
                   <option />
                   {departments.map((option) => (
-                    <option key={option.ID} value={option.EAAITM}>
+                    <option key={option.ID} value={option.S1STID}>
                       {option.DEPARTMENT}
                     </option>
                   ))}
@@ -594,7 +571,7 @@ export default (props) => {
                   style={{ maxWidth: 100 }}
                   required
                   // disabled={editdisable}
-                  disabled={true}
+                  disabled="true"
                   size="small"
                   id="vMonth"
                   label="Month"
@@ -616,7 +593,7 @@ export default (props) => {
                   style={{ maxWidth: 120 }}
                   required
                   // disabled={editdisable}
-                  disabled={true}
+                  disabled="true"
                   size="small"
                   id="vPlanUnPlan"
                   label="Plan / UnPlan"
@@ -734,7 +711,7 @@ export default (props) => {
                   style={{ maxWidth: 150 }}
                   required
                   // disabled={editdisable}
-                  disabled={true}
+                  disabled="true"
                   size="small"
                   id="vRequestor"
                   label="Requestor"
@@ -932,6 +909,34 @@ export default (props) => {
                   >
                     Submit PH
                   </Button>
+
+                  {/* <Button
+                    // fullWidth
+                    size="medium"
+                    id="vCancelPR"
+                    variant="contained"
+                    color="primary"
+                    // style={{ backgroundColor: green[500] }}
+                    startIcon={<DeleteIcon />}
+                    disabled={cancelprdisable}
+                    onClick={handleCancelPR}
+                  >
+                    Reject PR
+                  </Button>
+                </Grid>
+                <Grid className={classes.margin}>
+                  <Button
+                    // fullWidth
+                    size="medium"
+                    id="vCancelPR"
+                    variant="contained"
+                    color="secondary"
+                    startIcon={<SendIcon />}
+                    disabled={cancelprdisable}
+                    onClick={handleSubmitPH}
+                  >
+                    Confirm All
+                  </Button> */}
                 </Grid>
               </Grid>
             </Paper>
@@ -948,7 +953,7 @@ export default (props) => {
     setFieldValue,
     isSubmitting,
   }) => {
-    if (selectedProduct == null) {
+    if (selectedProduct === null) {
       return "";
     }
 
@@ -956,6 +961,7 @@ export default (props) => {
     const itemunits = itemunitReducer.result ? itemunitReducer.result : [];
     const phgroups = phgroupReducer.result ? phgroupReducer.result : [];
     const phbuyers = phbuyerReducer.result ? phbuyerReducer.result : [];
+    const suppliers = supplierReducer.result ? supplierReducer.result : [];
     return (
       <Dialog
         open={openDialog}
@@ -982,25 +988,57 @@ export default (props) => {
                   size="small"
                   id="vItemNoAuto"
                   options={items}
-                  getOptionLabel={(option) => option.MMITNO}
-                  value={itemprdetail.vItemNo}
+                  getOptionLabel={(option) => option.ITEM}
+                  value={itemprdetail.vItemDesc2}
                   values={(values.vItemNo = itemprdetail.vItemNo)}
                   onChange={(event, values) => {
                     // console.log(values);
                     if (values) {
+                      // console.log(
+                      //   "Price: " +
+                      //     values.MMPUPR +
+                      //     " : Order Type: " +
+                      //     values.MBORTY +
+                      //     " Currency: " +
+                      //     values.MMCUCD
+                      // );
+
                       setItemPRDetail({
                         ...itemprdetail,
                         vQty: "",
                         vTotal: "",
-                        vItemNo: { MMITNO: values.MMITNO },
+                        // vItemNo: { MMITNO: values.MMITNO },
+                        vItemNo: values.MMITNO,
+                        vItemDesc1: values.MMITDS,
+                        vItemDesc2: { ITEM: values.ITEM },
+                        vUnit: values.MMUNMS,
+                        vSupplierNo: values.MMSUNO,
+                        vSupplierName: values.SASUNM,
+                        vSupplierDesc: { SUPPLIER: values.SUPPLIER },
+                        vPrice: values.MMPUPR,
+                        vVat: values.MMVTCS,
+                        vCurrency: values.MMCUCD,
+                        vOrdertype: values.MBORTY,
                       });
                       dispatch(itemunitActions.getItemUnits(values.MMITNO));
-                      dispatch(
-                        itemprdetailActions.getItems(
-                          prhead.vWarehouse,
-                          values.MMITNO
-                        )
-                      );
+
+                      if (values.MMPUPR < 0) {
+                        setSaveDisable(true);
+                        setConfirmDisable(true);
+                        alert("Price must be enter, Please contact ICT.");
+                      }
+
+                      if (values.MBORTY === "") {
+                        setSaveDisable(true);
+                        setConfirmDisable(true);
+                        alert("Order Type must be enter, Please contact ICT.");
+                      }
+
+                      if (values.MMCUCD === "") {
+                        setSaveDisable(true);
+                        setConfirmDisable(true);
+                        alert("Currency must be enter, Please contact ICT.");
+                      }
                     }
                   }}
                   renderInput={(params) => (
@@ -1102,26 +1140,62 @@ export default (props) => {
               value={itemprdetail.vDateDetail}
               values={(values.vDateDetail = itemprdetail.vDateDetail)}
               onChange={(event) => {
-                // console.log(event.target.value);
-                setItemPRDetail({
-                  ...itemprdetail,
-                  vDateDetail: event.target.value,
-                });
+                var dateNow = new Date();
+                if (event.target.value < moment(dateNow).format("YYYY-MM-DD")) {
+                  alert("Date not less than present day.");
+                } else {
+                  setItemPRDetail({
+                    ...itemprdetail,
+                    vDateDetail: event.target.value,
+                  });
+                }
               }}
               InputLabelProps={{ shrink: true, required: true }}
             />
             <Grid container item xs={12} spacing={2}>
               <Grid item xs={5}>
-                <TextField
+                <Autocomplete
+                  className={classes.margin}
+                  autoFocus
                   required
-                  fullWidth
                   disabled="true"
-                  margin="dense"
-                  id="vSupplierNo"
-                  label="Supplier No"
-                  type="text"
-                  value={itemprdetail.vSupplierNo}
+                  fullWidth
+                  size="small"
+                  id="vSupplierNoAuto"
+                  options={suppliers}
+                  // getOptionLabel={(option) => option.IDSUNO}
+                  // value={itemprdetail.vSupplierNo}
+                  // values={(values.vSupplierNo = itemprdetail.vSupplierNo)}
+                  getOptionLabel={(option) => option.SUPPLIER}
+                  value={itemprdetail.vSupplierDesc}
                   values={(values.vSupplierNo = itemprdetail.vSupplierNo)}
+                  onChange={(event, values) => {
+                    // console.log(values);
+                    if (values) {
+                      setItemPRDetail({
+                        ...itemprdetail,
+                        // vSupplierNo: { IDSUNO: values.IDSUNO },
+                        vSupplierNo: values.IDSUNO,
+                        vSupplierName: values.SASUNM,
+                        vSupplierDesc: { SUPPLIER: values.SUPPLIER },
+                      });
+                      // dispatch(itemunitActions.getItemUnits(values.IDSUNO));
+                      // dispatch(
+                      //   itemprdetailActions.getItems(
+                      //     prhead.vWarehouse,
+                      //     values.MMITNO
+                      //   )
+                      // );
+                    }
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      id="vSupplierNo"
+                      label="Supplier No"
+                      required
+                    />
+                  )}
                 />
               </Grid>
               <Grid item xs>
@@ -1150,6 +1224,16 @@ export default (props) => {
                   type="number"
                   value={itemprdetail.vPrice}
                   values={(values.vPrice = itemprdetail.vPrice)}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
+                    let price = event.target.value;
+                    let qty = itemprdetail.vQty;
+                    setItemPRDetail({
+                      ...itemprdetail,
+                      vPrice: event.target.value,
+                      vTotal: (qty * price).toFixed(4),
+                    });
+                  }}
                 />
               </Grid>
               <Grid item xs>
@@ -1326,9 +1410,9 @@ export default (props) => {
               }}
             >
               <option />
-              {departments.map((option) => (
-                <option key={option.ID} value={option.EAAITM}>
-                  {option.DEPARTMENT}
+              {costcenters.map((option) => (
+                <option key={option.ID} value={option.S2AITM}>
+                  {option.COSTCENTER}
                 </option>
               ))}
             </TextField>
@@ -1357,22 +1441,29 @@ export default (props) => {
               Cancel
             </Button>
             <Button
-              disabled=""
+              disabled={savedisable}
               type="submit"
               color="primary"
-              onSubmit={(event) => {
-                console.log("submit");
+              onClick={(event) => {
+                if (itemprdetail.vItemLine === "") {
+                  setCreate(true);
+                } else {
+                  setUpdate(true);
+                }
               }}
             >
               Save
             </Button>
             <Button
-              disabled=""
+              disabled={confirmdisable}
               type="submit"
               color="secondary"
+              onClick={(event) => {
+                setConfirm(true);
+              }}
               style={{ display: "none" }}
             >
-              Comfirm
+              Confirm
             </Button>
           </DialogActions>
         </form>
@@ -1400,6 +1491,25 @@ export default (props) => {
         </Typography>
       ),
     },
+    // {
+    //   title: "Confirm",
+    //   field: "PR_CONFIRM",
+    //   headerStyle: { maxWidth: 80, whiteSpace: "nowrap", textAlign: "center" },
+    //   cellStyle: {
+    //     textAlign: "center",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       {item.PR_CONFIRM}
+    //     </Typography>
+    //   ),
+    // },
     {
       title: "Item No",
       field: "PR_IBITNO",
@@ -1507,26 +1617,6 @@ export default (props) => {
       ),
     },
     {
-      title: "U/P",
-      field: "PR_IBPUPR",
-      // type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBPUPR}
-        </Typography>
-      ),
-    },
-    {
       title: "Deli. Date",
       field: "PR_IBDWDT",
       type: "date",
@@ -1547,44 +1637,6 @@ export default (props) => {
       ),
     },
     {
-      title: "Supp. No",
-      field: "PR_IBSUNO",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "left",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBSUNO}
-        </Typography>
-      ),
-    },
-    {
-      title: "Supp. Name",
-      field: "SASUNM",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "left",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.SASUNM}
-        </Typography>
-      ),
-    },
-    {
       title: "Order Typ.",
       field: "PR_IBORTY",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
@@ -1600,63 +1652,6 @@ export default (props) => {
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBORTY}
-        </Typography>
-      ),
-    },
-    {
-      title: "Vat.",
-      field: "PR_IBVTCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBVTCD}
-        </Typography>
-      ),
-    },
-    {
-      title: "Total",
-      field: "PR_IBTOTA",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBTOTA}
-        </Typography>
-      ),
-    },
-    {
-      title: "Curr.",
-      field: "PR_IBCUCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBCUCD}
         </Typography>
       ),
     },
@@ -1717,28 +1712,10 @@ export default (props) => {
         </Typography>
       ),
     },
+
     {
-      title: "PR Rem3.",
-      field: "PR_REM3",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "left",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_REM3}
-        </Typography>
-      ),
-    },
-    {
-      title: "PR Rem5.",
-      field: "PR_REM5",
+      title: "U/P",
+      field: "PR_IBPUPR",
       // type: "numeric",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
@@ -1752,10 +1729,144 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_REM5}
+          {item.PR_IBPUPR}
         </Typography>
       ),
     },
+    {
+      title: "Total",
+      field: "PR_IBTOTA",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBTOTA}
+        </Typography>
+      ),
+    },
+    {
+      title: "Vat.",
+      field: "PR_IBVTCD",
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBVTCD}
+        </Typography>
+      ),
+    },
+    {
+      title: "Curr.",
+      field: "PR_IBCUCD",
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBCUCD}
+        </Typography>
+      ),
+    },
+    {
+      title: "Supp. No",
+      field: "PR_IBSUNO",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBSUNO}
+        </Typography>
+      ),
+    },
+    {
+      title: "Supp. Name",
+      field: "SASUNM",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.SASUNM}
+        </Typography>
+      ),
+    },
+    // {
+    //   title: "PR Rem3.",
+    //   field: "PR_REM3",
+    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+    //   cellStyle: {
+    //     textAlign: "left",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       {item.PR_REM3}
+    //     </Typography>
+    //   ),
+    // },
+    // {
+    //   title: "PR Rem5.",
+    //   field: "PR_REM5",
+    //   // type: "numeric",
+    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+    //   cellStyle: {
+    //     textAlign: "right",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       {item.PR_REM5}
+    //     </Typography>
+    //   ),
+    // },
   ];
 
   return (
@@ -1763,8 +1874,7 @@ export default (props) => {
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
-      {/* <p>#Debug itemdetail {JSON.stringify(itemdetail)}</p> */}
-      {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
+      <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
@@ -1791,7 +1901,7 @@ export default (props) => {
           formData.append("vWarehouse", values.vWarehouse);
           formData.append("vDepartment", values.vDepartment);
           formData.append("vMonth", values.vMonth);
-          formData.append("vPlanUnPlan", values.vPlanUnPlan);
+          formData.append("vPlanUnPlan", "5");
           formData.append("vBU", values.vBU);
           formData.append("vCAPNo", values.vCAPNo);
           formData.append(
@@ -1813,6 +1923,7 @@ export default (props) => {
               setEditDisable(true);
               setCreateDisable(true);
               setWhsDisable(true);
+              setDeptDisable(true);
               setPRNumber({ ...prnumber, vPRSelectNumber: "" });
               setPRHead({ ...initialStatePRHead });
               let status = "00";
@@ -1962,16 +2073,16 @@ export default (props) => {
             icon: "edit",
             tooltip: "Edit row",
             onClick: (event, rowData) => {
-              // console.log("rowData: " + JSON.stringify([rowData]));
+              console.log("rowData: " + JSON.stringify([rowData]));
 
               let data = [rowData];
               let phgroup = "PH";
               data.map((item) => {
                 // setItemDetail({ ...itemdetail, MMITNO: item.PR_IBITNO });
-                setItemPRDetail({
-                  ...itemprdetail,
-                  vItemNo: { MMITNO: item.PR_IBITNO },
-                });
+                // setItemPRDetail({
+                //   ...itemprdetail,
+                //   vItemNo: { MMITNO: item.PR_IBITNO },
+                // });
                 // dispatch(itemActions.getItems(prhead.vWarehouse));
                 dispatch(itemunitActions.getItemUnits(item.PR_IBITNO));
                 // dispatch(phgroupActions.getPHGroups(phgroup));
@@ -1979,17 +2090,21 @@ export default (props) => {
               });
 
               setTimeout(() => {
-                data.map((item) =>
+                data.map((item) => {
                   setItemPRDetail({
                     ...itemprdetail,
                     vItemLine: item.PR_IBPLPS,
-                    vItemNo: { MMITNO: item.PR_IBITNO },
+                    // vItemNo: { MMITNO: item.PR_IBITNO },
+                    vItemNo: item.PR_IBITNO,
                     vItemDesc1: item.PR_IBPITT,
+                    vItemDesc2: { ITEM: item.ITEM },
                     vQty: item.PR_IBORQA,
                     vUnit: item.PR_IBPUUN,
                     vDateDetail: item.PR_IBDWDT,
+                    // vSupplierNo: { IDSUNO: item.PR_IBSUNO },
                     vSupplierNo: item.PR_IBSUNO,
                     vSupplierName: item.SASUNM,
+                    vSupplierDesc: { SUPPLIER: item.SUPPLIER },
                     vPrice: item.PR_IBPUPR,
                     vVat: item.PR_IBVTCD,
                     vCurrency: item.PR_IBCUCD,
@@ -1999,8 +2114,8 @@ export default (props) => {
                     vPHGroupDetail: item.PR_IBMODL,
                     vBuyerDetail: item.PR_IBBUYE,
                     vRemarkDetail: item.PR_REM3,
-                  })
-                );
+                  });
+                });
               }, 500);
 
               setSelectedProduct("rowData");
@@ -2038,9 +2153,9 @@ export default (props) => {
           // alert(JSON.stringify(values));
           let formData = new FormData();
           formData.append("vPRNumber", prhead.vPRNumber);
-          formData.append("vPlanUnPlan", prhead.vPlanUnPlan);
+          formData.append("vPlanUnPlan", "5");
           formData.append("vItemLine", itemprdetail.vItemLine);
-          formData.append("vItemNo", values.vItemNo.MMITNO);
+          formData.append("vItemNo", values.vItemNo);
           formData.append("vItemDesc1", values.vItemDesc1);
           formData.append("vQty", values.vQty);
           formData.append("vUnit", values.vUnit);
@@ -2055,24 +2170,38 @@ export default (props) => {
           formData.append("vPHGroupDetail", values.vPHGroupDetail);
           formData.append("vBuyerDetail", values.vBuyerDetail);
           formData.append("vRemarkDetail", values.vRemarkDetail);
+          formData.append("vConfirm", confirm ? "1" : "");
           formData.append("vStatus", "10");
 
-          if (itemprdetail.vItemLine === "") {
-            // console.log("true");
+          if (create) {
+            // console.log("create");
             dispatch(prdetailActions.addPRDetail(formData, props.history));
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });
               dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
               setOpenDialog(false);
             }, 500);
-          } else {
-            // console.log("false");
+            setCreate(false);
+          } else if (update) {
+            // console.log("update");
             dispatch(prdetailActions.updatePRDetail(formData, props.history));
             setTimeout(() => {
               setItemPRDetail({ ...initialStateItemPRDetail });
               dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
               setOpenDialog(false);
             }, 500);
+            setUpdate(false);
+          } else {
+            // console.log("confirm");
+            dispatch(prdetailActions.updatePRDetail(formData, props.history));
+            setTimeout(() => {
+              setItemPRDetail({ ...initialStateItemPRDetail });
+              // let status = "10";
+              // dispatch(prnumberActions.getPRNumbers(status));
+              dispatch(prdetailActions.getPRDetails(prhead.vPRNumber));
+              setOpenDialog(false);
+            }, 500);
+            setConfirm(false);
           }
         }}
       >

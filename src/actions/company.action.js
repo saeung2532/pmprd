@@ -38,7 +38,7 @@ const doGetCompanys = async (dispatch) => {
     dispatch(setStateCompanyToSuccess(result.data));
     // alert(JSON.stringify(result.data));
   } catch (err) {
-    alert(JSON.stringify(err.message));
+    alert(JSON.stringify(err));
     dispatch(setStateCompanyToFailed());
   }
 };
