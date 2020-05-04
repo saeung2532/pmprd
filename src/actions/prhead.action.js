@@ -75,7 +75,7 @@ export const updateStsPRHead = (prno, status) => {
   return async dispatch => {
     try {
       // console.log(formData);
-      await httpClient.delete(`${server.PRSTOCKHEAD_URL}/${prno}/${status}`);
+      await httpClient.put(`${server.PRSTOCKHEAD_URL}/${prno}/${status}`);
       // alert("Update Complete");
       // history.goBack();
     } catch (err) {

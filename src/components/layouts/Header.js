@@ -1,113 +1,128 @@
 import React, { useState } from "react";
+import { Link, withRouter, NavLink } from "react-router-dom";
 import clsx from "clsx";
+import { useSelector, useDispatch } from "react-redux";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import Typography from "@material-ui/core/Typography";
-import * as loginActions from "./../../actions/login.action";
-import Badge from "@material-ui/core/Badge";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import SearchIcon from "@material-ui/icons/Search";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import MoreIcon from "@material-ui/icons/MoreVert";
-import MailIcon from "@material-ui/icons/Mail";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { useSelector, useDispatch } from "react-redux";
-import { withWidth } from "@material-ui/core";
-import { Link, withRouter, NavLink } from "react-router-dom";
+import * as loginActions from "./../../actions/login.action";
 
 const drawerWidth = 240;
-const useStyles = makeStyles(theme => ({
+
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: "flex"
+    display: "flex",
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+      duration: theme.transitions.duration.leavingScreen,
+    }),
   },
   appBarShift: {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   menuButton: {
-    marginRight: 36
+    marginRight: 36,
   },
   hide: {
-    display: "none"
+    display: "none",
   },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
-    whiteSpace: "nowrap"
+    whiteSpace: "nowrap",
   },
-  drawerOpen: {
+  draweropendrawer: {
     width: drawerWidth,
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen
-    })
+      duration: theme.transitions.duration.enteringScreen,
+    }),
   },
   drawerClose: {
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
+      duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: theme.spacing(7) + 1,
+    // width: theme.spacing(7) + 1,
+    width: 0,
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(9) + 1
-    }
+      // width: theme.spacing(9) + 1
+      width: 0,
+    },
   },
   toolbar: {
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-end",
     padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+  },
+  isActive: {
+    backgroundColor: "#e0f5fd",
+    color: "#0080ff",
   },
   sectionDesktop: {
     display: "none",
     [theme.breakpoints.up("md")]: {
-      display: "flex"
-    }
+      display: "flex",
+    },
   },
   sectionMobile: {
     display: "flex",
     [theme.breakpoints.up("md")]: {
-      display: "none"
-    }
+      display: "none",
+    },
   },
   grow: {
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 }));
 
-const Header = props => {
+const MiniDrawer = (props) => {
   const classes = useStyles();
+  const theme = useTheme();
+  const [opendrawer, setOpenDrawer] = useState(false);
+  const [openmenuph, setOpenMenuPH] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const isMenuOpen = Boolean(anchorEl);
+
+  const handleDraweropendrawer = () => {
+    setOpenDrawer(false);
+  };
+
+  const handleDrawerClose = () => {
+    setOpenDrawer(false);
+  };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleProfileMenuOpen = event => {
+  const handleProfileMenuopendrawer = (event) => {
     setAnchorEl(event.currentTarget);
+  };
+
+  const handleClick = () => {
+    setOpenMenuPH(!openmenuph);
   };
 
   const logout = () => {
@@ -117,79 +132,42 @@ const Header = props => {
   };
 
   const menuId = "primary-search-account-menu";
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{ vertical: "top", horizontal: "right" }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={logout}>Logout</MenuItem>
-    </Menu>
-  );
 
   return (
     <div className={classes.root}>
+      <CssBaseline />
       <AppBar
         color={
           process.env.REACT_APP_IS_PRODUCTION == 1 ? "primary" : "secondary"
         }
         position="fixed"
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: props.open
+          [classes.appBarShift]: opendrawer,
         })}
       >
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
-            onClick={props.handleDrawerOpen}
+            aria-label="opendrawer drawer"
+            onClick={handleDraweropendrawer}
             edge="start"
             className={clsx(classes.menuButton, {
-              [classes.hide]: props.open && classes.hide
+              [classes.hide]: opendrawer,
             })}
           >
             <MenuIcon />
           </IconButton>
 
           <Typography variant="h6" noWrap>
-            ePR Systems - Ver 1.0 {process.env.REACT_APP_VERSION}
-            <Typography variant="body1"> Bangkok ranch </Typography>
+            Smart Purchase : Monthly Plan - Ver {process.env.REACT_APP_VERSION}
+            <Typography variant="body1"> Approve </Typography>
           </Typography>
 
           <div className={classes.grow} />
-
-          <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              color="inherit"
-              onClick={event => setAnchorEl(event.currentTarget)}
-            >
-              <AccountCircle />
-            </IconButton>
-          </div>
         </Toolbar>
       </AppBar>
-      {renderMenu}
     </div>
   );
 };
 
-export default withRouter(Header);
+export default withRouter(MiniDrawer);

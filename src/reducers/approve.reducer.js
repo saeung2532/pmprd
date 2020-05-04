@@ -2,13 +2,13 @@ import {
   HTTP_APPROVE_SUCCESS,
   HTTP_APPROVE_FETCHING,
   HTTP_APPROVE_FAILED,
-  HTTP_APPROVE_CLEAR
+  HTTP_APPROVE_CLEAR,
 } from "../constants";
 
 const initialState = {
   result: null,
   isFetching: false,
-  isError: false
+  isError: false,
 };
 
 export default (state = initialState, { type, payload }) => {
@@ -19,7 +19,7 @@ export default (state = initialState, { type, payload }) => {
         ...state,
         result: null,
         isFetching: true,
-        isError: false
+        isError: false,
       });
     case HTTP_APPROVE_FAILED:
       // return { ...state, result: null, isFetching: false, isError: true };
@@ -27,7 +27,7 @@ export default (state = initialState, { type, payload }) => {
         ...state,
         result: null,
         isFetching: false,
-        isError: true
+        isError: true,
       });
     case HTTP_APPROVE_SUCCESS:
       // return { ...state, result: payload, isFetching: false, isError: false };
@@ -35,7 +35,7 @@ export default (state = initialState, { type, payload }) => {
         ...state,
         result: payload,
         isFetching: false,
-        isError: false
+        isError: false,
       });
 
     default:

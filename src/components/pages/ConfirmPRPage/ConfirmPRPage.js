@@ -39,6 +39,7 @@ import * as itemunitActions from "./../../../actions/itemunit.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
 import * as phbuyerActions from "./../../../actions/phbuyer.action";
 import * as supplierActions from "./../../../actions/supplier.action";
+import * as prconfirmbuyerActions from "./../../../actions/prconfirmbuyer.action";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -106,6 +107,9 @@ export default (props) => {
   const phgroupReducer = useSelector(({ phgroupReducer }) => phgroupReducer);
   const phbuyerReducer = useSelector(({ phbuyerReducer }) => phbuyerReducer);
   const supplierReducer = useSelector(({ supplierReducer }) => supplierReducer);
+  const prconfirmbuyerReducer = useSelector(
+    ({ prconfirmbuyerReducer }) => prconfirmbuyerReducer
+  );
   const [prnumber, setPRNumber] = useState({ vPRSelectNumber: "" });
   const initialStatePRHead = {
     vPRNumber: "",
@@ -163,6 +167,7 @@ export default (props) => {
   const [deptdisable, setDeptDisable] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [prconfirmbuyer, setPRConfirmBuyer] = useState(null);
 
   useEffect(() => {
     // console.log("dispatch prnumberbuyerActions");
@@ -180,14 +185,12 @@ export default (props) => {
   useEffect(() => {
     const prheads = prheadReducer.result ? prheadReducer.result : [];
     prheads.map((item) => {
-      setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
-    });
-    prheads.map((item) => {
       dispatch(itemActions.getItems(item.HD_IBWHLO));
       let phgroup = "PH";
       let department = item.HD_IBCOCE;
       dispatch(phgroupActions.getPHGroups(phgroup));
       dispatch(costcenterActions.getCostCenters(department));
+      setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
       setPRHead({
         ...prhead,
         vPRNumber: item.HD_IBPLPN,
@@ -210,6 +213,28 @@ export default (props) => {
       });
     });
   }, [prheadReducer]);
+
+  useEffect(() => {
+    const prconfirmbuyers = prconfirmbuyerReducer.result
+      ? prconfirmbuyerReducer.result
+      : [];
+    prconfirmbuyers.map((item) => {
+      console.log("PR_CONFIRM: " + item.PR_CONFIRM);
+      setPRConfirmBuyer(item.PR_CONFIRM);
+      if (item.PR_CONFIRM === 0) {
+        console.log("prconfirm: true");
+        let statusprnumber = "10";
+        dispatch(prnumberbuyerActions.getPRNumbers(statusprnumber));
+        let statusprhead = "20";
+        dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, statusprhead));
+        prheadReducer.result = null;
+        prdetailbuyerReducer.result = null;
+        setPRHead({
+          ...initialStatePRHead,
+        });
+      }
+    });
+  }, [prconfirmbuyerReducer]);
 
   const prnumberbuyers = useMemo(() =>
     prnumberbuyerReducer.result ? prnumberbuyerReducer.result : []
@@ -238,7 +263,7 @@ export default (props) => {
       setPRHead({
         ...initialStatePRHead,
       });
-      dispatch(prdetailbuyerActions.getPRDetails("00"));
+      dispatch(prdetailbuyerActions.getPRDetails("0"));
     } else {
       setNewDisable(true);
       setEditDisable(false);
@@ -291,7 +316,7 @@ export default (props) => {
     setCancelPRDisable(true);
     setWhsDisable(true);
     setDeptDisable(true);
-    let status = "99";
+    let status = "00";
     dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
     setTimeout(() => {
       setCancelPRDisable(true);
@@ -299,7 +324,7 @@ export default (props) => {
       setPRHead({ ...initialStatePRHead });
       dispatch(prnumberbuyerActions.getPRNumbers("00"));
       dispatch(prdetailbuyerActions.getPRDetails("00"));
-      alert("Cancel Complete");
+      alert("Reject Complete");
     }, 500);
   };
 
@@ -1500,6 +1525,9 @@ export default (props) => {
               color="secondary"
               onClick={(event) => {
                 setConfirm(true);
+                // dispatch(
+                //   prconfirmbuyerActions.getPRConfirmBuyers(prhead.vPRNumber)
+                // );
               }}
               style={{ display: "" }}
             >
@@ -1914,10 +1942,11 @@ export default (props) => {
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
-      <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
+      {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}
+      {/* <p>#Debug prconfirmbuyer {JSON.stringify(prconfirmbuyer)}</p> */}
       <Formik
         initialValues={{
           vPRNumber: "",
@@ -2246,6 +2275,9 @@ export default (props) => {
               // let status = "10";
               // dispatch(prnumberbuyerActions.getPRNumbers(status));
               dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
+              dispatch(
+                prconfirmbuyerActions.getPRConfirmBuyers(prhead.vPRNumber)
+              );
               setOpenDialog(false);
             }, 500);
             setConfirm(false);
