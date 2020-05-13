@@ -1874,7 +1874,7 @@ export default (props) => {
       {/* Grid */}
       {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
-      <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p>
+      {/* <p>#Debug itemprdetail {JSON.stringify(itemprdetail)}</p> */}
       {/* <p>#Debug editdisable {JSON.stringify(editdisable)}</p> */}
       {/* <p>#Debug warehouse {JSON.stringify(warehouse)}</p> */}
       {/* <p>#Debug approves {JSON.stringify(approve)}</p> */}

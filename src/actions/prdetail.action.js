@@ -43,6 +43,27 @@ const doGetPRDetails = async (dispatch, prno) => {
   }
 };
 
+export const getPRDetailApproves = (cono, divi, prno) => {
+  return async (dispatch) => {
+    // console.log("PR: " + prno);
+    dispatch(setStatePRDetailToFetching());
+    doGetPRDetailApproves(dispatch, cono, divi, prno);
+  };
+};
+
+const doGetPRDetailApproves = async (dispatch, cono, divi, prno) => {
+  try {
+    let result = await httpClient.get(
+      `${server.PRSTOCKDETAILAPPROVE_URL}/${cono}/${divi}/${prno}`
+    );
+    // alert(JSON.stringify(result.data));
+    dispatch(setStatePRDetailToSuccess(result.data));
+  } catch (err) {
+    // alert(JSON.stringify(err));
+    dispatch(setStatePRDetailToFailed());
+  }
+};
+
 export const addPRDetail = (formData, history) => {
   return async (dispatch) => {
     try {

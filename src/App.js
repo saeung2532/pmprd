@@ -113,7 +113,12 @@ export default function App() {
         <PrivateRoute exact path="/" component={HomePage} />
         <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
         <PrivateRoute exact path="/confirm_pr" component={ConfirmPRPage} />
-        <PublicRoute exact path="/approve" component={ApprovePage} />
+        <PublicRoute
+          exact
+          // path="/approve"
+          path="/approve/:cono/:divi/:prno/:status/:approve"
+          component={ApprovePage}
+        />
         {/* The Default not found component */}
         {/* <Route render={(props) => <Redirect to="/" />} /> */}
       </Switch>

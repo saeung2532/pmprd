@@ -4,28 +4,28 @@ import {
   HTTP_PRHEAD_FETCHING,
   HTTP_PRHEAD_FAILED,
   HTTP_PRHEAD_CLEAR,
-  server
+  server,
 } from "../constants";
 
-export const setStatePRHeadToSuccess = payload => ({
+export const setStatePRHeadToSuccess = (payload) => ({
   type: HTTP_PRHEAD_SUCCESS,
-  payload
+  payload,
 });
 
 const setStatePRHeadToFetching = () => ({
-  type: HTTP_PRHEAD_FETCHING
+  type: HTTP_PRHEAD_FETCHING,
 });
 
 const setStatePRHeadToFailed = () => ({
-  type: HTTP_PRHEAD_FAILED
+  type: HTTP_PRHEAD_FAILED,
 });
 
 const setStatePRHeadToClear = () => ({
-  type: HTTP_PRHEAD_CLEAR
+  type: HTTP_PRHEAD_CLEAR,
 });
 
 export const getPRHeads = (prno, status) => {
-  return async dispatch => {
+  return async (dispatch) => {
     // console.log("PR: " + prno + " STS: " + status);
     dispatch(setStatePRHeadToFetching());
     doGetPRHeads(dispatch, prno, status);
@@ -46,7 +46,7 @@ const doGetPRHeads = async (dispatch, prno, status) => {
 };
 
 export const addPRHead = (formData, history) => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
       // console.log(formData);
       let result = await httpClient.post(server.PRSTOCKHEAD_URL, formData);
@@ -59,7 +59,7 @@ export const addPRHead = (formData, history) => {
 };
 
 export const updatePRHead = (formData, history) => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
       // console.log(formData);
       await httpClient.put(server.PRSTOCKHEAD_URL, formData);
@@ -72,7 +72,7 @@ export const updatePRHead = (formData, history) => {
 };
 
 export const updateStsPRHead = (prno, status) => {
-  return async dispatch => {
+  return async (dispatch) => {
     try {
       // console.log(formData);
       await httpClient.put(`${server.PRSTOCKHEAD_URL}/${prno}/${status}`);

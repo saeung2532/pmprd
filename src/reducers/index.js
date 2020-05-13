@@ -11,6 +11,7 @@ import loginReducer from "./login.reducer";
 import prnumberReducer from "./prnumber.reducer";
 import prnumberbuyerReducer from "./prnumberbuyer.reducer";
 import prheadReducer from "./prhead.reducer";
+import prheadapproveReducer from "./prheadapprove.reducer";
 import prdetailReducer from "./prdetail.reducer";
 import prdetailbuyerReducer from "./prdetailbuyer.reducer";
 import itemunitReducer from "./itemunit.reducer";
@@ -33,6 +34,7 @@ export default combineReducers({
   prnumberReducer,
   prnumberbuyerReducer,
   prheadReducer,
+  prheadapproveReducer,
   prdetailReducer,
   prdetailbuyerReducer,
   phgroupReducer,
