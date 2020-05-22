@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
 import NumberFormat from "react-number-format";
 import MaterialTable, { MTableToolbar } from "material-table";
+import { Link } from "react-router-dom";
 import {
   makeStyles,
   withStyles,
@@ -10,7 +11,7 @@ import {
   createMuiTheme,
 } from "@material-ui/core/styles";
 import { Typography, Grid, Paper, TextField, Button } from "@material-ui/core";
-import CardMedia from "@material-ui/core/CardMedia";
+import { Card, CardMedia } from "@material-ui/core/";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -76,17 +77,25 @@ export default (props) => {
     vRemark: "",
     vApprove: "",
     vApproveSign: null,
+    vApproveDate: moment(new Date()).format("YYYY-MM-DD"),
     vApprove1: "",
     vApproveSign1: null,
+    vApproveDate1: null,
     vApprove2: "",
     vApproveSign2: null,
+    vApproveDate2: null,
     vApprove3: "",
     vApproveSign3: null,
+    vApproveDate3: null,
     vApprove4: "",
     vApproveSign4: null,
+    vApproveDate4: null,
     vStatus: "",
   };
   const [prhead, setPRHead] = useState(initialStatePRHead);
+  const [reject, setReject] = useState(false);
+  const [approve, setApprove] = useState(false);
+  const [approveDisable, setApproveDisable] = useState(false);
 
   useEffect(() => {
     let params = props.match.params;
@@ -127,25 +136,29 @@ export default (props) => {
         vApprove: item.HD_APP,
         vApproveSign: item.HD_APPSIGN,
         vApprove1: item.HD_APP1,
-        vApproveDate1: item.HD_APPDT1,
         vApproveSign1: item.HD_APPSIGN1,
+        vApproveDate1: moment(item.HD_APPDT1).format("YYYY-MM-DD"),
         vApprove2: item.HD_APP2,
-        vApproveDate2: item.HD_APPDT2,
         vApproveSign2: item.HD_APPSIGN2,
+        vApproveDate2: moment(item.HD_APPDT2).format("YYYY-MM-DD"),
         vApprove3: item.HD_APP3,
-        vApproveDate3: item.HD_APPDT3,
         vApproveSign3: item.HD_APPSIGN3,
+        vApproveDate3: moment(item.HD_APPDT3).format("YYYY-MM-DD"),
         vApprove4: item.HD_APP4,
-        vApproveDate4: item.HD_APPDT4,
         vApproveSign4: item.HD_APPSIGN4,
+        vApproveDate4: moment(item.HD_APPDT4).format("YYYY-MM-DD"),
         vStatus: item.HD_STATUS,
       });
+      // console.log("item.HD_APPCK: " + item.HD_APPCK);
+      if (item.HD_APPCK > 0) {
+        setApproveDisable(true);
+      } else {
+        setApproveDisable(false);
+      }
     });
-    // console.log(prhead.vApproveSign1);
   }, [prheadapproveReducer]);
 
   // const Example = ({ data }) => <img src={`data:image/jpeg;base64,${data}`} />;
-
   // const img = <img src={`data:image/jpeg;base64,${data}`} />;
 
   const showForm = ({
@@ -347,8 +360,8 @@ export default (props) => {
                     id="vApproveDate1"
                     label="ApproveDate 1"
                     variant="outlined"
-                    // defaultValue={prhead.vDate}
-                    // value={prhead.vDate}
+                    defaultValue={prhead.vApproveDate1}
+                    value={prhead.vApproveDate1}
                     InputLabelProps={{ shrink: true, required: true }}
                   />
                 </Grid>
@@ -363,8 +376,8 @@ export default (props) => {
                     id="vApproveDate2"
                     label="ApproveDate 2"
                     variant="outlined"
-                    // defaultValue={prhead.vDate}
-                    // value={prhead.vDate}
+                    defaultValue={prhead.vApproveDate4}
+                    value={prhead.vApproveDate2}
                     InputLabelProps={{ shrink: true, required: true }}
                   />
                 </Grid>
@@ -379,8 +392,8 @@ export default (props) => {
                     id="vApproveDate3"
                     label="ApproveDate 3"
                     variant="outlined"
-                    // defaultValue={prhead.vDate}
-                    // value={prhead.vDate}
+                    defaultValue={prhead.vApproveDate4}
+                    value={prhead.vApproveDate3}
                     InputLabelProps={{ shrink: true, required: true }}
                   />
                 </Grid>
@@ -395,8 +408,8 @@ export default (props) => {
                     id="vApproveDate4"
                     label="ApproveDate 4"
                     variant="outlined"
-                    // defaultValue={prhead.vDate}
-                    // value={prhead.vDate}
+                    defaultValue={prhead.vApproveDate4}
+                    value={prhead.vApproveDate4}
                     InputLabelProps={{ shrink: true, required: true }}
                   />
                 </Grid>
@@ -406,40 +419,78 @@ export default (props) => {
                 <Grid item xs={12} sm={3}>
                   {/* <Example data={data} />
                 <img src={`data:image/jpeg;base64,${data}`} /> */}
-                  <CardMedia
-                    className={classes.media}
-                    image={`data:image/jpeg;base64,${prhead.vApproveSign1}`}
-                    title="Paella dish"
-                  />
+                  <Card>
+                    <CardMedia
+                      className={classes.media}
+                      image={`data:image/jpeg;base64,${prhead.vApproveSign1}`}
+                      title="Paella dish"
+                    />
+                  </Card>
+                </Grid>
+
+                <Grid item xs={12} sm={3} spacing={2}>
+                  <Card>
+                    <CardMedia
+                      className={classes.media}
+                      image={`data:image/jpeg;base64,${prhead.vApproveSign2}`}
+                      title="Paella dish"
+                    />
+                  </Card>
                 </Grid>
                 <Grid item xs={12} sm={3} spacing={2}>
-                  <CardMedia
-                    className={classes.media}
-                    image={`data:image/jpeg;base64,${prhead.vApproveSign2}`}
-                    title="Paella dish"
-                  />
+                  <Card>
+                    <CardMedia
+                      className={classes.media}
+                      image={`data:image/jpeg;base64,${prhead.vApproveSign3}`}
+                      title="Paella dish"
+                    />
+                  </Card>
                 </Grid>
                 <Grid item xs={12} sm={3} spacing={2}>
-                  <CardMedia
-                    className={classes.media}
-                    image={`data:image/jpeg;base64,${prhead.vApproveSign3}`}
-                    title="Paella dish"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3} spacing={2}>
-                  <CardMedia
-                    className={classes.media}
-                    image={`data:image/jpeg;base64,${prhead.vApproveSign4}`}
-                    title="Paella dish"
-                  />
+                  <Card>
+                    <CardMedia
+                      className={classes.media}
+                      image={`data:image/jpeg;base64,${prhead.vApproveSign4}`}
+                      title="Paella dish"
+                    />
+                  </Card>
                 </Grid>
               </Grid>
               <br />
               <MaterialTable
                 id="root_prstock"
-                title={`Plan PR :`}
+                title={`Plan PR : ${prhead.vStatus}`}
                 columns={columns}
                 data={prdetailReducer.result ? prdetailReducer.result : []}
+                components={{
+                  Toolbar: (props) => (
+                    <div>
+                      <MTableToolbar {...props} />
+                      <Link
+                        to="chart"
+                        target="_blank"
+                        style={{ textDecoration: "none" }}
+                      >
+                        <Button
+                          fullWidth
+                          variant="contained"
+                          color="primary"
+                          // type="submit"
+                          // component={Link}
+                          // to="/stock/create"
+                          startIcon={<SearchIcon />}
+                          // onClick={(event, rowData) => {
+                          //   // setSelectedProduct("rowData");
+                          //   // setOpenDialog(true);
+                          // }}
+                        >
+                          View PR
+                        </Button>
+                      </Link>
+                    </div>
+                  ),
+                }}
+                options={{ paging: false }}
               />
               <br />
               <Grid
@@ -451,18 +502,20 @@ export default (props) => {
                 xs={12}
                 spacing={2}
               >
-                {/* <Grid item xs={5}></Grid> */}
                 <Grid item xs={12} sm={3} spacing={2}>
-                  <CardMedia
-                    className={classes.media}
-                    image={`data:image/jpeg;base64,${prhead.vApproveSign}`}
-                    title="Paella dish"
-                  />
+                  <Card>
+                    <CardMedia
+                      className={classes.media}
+                      image={`data:image/jpeg;base64,${prhead.vApproveSign}`}
+                      title="Paella dish"
+                    />
+                    {`${prhead.vApprove}`}
+                  </Card>
                 </Grid>
-                {/* <Grid item xs={5}></Grid> */}
               </Grid>
 
               <Grid
+                className={classes.margin}
                 container
                 direction="row"
                 justify="center"
@@ -473,12 +526,15 @@ export default (props) => {
               >
                 <Grid className={classes.margin}>
                   <Button
+                    style={{ width: "100px" }}
+                    disabled={approveDisable}
+                    type="submit"
                     size="small"
                     variant="contained"
                     color="primary"
                     startIcon={<SendIcon />}
                     onClick={(event, rowData) => {
-                      // let phgroup = "PH";
+                      setApprove(true);
                       // setSelectedProduct("rowData");
                       // setOpenDialog(true);
                       // dispatch(itemActions.getItems(prhead.vWarehouse));
@@ -490,12 +546,48 @@ export default (props) => {
                 </Grid>
 
                 <Grid className={classes.margin}>
+                  {/* <TextField
+                    style={{ width: "200px" }}
+                    placeholder="Reason"
+                  ></TextField> */}
+                  <TextField
+                    style={{ width: "200px" }}
+                    required
+                    fullWidth
+                    disabled="true"
+                    margin="dense"
+                    type="date"
+                    size="small"
+                    id="vApproveDate"
+                    label="Approve Date"
+                    variant="standard"
+                    defaultValue={prhead.vApproveDate}
+                    value={prhead.vApproveDate}
+                    InputLabelProps={{ shrink: true, required: true }}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid
+                className={classes.margin}
+                container
+                direction="row"
+                justify="center"
+                alignItems="center"
+                item
+                xs={12}
+                spacing={2}
+              >
+                <Grid className={classes.margin}>
                   <Button
+                    style={{ width: "100px" }}
+                    type="submit"
                     size="small"
                     variant="contained"
                     color="secondary"
                     startIcon={<DeleteIcon />}
                     onClick={(event, rowData) => {
+                      setReject(true);
                       // let phgroup = "PH";
                       // setSelectedProduct("rowData");
                       // setOpenDialog(true);
@@ -508,10 +600,7 @@ export default (props) => {
                 </Grid>
 
                 <Grid className={classes.margin}>
-                  <TextField
-                    style={{ width: "200px" }}
-                    placeholder="Reason"
-                  ></TextField>
+                  <TextField style={{ width: "200px" }} placeholder="Reason" />
                 </Grid>
               </Grid>
             </Paper>
@@ -599,12 +688,12 @@ export default (props) => {
       ),
     },
     {
-      title: "Stock Rem.",
-      field: "MBSTQT",
-      // type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
+      title: "Deli. Date",
+      field: "PR_IBDWDT",
+      type: "date",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "right",
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -614,10 +703,30 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.MBSTQT}
+          {item.PR_IBDWDT ? moment(item.PR_IBDWDT).format("DD/MM/YYYY") : ""}
         </Typography>
       ),
     },
+    // {
+    //   title: "Stock Rem.",
+    //   field: "MBSTQT",
+    //   // type: "numeric",
+    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
+    //   cellStyle: {
+    //     textAlign: "right",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       {item.MBSTQT}
+    //     </Typography>
+    //   ),
+    // },
     {
       title: "Qty",
       field: "PR_IBORQA",
@@ -639,10 +748,9 @@ export default (props) => {
       ),
     },
     {
-      title: "Deli. Date",
-      field: "PR_IBDWDT",
-      type: "date",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      title: "Vat.",
+      field: "PR_IBVTCD",
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "center",
         borderLeft: 1,
@@ -654,7 +762,141 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {moment(item.PR_IBDWDT).format("DD/MM/YYYY")}
+          {item.PR_IBVTCD}
+        </Typography>
+      ),
+    },
+    {
+      title: "U/P",
+      field: "PR_IBPUPR",
+      // type: "numeric",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBPUPR}
+        </Typography>
+      ),
+    },
+    {
+      title: "Sub Total",
+      field: "PR_IBTOTA",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBTOTA}
+        </Typography>
+      ),
+    },
+    {
+      title: "Vat Amt",
+      field: "PR_VTCHARGE",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_VTCHARGE}
+        </Typography>
+      ),
+    },
+    {
+      title: "Total",
+      field: "PR_IBTOTA2",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBTOTA2}
+        </Typography>
+      ),
+    },
+    {
+      title: "Curr.",
+      field: "PR_IBCUCD",
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBCUCD}
+        </Typography>
+      ),
+    },
+    {
+      title: "Supp. No",
+      field: "PR_IBSUNO",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBSUNO}
+        </Typography>
+      ),
+    },
+    {
+      title: "Supp. Name",
+      field: "SASUNM",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.SASUNM}
         </Typography>
       ),
     },
@@ -734,128 +976,48 @@ export default (props) => {
         </Typography>
       ),
     },
-
-    {
-      title: "U/P",
-      field: "PR_IBPUPR",
-      // type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBPUPR}
-        </Typography>
-      ),
-    },
-    {
-      title: "Total",
-      field: "PR_IBTOTA",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBTOTA}
-        </Typography>
-      ),
-    },
-    {
-      title: "Vat.",
-      field: "PR_IBVTCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBVTCD}
-        </Typography>
-      ),
-    },
-    {
-      title: "Curr.",
-      field: "PR_IBCUCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBCUCD}
-        </Typography>
-      ),
-    },
-    {
-      title: "Supp. No",
-      field: "PR_IBSUNO",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "left",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBSUNO}
-        </Typography>
-      ),
-    },
-    {
-      title: "Supp. Name",
-      field: "SASUNM",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "left",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.SASUNM}
-        </Typography>
-      ),
-    },
   ];
 
   return (
     <div className={classes.root}>
-      {/* <p>#Debug prheadapprove {JSON.stringify(prheadapproveReducer)}</p> */}
-      <Formik>{(props) => showForm(props)}</Formik>
+      {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
+      <Formik
+        initialValues={{
+          vPRNumber: prhead.vPRNumber,
+          vApprove: "",
+          vApproveSign: null,
+          vApproveDate: moment(new Date()).format("YYYY-MM-DD"),
+          vStatus: prhead.vStatus,
+        }}
+        onSubmit={(values, { setSubmitting }) => {
+          // alert(JSON.stringify(values));
+          let formData = new FormData();
+          let params = props.match.params;
+          formData.append("vCono", params.cono);
+          formData.append("vDivi", params.divi);
+          formData.append("vPRNumber", prhead.vPRNumber);
+          formData.append("vApprove", prhead.vApprove);
+          // formData.append("vApproveSign", prhead.vApproveSign);
+          formData.append("vApproveDate", prhead.vApproveDate);
+          formData.append("vStatus", prhead.vStatus);
+
+          if (approve) {
+            console.log("approve");
+            dispatch(prheadapproveActions.approvePRHead(formData));
+            // setTimeout(() => {
+            //   setItemPRDetail({ ...initialStateItemPRDetail });
+            //   dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
+            //   setOpenDialog(false);
+            // }, 500);
+            setApprove(false);
+          } else {
+            console.log("reject");
+            setReject(false);
+          }
+        }}
+      >
+        {(props) => showForm(props)}
+      </Formik>
     </div>
   );
 };

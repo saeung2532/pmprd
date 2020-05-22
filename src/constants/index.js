@@ -189,6 +189,8 @@ export const server = {
   PRSTOCKDETAILAPPROVE_URL: `api_data/prdetailapprove`,
   PRSTOCKDETAILBUYER_URL: `api_data/prdetailbuyer`,
   PRCONFIRMBUYER_URL: `api_data/prconfirmbuyer`,
+  PRAPPROVE_URL: `api_data/prapprove`,
+  PRREJECT_URL: `api_data/prreject`,
 
   REFRESH_TOKEN_URL: `refresh/token`,
   REGISTER_URL: `register`,

@@ -51,3 +51,27 @@ const doGetPRHeadApproves = async (
     dispatch(setStatePRHeadApproveToFailed());
   }
 };
+
+export const approvePRHead = (formData, history) => {
+  return async (dispatch) => {
+    try {
+      await httpClient.put(server.PRAPPROVE_URL, formData);
+      alert("Approve Complete");
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};
+
+export const rejectPRHead = (formData, history) => {
+  return async (dispatch) => {
+    try {
+      await httpClient.put(server.PRAPPROVE_URL, formData);
+      alert("Reject Complete");
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};
