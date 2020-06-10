@@ -106,7 +106,7 @@ export default function App() {
 
   return (
     <Router
-      basename={process.env.REACT_APP_IS_PRODUCTION == 1 ? "/monthlyplan" : ""}
+      basename={process.env.REACT_APP_IS_PRODUCTION === 1 ? "/monthlyplan" : ""}
     >
       <Switch>
         <LoginRoute exact path="/login" component={LoginPage} />

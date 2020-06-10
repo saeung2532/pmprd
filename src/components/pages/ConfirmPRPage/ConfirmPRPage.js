@@ -219,10 +219,10 @@ export default (props) => {
       ? prconfirmbuyerReducer.result
       : [];
     prconfirmbuyers.map((item) => {
-      console.log("PR_CONFIRM: " + item.PR_CONFIRM);
+      // console.log("PR_CONFIRM: " + item.PR_CONFIRM);
       setPRConfirmBuyer(item.PR_CONFIRM);
       if (item.PR_CONFIRM === 0) {
-        console.log("prconfirm: true");
+        // console.log("prconfirm: true");
         let statusprnumber = "10";
         dispatch(prnumberbuyerActions.getPRNumbers(statusprnumber));
         let statusprhead = "20";

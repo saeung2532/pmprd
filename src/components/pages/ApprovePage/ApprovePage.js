@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import moment from "moment";
 import NumberFormat from "react-number-format";
 import MaterialTable, { MTableToolbar } from "material-table";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import {
   makeStyles,
   withStyles,
@@ -62,6 +62,14 @@ export default (props) => {
   );
   const prdetailReducer = useSelector(({ prdetailReducer }) => prdetailReducer);
 
+  const initialStateParams = {
+    cono: "",
+    divi: "",
+    prno: "",
+    status: "",
+    approve: "",
+  };
+  const [params, setParams] = useState(initialStateParams);
   const initialStatePRHead = {
     vPRNumber: "",
     vDate: "",
@@ -95,11 +103,20 @@ export default (props) => {
   const [prhead, setPRHead] = useState(initialStatePRHead);
   const [reject, setReject] = useState(false);
   const [approve, setApprove] = useState(false);
-  const [approveDisable, setApproveDisable] = useState(false);
+  const [approveDisable, setApproveDisable] = useState(true);
+  const [rejectDisable, setRejectDisable] = useState(true);
 
   useEffect(() => {
     let params = props.match.params;
-    console.log(params);
+    let statusDetail = "10";
+    // console.log(params);
+    setParams({
+      cono: params.cono,
+      divi: params.divi,
+      prno: params.prno,
+      status: params.status,
+      approve: params.approve,
+    });
     dispatch(
       prheadapproveActions.getPRHeadApproves(
         params.cono,
@@ -109,15 +126,31 @@ export default (props) => {
         params.approve
       )
     );
+
     dispatch(
-      prdetailActions.getPRDetailApproves(params.cono, params.divi, params.prno)
+      prdetailActions.getPRDetailApproves(
+        params.cono,
+        params.divi,
+        params.prno,
+        statusDetail
+      )
     );
+
+    // console.log("prheadapproves: " + prheadapproveReducer.result);
+    if (prheadapproveReducer.result === null) {
+      setApproveDisable(true);
+      setRejectDisable(true);
+    } else {
+      setApproveDisable(false);
+      setRejectDisable(false);
+    }
   }, []);
 
   useEffect(() => {
     const prheadapproves = prheadapproveReducer.result
       ? prheadapproveReducer.result
       : [];
+
     prheadapproves.map((item) => {
       setPRHead({
         ...prhead,
@@ -152,11 +185,15 @@ export default (props) => {
       // console.log("item.HD_APPCK: " + item.HD_APPCK);
       if (item.HD_APPCK > 0) {
         setApproveDisable(true);
+        setRejectDisable(true);
       } else {
         setApproveDisable(false);
+        setRejectDisable(false);
       }
     });
   }, [prheadapproveReducer]);
+
+  const viewPR = () => {};
 
   // const Example = ({ data }) => <img src={`data:image/jpeg;base64,${data}`} />;
   // const img = <img src={`data:image/jpeg;base64,${data}`} />;
@@ -457,6 +494,7 @@ export default (props) => {
                 </Grid>
               </Grid>
               <br />
+
               <MaterialTable
                 id="root_prstock"
                 title={`Plan PR : ${prhead.vStatus}`}
@@ -466,8 +504,8 @@ export default (props) => {
                   Toolbar: (props) => (
                     <div>
                       <MTableToolbar {...props} />
-                      <Link
-                        to="chart"
+                      <a
+                        href={`${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`}
                         target="_blank"
                         style={{ textDecoration: "none" }}
                       >
@@ -475,18 +513,12 @@ export default (props) => {
                           fullWidth
                           variant="contained"
                           color="primary"
-                          // type="submit"
-                          // component={Link}
-                          // to="/stock/create"
                           startIcon={<SearchIcon />}
-                          // onClick={(event, rowData) => {
-                          //   // setSelectedProduct("rowData");
-                          //   // setOpenDialog(true);
-                          // }}
+                          onClick={viewPR}
                         >
                           View PR
                         </Button>
-                      </Link>
+                      </a>
                     </div>
                   ),
                 }}
@@ -581,6 +613,7 @@ export default (props) => {
                 <Grid className={classes.margin}>
                   <Button
                     style={{ width: "100px" }}
+                    disabled={rejectDisable}
                     type="submit"
                     size="small"
                     variant="contained"
@@ -981,6 +1014,7 @@ export default (props) => {
   return (
     <div className={classes.root}>
       {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
+      {/* <p>#Debug params {JSON.stringify(params)}</p> */}
       <Formik
         initialValues={{
           vPRNumber: prhead.vPRNumber,
@@ -992,7 +1026,6 @@ export default (props) => {
         onSubmit={(values, { setSubmitting }) => {
           // alert(JSON.stringify(values));
           let formData = new FormData();
-          let params = props.match.params;
           formData.append("vCono", params.cono);
           formData.append("vDivi", params.divi);
           formData.append("vPRNumber", prhead.vPRNumber);
@@ -1002,18 +1035,42 @@ export default (props) => {
           formData.append("vStatus", prhead.vStatus);
 
           if (approve) {
-            console.log("approve");
+            // console.log("approve");
             dispatch(prheadapproveActions.approvePRHead(formData));
-            // setTimeout(() => {
-            //   setItemPRDetail({ ...initialStateItemPRDetail });
-            //   dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
-            //   setOpenDialog(false);
-            // }, 500);
+            setTimeout(() => {
+              dispatch(prheadapproveActions.checkApprovePRHead(formData));
+            }, 1000);
             setApprove(false);
           } else {
-            console.log("reject");
+            // console.log("reject");
+            dispatch(prheadapproveActions.rejectPRHead(formData));
+            setTimeout(() => {
+              setPRHead({ ...initialStatePRHead });
+              let statusDetail = "10";
+              dispatch(
+                prdetailActions.getPRDetailApproves(
+                  params.cono,
+                  params.divi,
+                  params.prno,
+                  statusDetail
+                )
+              );
+            }, 1000);
+
             setReject(false);
           }
+
+          setTimeout(() => {
+            dispatch(
+              prheadapproveActions.getPRHeadApproves(
+                params.cono,
+                params.divi,
+                params.prno,
+                params.status,
+                params.approve
+              )
+            );
+          }, 1000);
         }}
       >
         {(props) => showForm(props)}

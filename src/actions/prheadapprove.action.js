@@ -55,8 +55,20 @@ const doGetPRHeadApproves = async (
 export const approvePRHead = (formData, history) => {
   return async (dispatch) => {
     try {
-      await httpClient.put(server.PRAPPROVE_URL, formData);
-      alert("Approve Complete");
+      let result = await httpClient.put(server.PRAPPROVE_URL, formData);
+      alert(JSON.stringify(result.data));
+      // history.goBack();
+    } catch (err) {
+      alert(JSON.stringify(err));
+    }
+  };
+};
+
+export const checkApprovePRHead = (formData, history) => {
+  return async (dispatch) => {
+    try {
+      let result = await httpClient.put(server.CHECKPRAPPROVE_URL, formData);
+      // alert(JSON.stringify(result.data));
       // history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));
@@ -67,8 +79,8 @@ export const approvePRHead = (formData, history) => {
 export const rejectPRHead = (formData, history) => {
   return async (dispatch) => {
     try {
-      await httpClient.put(server.PRAPPROVE_URL, formData);
-      alert("Reject Complete");
+      let result = await httpClient.put(server.PRREJECT_URL, formData);
+      // alert(JSON.stringify(result.data));
       // history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));

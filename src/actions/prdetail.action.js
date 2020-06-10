@@ -43,18 +43,18 @@ const doGetPRDetails = async (dispatch, prno) => {
   }
 };
 
-export const getPRDetailApproves = (cono, divi, prno) => {
+export const getPRDetailApproves = (cono, divi, prno, status) => {
   return async (dispatch) => {
     // console.log("PR: " + prno);
     dispatch(setStatePRDetailToFetching());
-    doGetPRDetailApproves(dispatch, cono, divi, prno);
+    doGetPRDetailApproves(dispatch, cono, divi, prno, status);
   };
 };
 
-const doGetPRDetailApproves = async (dispatch, cono, divi, prno) => {
+const doGetPRDetailApproves = async (dispatch, cono, divi, prno, status) => {
   try {
     let result = await httpClient.get(
-      `${server.PRSTOCKDETAILAPPROVE_URL}/${cono}/${divi}/${prno}`
+      `${server.PRSTOCKDETAILAPPROVE_URL}/${cono}/${divi}/${prno}/${status}`
     );
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRDetailToSuccess(result.data));
