@@ -19,6 +19,8 @@ import phgroupReducer from "./phgroup.reducer";
 import phbuyerReducer from "./phbuyer.reducer";
 import supplierReducer from "./supplier.reducer";
 import prconfirmbuyerReducer from "./prconfirmbuyer.reducer";
+import monthReducer from "./month.reducer";
+import statusReducer from "./status.reducer";
 
 export default combineReducers({
   companyReducer,
@@ -41,4 +43,6 @@ export default combineReducers({
   phbuyerReducer,
   supplierReducer,
   prconfirmbuyerReducer,
+  monthReducer,
+  statusReducer,
 });

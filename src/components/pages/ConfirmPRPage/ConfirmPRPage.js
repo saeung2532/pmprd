@@ -1020,7 +1020,7 @@ export default (props) => {
     setFieldValue,
     isSubmitting,
   }) => {
-    if (selectedProduct == null) {
+    if (selectedProduct === null) {
       return "";
     }
 
@@ -1095,13 +1095,13 @@ export default (props) => {
                         alert("Price must be enter, Please contact ICT.");
                       }
 
-                      if (values.MBORTY == "") {
+                      if (values.MBORTY === "") {
                         setSaveDisable(true);
                         setConfirmDisable(true);
                         alert("Order Type must be enter, Please contact ICT.");
                       }
 
-                      if (values.MMCUCD == "") {
+                      if (values.MMCUCD === "") {
                         setSaveDisable(true);
                         setConfirmDisable(true);
                         alert("Currency must be enter, Please contact ICT.");

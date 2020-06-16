@@ -124,6 +124,18 @@ export const HTTP_PRCONFIRM_FAILED = "HTTP_PRCONFIRM_FAILED";
 export const HTTP_PRCONFIRM_SUCCESS = "HTTP_PRCONFIRM_SUCCESS";
 export const HTTP_PRCONFIRM_CLEAR = "HTTP_PRCONFIRM_CLEAR";
 
+// MONTH
+export const HTTP_MONTH_FETCHING = "HTTP_MONTH_FETCHING";
+export const HTTP_MONTH_FAILED = "HTTP_MONTH_FAILED";
+export const HTTP_MONTH_SUCCESS = "HTTP_MONTH_SUCCESS";
+export const HTTP_MONTH_CLEAR = "HTTP_MONTH_CLEAR";
+
+// STATUS
+export const HTTP_STATUS_FETCHING = "HTTP_STATUS_FETCHING";
+export const HTTP_STATUS_FAILED = "HTTP_STATUS_FAILED";
+export const HTTP_STATUS_SUCCESS = "HTTP_STATUS_SUCCESS";
+export const HTTP_STATUS_CLEAR = "HTTP_STATUS_CLEAR";
+
 // Stock Edit Page
 export const HTTP_STOCK_EDIT_FETCHING = "HTTP_STOCK_EDIT_FETCHING";
 export const HTTP_STOCK_EDIT_SUCCESS = "HTTP_STOCK_EDIT_SUCCESS";
@@ -193,6 +205,10 @@ export const server = {
   PRAPPROVE_URL: `api_data/prapprove`,
   CHECKPRAPPROVE_URL: `api_data/checkprapprove`,
   PRREJECT_URL: `api_data/prreject`,
+  PRNUMBERWITHOUTUSER_URL: `api_data/prnumberwithoutuser`,
+  COSTCENTERWITHOUTDEPARTMENT_URL: `api_data/costcenterwithoutdepartment`,
+  MONTH_URL: `api_data/month`,
+  STATUS_URL: `api_data/status`,
 
   REFRESH_TOKEN_URL: `refresh/token`,
   REGISTER_URL: `register`,

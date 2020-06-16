@@ -42,3 +42,22 @@ const doGetPRNumbers = async (dispatch, status) => {
     dispatch(setStatePRNumberToFailed());
   }
 };
+
+export const getPRNumbersWithOutUser = () => {
+  return async (dispatch) => {
+    dispatch(setStatePRNumberToFetching());
+    doGetPRNumbersWithOutUser(dispatch);
+  };
+};
+
+const doGetPRNumbersWithOutUser = async (dispatch) => {
+  try {
+    let result = await httpClient.get(`${server.PRNUMBERWITHOUTUSER_URL}`);
+    dispatch(setStatePRNumberToSuccess(result.data));
+    // alert(JSON.stringify(result.data));
+  } catch (err) {
+    alert(JSON.stringify(err));
+    localStorage.removeItem(server.TOKEN_KEY);
+    dispatch(setStatePRNumberToFailed());
+  }
+};

@@ -152,6 +152,8 @@ export default (props) => {
   const [cancelprdisable, setCancelPRDisable] = useState(true);
   const [savedisable, setSaveDisable] = useState(false);
   const [confirmdisable, setConfirmDisable] = useState(false);
+  const [editnamedisable, setEditNameDisable] = useState(false);
+  const [newpr, setNewPR] = useState(false);
   const [create, setCreate] = useState(false);
   const [update, setUpdate] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -175,10 +177,11 @@ export default (props) => {
 
   useEffect(() => {
     const prheads = prheadReducer.result ? prheadReducer.result : [];
+    // prheads.map((item) => {
+    //   setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
+    // });
     prheads.map((item) => {
       setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
-    });
-    prheads.map((item) => {
       dispatch(itemActions.getItems(item.HD_IBWHLO));
       let phgroup = "PH";
       let department = item.HD_IBCOCE;
@@ -204,6 +207,14 @@ export default (props) => {
         vApprove4: item.HD_APP4,
         vStatus: item.HD_STATUS,
       });
+
+      if (item.HD_IBWHLO === "A99") {
+        // console.log("Warehouse A99: true");
+        setEditNameDisable(false);
+      } else {
+        // console.log("Warehouse A99: false");
+        setEditNameDisable(true);
+      }
     });
   }, [prheadReducer]);
 
@@ -248,13 +259,24 @@ export default (props) => {
 
   const handleNew = () => {
     setSearchDisable(true);
+    setNewDisable(true);
     setEditDisable(false);
     setCreateDisable(true);
     setWhsDisable(false);
     setDeptDisable(false);
+    setNewPR(true);
+
+    var dateNow = new Date();
+    var futureMonth = moment(dateNow)
+      .add(1, "M")
+      .format("YYYY-MM-DD");
+    // console.log(moment(futureMonth).format("YYYY-MM-DD") + " " + futureMonth.toString().substr(2, 2) + futureMonth.toString().substr(5, 2));
+
     setPRHead({
       ...initialStatePRHead,
-      vMonth: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
+      vMonth:
+        futureMonth.toString().substr(2, 2) +
+        futureMonth.toString().substr(5, 2),
       vPlanUnPlan: "Plan",
     });
   };
@@ -1056,13 +1078,20 @@ export default (props) => {
                   className={classes.margin}
                   // required
                   fullWidth
-                  disabled="true"
+                  disabled={editnamedisable}
                   margin="dense"
                   id="vItemName"
                   label="Item Name"
                   type="text"
                   value={itemprdetail.vItemDesc1}
                   values={(values.vItemDesc1 = itemprdetail.vItemDesc1)}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
+                    setItemPRDetail({
+                      ...itemprdetail,
+                      vItemDesc1: event.target.value,
+                    });
+                  }}
                 />
               </Grid>
             </Grid>
@@ -1093,9 +1122,8 @@ export default (props) => {
               <Grid item xs>
                 <TextField
                   className={classes.margin}
-                  disabled={editdisable}
+                  disabled={editnamedisable}
                   fullWidth
-                  disabled="true"
                   required
                   select
                   margin="dense"
@@ -1915,7 +1943,7 @@ export default (props) => {
           formData.append("vApprove2", values.vApprove2);
           formData.append("vStatus", prhead.vStatus ? prhead.vStatus : "00");
 
-          if (newdisable === false && cancelprdisable === true) {
+          if (newpr) {
             dispatch(prheadActions.addPRHead(formData, props.history));
             setTimeout(() => {
               setSearchDisable(false);
@@ -1926,10 +1954,11 @@ export default (props) => {
               setDeptDisable(true);
               setPRNumber({ ...prnumber, vPRSelectNumber: "" });
               setPRHead({ ...initialStatePRHead });
+              setNewPR(false);
               let status = "00";
               dispatch(prnumberActions.getPRNumbers(status));
             }, 500);
-          } else if (searchdisable === false) {
+          } else {
             dispatch(prheadActions.updatePRHead(formData, props.history));
           }
         }}

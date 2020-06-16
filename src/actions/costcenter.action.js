@@ -41,3 +41,23 @@ const dogetCostCenters = async (dispatch, department) => {
     dispatch(setStateCostCenterToFailed());
   }
 };
+
+export const getCostCentersWithOutDepartment = () => {
+  return async (dispatch) => {
+    dispatch(setStateCostCenterToFetching());
+    dogetCostCentersWithOutDepartment(dispatch);
+  };
+};
+
+const dogetCostCentersWithOutDepartment = async (dispatch) => {
+  try {
+    let result = await httpClient.get(
+      `${server.COSTCENTERWITHOUTDEPARTMENT_URL}`
+    );
+    dispatch(setStateCostCenterToSuccess(result.data));
+    // alert(JSON.stringify(result.data));
+  } catch (err) {
+    // alert(JSON.stringify(err));
+    dispatch(setStateCostCenterToFailed());
+  }
+};

@@ -16,8 +16,9 @@ export const setLoginStateToFetching = () => ({
   type: HTTP_LOGIN_FETCHING,
 });
 
-export const setLoginStateToFailed = () => ({
+export const setLoginStateToFailed = (payload) => ({
   type: HTTP_LOGIN_FAILED,
+  payload,
 });
 
 export const setLoginStateToSuccess = (payload) => ({
@@ -37,7 +38,7 @@ export const setLoginStateToLogout = () => ({
 //       dispatch(setLoginStateToFetching()); // fetching
 //       let result = await httpClient.post(server.HTTP_LOGIN_URL, value);
 //       // console.log(JSON.stringify(result));
-//       if (result.data.result == "ok") {
+//       if (result.data.result === "ok") {
 //         localStorage.setItem(server.TOKEN_KEY, result.data.token);
 //         localStorage.setItem(
 //           server.REFRESH_TOKEN_KEY,
@@ -71,7 +72,8 @@ const doGetLogins = async (dispatch, value, history) => {
       dispatch(setLoginStateToSuccess(result));
       history.push("/");
     } else {
-      dispatch(setLoginStateToFailed());
+      // console.log(JSON.stringify(result.data.message));
+      dispatch(setLoginStateToFailed(result.data.message));
     }
   } catch (err) {
     alert(JSON.stringify(err));

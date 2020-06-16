@@ -38,6 +38,8 @@ const LoginPage = (props) => {
   const loginReducer = useSelector(({ loginReducer }) => loginReducer);
   const companyReducer = useSelector(({ companyReducer }) => companyReducer);
   const [company, setCompany] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertDisable, setAlertDisable] = useState(false);
 
   useEffect(() => {
     dispatch(companyActions.getCompanys());
@@ -175,7 +177,7 @@ const LoginPage = (props) => {
 
         {loginReducer.isError && (
           <Alert severity="error" style={{ marginBottom: 8 }}>
-            Invalid account!
+            {loginReducer.result}
           </Alert>
         )}
 
@@ -189,7 +191,7 @@ const LoginPage = (props) => {
         >
           Sign In
         </Button>
-        {isSubmitting && <CircularProgress style={{ marginTop: 10 }} />}
+        {/* {isSubmitting && <CircularProgress style={{ marginTop: 10 }} />} */}
         <Grid container justify="flex-end">
           <Link component={RouterLink} to="/register" variant="body2">
             Register
@@ -216,9 +218,9 @@ const LoginPage = (props) => {
           onSubmit={(values, { setSubmitting }) => {
             // alert(JSON.stringify(values));
             dispatch(loginActions.login(values, props.history));
-            setInterval(() => {
-              setSubmitting(false);
-            }, 3000);
+            // setInterval(() => {
+            setSubmitting(false);
+            // }, 1000);
           }}
         >
           {(props) => showForm(props)}

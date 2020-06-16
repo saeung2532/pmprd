@@ -18,6 +18,7 @@ import LoginPage from "./components/pages/LoginPage/LoginPage";
 import HomePage from "./components/pages/HomePage/HomePage";
 import PlanPRPage from "./components/pages/PlanPRPage/PlanPRPage";
 import ConfirmPRPage from "./components/pages/ConfirmPRPage/ConfirmPRPage";
+import MonitoringPage from "./components/pages/MonitoringPage/MonitoringPage";
 import ApprovePage from "./components/pages/ApprovePage/ApprovePage";
 
 const useStyles = makeStyles((theme) => ({
@@ -106,13 +107,16 @@ export default function App() {
 
   return (
     <Router
-      basename={process.env.REACT_APP_IS_PRODUCTION === 1 ? "/monthlyplan" : ""}
+      basename={
+        process.env.REACT_APP_IS_PRODUCTION === "1" ? "/monthlyplan" : ""
+      }
     >
       <Switch>
         <LoginRoute exact path="/login" component={LoginPage} />
         <PrivateRoute exact path="/" component={HomePage} />
         <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
         <PrivateRoute exact path="/confirm_pr" component={ConfirmPRPage} />
+        <PrivateRoute exact path="/monitoring" component={MonitoringPage} />
         <PublicRoute
           exact
           // path="/approve"
