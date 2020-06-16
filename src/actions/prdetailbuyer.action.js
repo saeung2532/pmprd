@@ -35,7 +35,7 @@ export const getPRDetails = (prno) => {
 const doGetPRDetails = async (dispatch, prno) => {
   try {
     let result = await httpClient.get(
-      `${server.PRSTOCKDETAILBUYER_URL}/${prno}`
+      `${server.PRDETAILBUYER_URL}/${prno}`
     );
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRDetailBuyerToSuccess(result.data));
@@ -48,7 +48,7 @@ const doGetPRDetails = async (dispatch, prno) => {
 export const addPRDetail = (formData, history) => {
   return async (dispatch) => {
     try {
-      await httpClient.post(server.PRSTOCKDETAIL_URL, formData);
+      await httpClient.post(server.PRDETAIL_URL, formData);
       // history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));
@@ -60,7 +60,7 @@ export const updatePRDetail = (formData, history) => {
   return async (dispatch) => {
     try {
       // console.log(formData);
-      await httpClient.put(server.PRSTOCKDETAIL_URL, formData);
+      await httpClient.put(server.PRDETAIL_URL, formData);
       // alert("Update Complete");
       // history.goBack();
     } catch (err) {
@@ -74,7 +74,7 @@ export const deletePRDetail = (prno, itemline) => {
     try {
       // console.log(formData);
       await httpClient.delete(
-        `${server.PRSTOCKDETAIL_URL}/${prno}/${itemline}`
+        `${server.PRDETAIL_URL}/${prno}/${itemline}`
       );
       // alert("Delete Complete");
       // history.goBack();

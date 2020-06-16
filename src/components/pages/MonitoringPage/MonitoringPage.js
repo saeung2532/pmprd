@@ -112,7 +112,15 @@ export default (props) => {
     ({ prconfirmbuyerReducer }) => prconfirmbuyerReducer
   );
 
-  const [prnumber, setPRNumber] = useState({ vPRSelectNumber: "" });
+  const initialStatePRNumber = {
+    vPRSelectNumber: "",
+    vWarehouse: "",
+    vCostCenter: "",
+    vPHGroup: "",
+    vMonth: "",
+    vStatus: "",
+  };
+  const [prnumber, setPRNumber] = useState(initialStatePRNumber);
   const initialStatePRHead = {
     vPRNumber: "",
     vDate: moment(new Date()).format("YYYY-MM-DD"),
@@ -162,6 +170,8 @@ export default (props) => {
   const [cancelprdisable, setCancelPRDisable] = useState(true);
   const [savedisable, setSaveDisable] = useState(false);
   const [confirmdisable, setConfirmDisable] = useState(false);
+  const [search, setSearch] = useState(false);
+  const [cancle, setCancle] = useState(false);
   const [create, setCreate] = useState(false);
   const [update, setUpdate] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -215,28 +225,6 @@ export default (props) => {
     });
   }, [prheadReducer]);
 
-  useEffect(() => {
-    const prconfirmbuyers = prconfirmbuyerReducer.result
-      ? prconfirmbuyerReducer.result
-      : [];
-    prconfirmbuyers.map((item) => {
-      // console.log("PR_CONFIRM: " + item.PR_CONFIRM);
-      setPRConfirmBuyer(item.PR_CONFIRM);
-      if (item.PR_CONFIRM === 0) {
-        // console.log("prconfirm: true");
-        let statusprnumber = "10";
-        dispatch(prnumberActions.getPRNumbers(statusprnumber));
-        let statusprhead = "20";
-        dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, statusprhead));
-        prheadReducer.result = null;
-        prdetailReducer.result = null;
-        setPRHead({
-          ...initialStatePRHead,
-        });
-      }
-    });
-  }, [prconfirmbuyerReducer]);
-
   const prnumberbuyers = useMemo(() =>
     prnumberReducer.result ? prnumberReducer.result : []
   );
@@ -249,48 +237,23 @@ export default (props) => {
     costcenterReducer.result ? costcenterReducer.result : []
   );
 
-  const phgroups = useMemo(() =>
-    phgroupReducer.result ? phgroupReducer.result : []
-  );
+  // const phgroups = useMemo(() =>
+  //   phgroupReducer.result ? phgroupReducer.result : []
+  // );
 
   const months = useMemo(() =>
     monthReducer.result ? monthReducer.result : []
   );
 
   const statuses = useMemo(() =>
-  statusReducer.result ? statusReducer.result : []
+    statusReducer.result ? statusReducer.result : []
   );
 
   const handleSearch = () => {
-    if (prnumber.vPRSelectNumber === "") {
-      setEditDisable(true);
-      setCreateDisable(true);
-      setPRHead({
-        ...initialStatePRHead,
-      });
-      dispatch(prdetailbuyerActions.getPRDetails("0"));
-    } else {
-      setNewDisable(true);
-      setEditDisable(false);
-      setCreateDisable(false);
-      setCancelPRDisable(false);
-      let status = "10";
-      dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
-      dispatch(prdetailbuyerActions.getPRDetails(prnumber.vPRSelectNumber));
-    }
-  };
-
-  const handleNew = () => {
-    setSearchDisable(true);
-    setEditDisable(false);
-    setCreateDisable(true);
-    setWhsDisable(false);
-    setDeptDisable(false);
-    setPRHead({
-      ...initialStatePRHead,
-      vMonth: prhead.vDate.substr(2, 2) + prhead.vDate.substr(5, 2),
-      vPlanUnPlan: "Plan",
-    });
+    let status = "10";
+    setSearch(true);
+    dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
+    // dispatch(prdetailbuyerActions.getPRDetails(prnumber.vPRSelectNumber));
   };
 
   const handleCancel = () => {
@@ -311,50 +274,6 @@ export default (props) => {
     setOpenDialog(false);
     setSaveDisable(false);
     setConfirmDisable(false);
-  };
-
-  const handleCancelPR = () => {
-    setSearchDisable(false);
-    setNewDisable(false);
-    setEditDisable(true);
-    setCreateDisable(true);
-    setCancelPRDisable(true);
-    setWhsDisable(true);
-    setDeptDisable(true);
-    let status = "00";
-    dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
-    setTimeout(() => {
-      setCancelPRDisable(true);
-      setPRNumber({ ...prnumber, vPRSelectNumber: "" });
-      setPRHead({ ...initialStatePRHead });
-      dispatch(prnumberActions.getPRNumbers("00"));
-      dispatch(prdetailbuyerActions.getPRDetails("00"));
-      alert("Reject Complete");
-    }, 500);
-  };
-
-  const handleSubmitPH = () => {
-    if (prdetailReducer.result.length > 0) {
-      setSearchDisable(false);
-      setNewDisable(false);
-      setEditDisable(true);
-      setCreateDisable(true);
-      setCancelPRDisable(true);
-      setWhsDisable(true);
-      setDeptDisable(true);
-      let status = "10";
-      dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
-      setTimeout(() => {
-        setCancelPRDisable(true);
-        setPRNumber({ ...prnumber, vPRSelectNumber: "" });
-        setPRHead({ ...initialStatePRHead });
-        dispatch(prnumberActions.getPRNumbers("00"));
-        dispatch(prdetailbuyerActions.getPRDetails("00"));
-        alert("Submit Complete");
-      }, 500);
-    } else {
-      alert("Please create item detail before submit to PH");
-    }
   };
 
   const NumberFormatCustom = (props) => {
@@ -402,6 +321,7 @@ export default (props) => {
                     id="vSelectPRNumber"
                     label="PR Number"
                     value={prnumber.vPRSelectNumber}
+                    values={(values.vPRSelectNumber = prnumber.vPRSelectNumber)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
@@ -432,6 +352,7 @@ export default (props) => {
                     id="vWarehouse"
                     label="Warehouse"
                     value={prnumber.vWarehouse}
+                    values={(values.vWarehouse = prnumber.vWarehouse)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
@@ -462,6 +383,7 @@ export default (props) => {
                     id="vCostCenter"
                     label="Cost Center"
                     value={prnumber.vCostCenter}
+                    values={(values.vCostCenter = prnumber.vCostCenter)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
@@ -482,7 +404,7 @@ export default (props) => {
                     ))}
                   </TextField>
                 </Grid>
-                <Grid item xs={12} sm={1} className={classes.margin}>
+                {/* <Grid item xs={12} sm={1} className={classes.margin}>
                   <TextField
                     fullWidth
                     select
@@ -511,7 +433,8 @@ export default (props) => {
                       </option>
                     ))}
                   </TextField>
-                </Grid>
+                </Grid> */}
+
                 <Grid item xs={12} sm={1} className={classes.margin}>
                   <TextField
                     fullWidth
@@ -522,6 +445,7 @@ export default (props) => {
                     id="vMonth"
                     label="vMonth"
                     value={prnumber.vMonth}
+                    values={(values.vMonth = prnumber.vMonth)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
@@ -552,6 +476,7 @@ export default (props) => {
                     id="vStatus"
                     label="Status"
                     value={prnumber.vStatus}
+                    values={(values.vStatus = prnumber.vStatus)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
@@ -580,7 +505,6 @@ export default (props) => {
                     id="vSearch"
                     variant="contained"
                     color="primary"
-                    disabled={searchdisable}
                     startIcon={<SearchIcon />}
                     onClick={handleSearch}
                   >
@@ -1536,70 +1460,58 @@ export default (props) => {
   return (
     <div className={classes.root}>
       {/* Grid */}
-      {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
+      <p>#Debug prnumber {JSON.stringify(prnumber)}</p>
       <Formik
         initialValues={{
-          vPRNumber: "",
-          vDate: "",
+          vPRSelectNumber: "",
           vWarehouse: "",
-          vDepartment: "",
+          vCostcenter: "",
           vMonth: "",
-          vPlanUnPlan: "",
-          vBU: "",
-          vCAPNo: "",
-          vRequestor: "",
-          vRemark: "",
-          vApprove1: "",
-          vApprove2: "",
+          vStatus: "",
         }}
         onSubmit={(values, { setSubmitting }) => {
           // alert(JSON.stringify(values));
           let formData = new FormData();
-          formData.append("vPRNumber", values.vPRNumber);
-          formData.append("vDate", values.vDate);
+          formData.append("vPRNumber", values.vPRSelectNumber);
           formData.append("vWarehouse", values.vWarehouse);
-          formData.append("vDepartment", values.vDepartment);
+          formData.append("vCostcenter", values.vCostcenter);
           formData.append("vMonth", values.vMonth);
-          formData.append("vPlanUnPlan", "5");
-          formData.append("vBU", values.vBU);
-          formData.append("vCAPNo", values.vCAPNo);
-          formData.append(
-            "vRequestor",
-            prhead.vRequestor
-              ? prhead.vRequestor
-              : loginActions.getTokenUsername()
-          );
-          formData.append("vRemark", values.vRemark);
-          formData.append("vApprove1", values.vApprove1);
-          formData.append("vApprove2", values.vApprove2);
-          formData.append("vStatus", prhead.vStatus ? prhead.vStatus : "00");
+          formData.append("vStatus", values.vStatus);
 
-          if (newdisable === false && cancelprdisable === true) {
-            dispatch(prheadActions.addPRHead(formData, props.history));
-            setTimeout(() => {
-              setSearchDisable(false);
-              setNewDisable(false);
-              setEditDisable(true);
-              setCreateDisable(true);
-              setWhsDisable(true);
-              setDeptDisable(true);
-              setPRNumber({ ...prnumber, vPRSelectNumber: "" });
-              setPRHead({ ...initialStatePRHead });
-              let status = "00";
-              dispatch(prnumberActions.getPRNumbers(status));
-            }, 500);
-          } else if (searchdisable === false) {
-            dispatch(prheadActions.updatePRHead(formData, props.history));
+          if (search) {
+            // console.log("create");
+            dispatch(prdetailbuyerActions.addPRDetail(formData, props.history));
+            // setTimeout(() => {
+            //   setItemPRDetail({ ...initialStateItemPRDetail });
+            //   dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
+            //   setOpenDialog(false);
+            // }, 500);
+            setSearch(false);
+          } else {
+            // console.log("confirm");
+            // dispatch(
+            //   prdetailbuyerActions.updatePRDetail(formData, props.history)
+            // );
+            // setTimeout(() => {
+            //   setItemPRDetail({ ...initialStateItemPRDetail });
+            //   // let status = "10";
+            //   // dispatch(prnumberActions.getPRNumbers(status));
+            //   dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
+            //   dispatch(
+            //     prconfirmbuyerActions.getPRConfirmBuyers(prhead.vPRNumber)
+            //   );
+            //   setOpenDialog(false);
+            // }, 500);
+            setCancle(false);
           }
         }}
       >
         {(props) => showForm(props)}
       </Formik>
-
       {/* Plan PR Table */}
       {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
       <MaterialTable
-        id="root_prstock"
+        id="root_pr"
         title={`Plan PR : ${prhead.vStatus}`}
         columns={columns}
         data={prdetailReducer.result ? prdetailReducer.result : []}
@@ -1759,96 +1671,6 @@ export default (props) => {
           }),
         ]}
       />
-
-      {/* Dialog */}
-      <Formik
-        initialValues={{
-          vPRNumber: prhead.vPRNumber,
-          vPlanUnPlan: prhead.vPlanUnPlan,
-          vItemLine: "",
-          vItemNo: "", //{ MMITNO: "" },
-          vItemDesc1: "",
-          vItemDesc2: "",
-          vQty: "",
-          vUnit: "",
-          vDateDetail: moment(new Date()).format("YYYY-MM-DD"), //"2018-12-01"
-          vSupplierNo: "",
-          vSupplierName: "",
-          vPrice: "",
-          vVat: "",
-          vCurrency: "",
-          vOrdertype: "",
-          vTotal: "",
-          vCostcenterDetail: "",
-          vPHGroupDetail: "",
-          vBuyerDetail: "",
-          vRemarkDetail: "",
-        }}
-        onSubmit={(values, { setSubmitting }) => {
-          // alert(JSON.stringify(values));
-          let formData = new FormData();
-          formData.append("vPRNumber", prhead.vPRNumber);
-          formData.append("vPlanUnPlan", "5");
-          formData.append("vItemLine", itemprdetail.vItemLine);
-          formData.append("vItemNo", values.vItemNo);
-          formData.append("vItemDesc1", values.vItemDesc1);
-          formData.append("vQty", values.vQty);
-          formData.append("vUnit", values.vUnit);
-          formData.append("vDateDetail", values.vDateDetail);
-          formData.append("vSupplierNo", values.vSupplierNo);
-          formData.append("vPrice", values.vPrice);
-          formData.append("vVat", values.vVat);
-          formData.append("vCurrency", values.vCurrency);
-          formData.append("vOrdertype", values.vOrdertype);
-          formData.append("vTotal", values.vTotal);
-          formData.append("vCostcenterDetail", values.vCostcenterDetail);
-          formData.append("vPHGroupDetail", values.vPHGroupDetail);
-          formData.append("vBuyerDetail", values.vBuyerDetail);
-          formData.append("vRemarkDetail", values.vRemarkDetail);
-          formData.append("vConfirm", confirm ? "1" : "");
-          formData.append("vStatus", "10");
-
-          if (create) {
-            // console.log("create");
-            dispatch(prdetailbuyerActions.addPRDetail(formData, props.history));
-            setTimeout(() => {
-              setItemPRDetail({ ...initialStateItemPRDetail });
-              dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
-              setOpenDialog(false);
-            }, 500);
-            setCreate(false);
-          } else if (update) {
-            // console.log("update");
-            dispatch(
-              prdetailbuyerActions.updatePRDetail(formData, props.history)
-            );
-            setTimeout(() => {
-              setItemPRDetail({ ...initialStateItemPRDetail });
-              dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
-              setOpenDialog(false);
-            }, 500);
-            setUpdate(false);
-          } else {
-            // console.log("confirm");
-            dispatch(
-              prdetailbuyerActions.updatePRDetail(formData, props.history)
-            );
-            setTimeout(() => {
-              setItemPRDetail({ ...initialStateItemPRDetail });
-              // let status = "10";
-              // dispatch(prnumberActions.getPRNumbers(status));
-              dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
-              dispatch(
-                prconfirmbuyerActions.getPRConfirmBuyers(prhead.vPRNumber)
-              );
-              setOpenDialog(false);
-            }, 500);
-            setConfirm(false);
-          }
-        }}
-      >
-        {(props) => showDialog(props)}
-      </Formik>
     </div>
   );
 };

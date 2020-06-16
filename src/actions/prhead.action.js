@@ -35,7 +35,7 @@ export const getPRHeads = (prno, status) => {
 const doGetPRHeads = async (dispatch, prno, status) => {
   try {
     let result = await httpClient.get(
-      `${server.PRSTOCKHEAD_URL}/${prno}/${status}`
+      `${server.PRHEAD_URL}/${prno}/${status}`
     );
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRHeadToSuccess(result.data));
@@ -49,7 +49,7 @@ export const addPRHead = (formData, history) => {
   return async (dispatch) => {
     try {
       // console.log(formData);
-      let result = await httpClient.post(server.PRSTOCKHEAD_URL, formData);
+      let result = await httpClient.post(server.PRHEAD_URL, formData);
       alert("Save Complete: " + JSON.stringify(result.data));
       // history.goBack();
     } catch (err) {
@@ -62,7 +62,7 @@ export const updatePRHead = (formData, history) => {
   return async (dispatch) => {
     try {
       // console.log(formData);
-      await httpClient.put(server.PRSTOCKHEAD_URL, formData);
+      await httpClient.put(server.PRHEAD_URL, formData);
       alert("Update Complete");
       // history.goBack();
     } catch (err) {
@@ -75,11 +75,32 @@ export const updateStsPRHead = (prno, status) => {
   return async (dispatch) => {
     try {
       // console.log(formData);
-      await httpClient.put(`${server.PRSTOCKHEAD_URL}/${prno}/${status}`);
+      await httpClient.put(`${server.PRHEAD_URL}/${prno}/${status}`);
       // alert("Update Complete");
       // history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));
     }
   };
+};
+
+export const getPRHeadsMonitoring = (prno, status) => {
+  return async (dispatch) => {
+    // console.log("PR: " + prno + " STS: " + status);
+    dispatch(setStatePRHeadToFetching());
+    doGetPRHeadsMonitoring(dispatch, prno, status);
+  };
+};
+
+const doGetPRHeadsMonitoring = async (dispatch, prno, status) => {
+  try {
+    let result = await httpClient.get(
+      `${server.PRHEADMONITORRING_URL}/${prno}/${status}`
+    );
+    // alert(JSON.stringify(result.data));
+    dispatch(setStatePRHeadToSuccess(result.data));
+  } catch (err) {
+    // alert(JSON.stringify(err));
+    dispatch(setStatePRHeadToFailed());
+  }
 };

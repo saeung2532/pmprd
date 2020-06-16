@@ -34,7 +34,7 @@ export const getPRNumbers = (status) => {
 const doGetPRNumbers = async (dispatch, status) => {
   try {
     let result = await httpClient.get(
-      `${server.PRSTOCKNUMBERBUYER_URL}/${status}`
+      `${server.PRNUMBERBUYER_URL}/${status}`
     );
     dispatch(setStatePRNumberBuyerToSuccess(result.data));
     // alert(JSON.stringify(result.data));

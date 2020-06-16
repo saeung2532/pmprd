@@ -496,7 +496,7 @@ export default (props) => {
               <br />
 
               <MaterialTable
-                id="root_prstock"
+                id="root_pr"
                 title={`Plan PR : ${prhead.vStatus}`}
                 columns={columns}
                 data={prdetailReducer.result ? prdetailReducer.result : []}

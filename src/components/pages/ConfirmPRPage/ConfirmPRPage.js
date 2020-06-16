@@ -2010,7 +2010,7 @@ export default (props) => {
       {/* Plan PR Table */}
       {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
       <MaterialTable
-        id="root_prstock"
+        id="root_pr"
         title={`Plan PR : ${prhead.vStatus}`}
         columns={columns}
         data={prdetailbuyerReducer.result ? prdetailbuyerReducer.result : []}

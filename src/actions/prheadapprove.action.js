@@ -42,7 +42,7 @@ const doGetPRHeadApproves = async (
 ) => {
   try {
     let result = await httpClient.get(
-      `${server.PRSTOCKHEADAPPROVE_URL}/${cono}/${divi}/${prno}/${status}/${approve}`
+      `${server.PRHEADAPPROVE_URL}/${cono}/${divi}/${prno}/${status}/${approve}`
     );
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRHeadApproveToSuccess(result.data));
