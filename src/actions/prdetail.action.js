@@ -64,6 +64,27 @@ const doGetPRDetailApproves = async (dispatch, cono, divi, prno, status) => {
   }
 };
 
+export const getPRDetailsMonitoring = (prno) => {
+  return async (dispatch) => {
+    // console.log("PR: " + prno);
+    dispatch(setStatePRDetailToFetching());
+    doGetPRDetailsMonitoring(dispatch, prno);
+  };
+};
+
+const doGetPRDetailsMonitoring = async (dispatch, prno) => {
+  try {
+    let result = await httpClient.get(
+      `${server.PRDETAILMONITORING_URL}/${prno}`
+    );
+    // alert(JSON.stringify(result.data));
+    dispatch(setStatePRDetailToSuccess(result.data));
+  } catch (err) {
+    // alert(JSON.stringify(err));
+    dispatch(setStatePRDetailToFailed());
+  }
+};
+
 export const addPRDetail = (formData, history) => {
   return async (dispatch) => {
     try {
@@ -92,9 +113,7 @@ export const deletePRDetail = (prno, itemline) => {
   return async (dispatch) => {
     try {
       // console.log(formData);
-      await httpClient.delete(
-        `${server.PRDETAIL_URL}/${prno}/${itemline}`
-      );
+      await httpClient.delete(`${server.PRDETAIL_URL}/${prno}/${itemline}`);
       // alert("Delete Complete");
       // history.goBack();
     } catch (err) {

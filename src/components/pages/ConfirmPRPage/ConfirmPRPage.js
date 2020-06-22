@@ -219,10 +219,10 @@ export default (props) => {
       ? prconfirmbuyerReducer.result
       : [];
     prconfirmbuyers.map((item) => {
-      // console.log("PR_CONFIRM: " + item.PR_CONFIRM);
+      console.log("PR_CONFIRM: " + item.PR_CONFIRM);
       setPRConfirmBuyer(item.PR_CONFIRM);
-      if (item.PR_CONFIRM === 0) {
-        // console.log("prconfirm: true");
+      if (item.PR_CONFIRM === "0") {
+        console.log("prconfirm: true");
         let statusprnumber = "10";
         dispatch(prnumberbuyerActions.getPRNumbers(statusprnumber));
         let statusprhead = "20";
@@ -322,13 +322,13 @@ export default (props) => {
       setCancelPRDisable(true);
       setPRNumber({ ...prnumber, vPRSelectNumber: "" });
       setPRHead({ ...initialStatePRHead });
-      dispatch(prnumberbuyerActions.getPRNumbers("00"));
+      dispatch(prnumberbuyerActions.getPRNumbers("10"));
       dispatch(prdetailbuyerActions.getPRDetails("00"));
       alert("Reject Complete");
     }, 500);
   };
 
-  const handleSubmitPH = () => {
+  const handleConfirmAll = () => {
     if (prdetailbuyerReducer.result.length > 0) {
       setSearchDisable(false);
       setNewDisable(false);
@@ -395,7 +395,7 @@ export default (props) => {
                     variant="outlined"
                     required
                     id="vSelectPRNumber"
-                    label="PR Number"
+                    label="MPR Number"
                     disabled={searchdisable}
                     value={prnumber.vPRSelectNumber}
                     onChange={(event) => {
@@ -512,7 +512,7 @@ export default (props) => {
                   disabled={true}
                   size="small"
                   id="vPRNumber"
-                  label="PR Number"
+                  label="MPR Number"
                   placeholder="Placeholder"
                   variant="outlined"
                   value={prhead.vPRNumber}
@@ -999,8 +999,8 @@ export default (props) => {
                     variant="contained"
                     color="secondary"
                     startIcon={<SendIcon />}
-                    disabled={cancelprdisable}
-                    onClick={handleSubmitPH}
+                    disabled="true"
+                    onClick={handleConfirmAll}
                   >
                     Confirm All
                   </Button>
@@ -1661,14 +1661,19 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.MBSTQT}
+          <NumberFormat
+            value={item.MBSTQT}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
     {
       title: "Qty",
       field: "PR_IBORQA",
-      // type: "numeric",
+      type: "numeric",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "right",
@@ -1681,7 +1686,14 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBORQA}
+          {/* {item.PR_IBORQA} */}
+          {/* var NumberFormat = require('react-number-format'); */}
+          <NumberFormat
+            value={item.PR_IBORQA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1798,7 +1810,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBPUPR}
+          <NumberFormat
+            value={item.PR_IBPUPR}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1817,7 +1834,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBTOTA}
+          <NumberFormat
+            value={item.PR_IBTOTA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1836,7 +1858,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBVTCD}
+          <NumberFormat
+            value={item.PR_IBVTCD}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -2011,7 +2038,7 @@ export default (props) => {
       {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
       <MaterialTable
         id="root_pr"
-        title={`Plan PR : ${prhead.vStatus}`}
+        title={`Confirm MPR : ${prhead.vStatus}`}
         columns={columns}
         data={prdetailbuyerReducer.result ? prdetailbuyerReducer.result : []}
         components={{
@@ -2243,7 +2270,7 @@ export default (props) => {
           formData.append("vPHGroupDetail", values.vPHGroupDetail);
           formData.append("vBuyerDetail", values.vBuyerDetail);
           formData.append("vRemarkDetail", values.vRemarkDetail);
-          formData.append("vConfirm", confirm ? "1" : "");
+          formData.append("vConfirm", confirm ? "1" : "0");
           formData.append("vStatus", "10");
 
           if (create) {

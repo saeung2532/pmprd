@@ -16,32 +16,20 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import SearchIcon from "@material-ui/icons/Search";
-import DeleteIcon from "@material-ui/icons/Delete";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
-import EditIcon from "@material-ui/icons/Edit";
 import CancelIcon from "@material-ui/icons/Cancel";
-import SaveIcon from "@material-ui/icons/Save";
-import SendIcon from "@material-ui/icons/Send";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Formik, Form, Field } from "formik";
 import { red, green, purple } from "@material-ui/core/colors/";
-import * as loginActions from "./../../../actions/login.action";
 import * as prnumberActions from "./../../../actions/prnumber.action";
 import * as prheadActions from "./../../../actions/prhead.action";
-import * as prdetailbuyerActions from "./../../../actions/prdetailbuyer.action";
+import * as prdetailActions from "./../../../actions/prdetail.action";
 import * as monthActions from "./../../../actions/month.action";
 import * as statusActions from "./../../../actions/status.action";
 import * as warehouseActions from "./../../../actions/warehouse.action";
 import * as departmentActions from "./../../../actions/department.action";
 import * as costcenterActions from "./../../../actions/costcenter.action";
-import * as approveActions from "./../../../actions/approve.action";
-import * as buyerActions from "./../../../actions/buyer.action";
-import * as itemActions from "./../../../actions/item.action";
-import * as itemunitActions from "./../../../actions/itemunit.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
-import * as phbuyerActions from "./../../../actions/phbuyer.action";
-import * as supplierActions from "./../../../actions/supplier.action";
-import * as prconfirmbuyerActions from "./../../../actions/prconfirmbuyer.action";
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -90,6 +78,9 @@ export default (props) => {
   const warehouseReducer = useSelector(
     ({ warehouseReducer }) => warehouseReducer
   );
+  const departmentReducer = useSelector(
+    ({ departmentReducer }) => departmentReducer
+  );
   const costcenterReducer = useSelector(
     ({ costcenterReducer }) => costcenterReducer
   );
@@ -99,26 +90,14 @@ export default (props) => {
   const prheadReducer = useSelector(({ prheadReducer }) => prheadReducer);
   const prdetailReducer = useSelector(({ prdetailReducer }) => prdetailReducer);
 
-  const departmentReducer = useSelector(
-    ({ departmentReducer }) => departmentReducer
-  );
-  const approveReducer = useSelector(({ approveReducer }) => approveReducer);
-  const buyerReducer = useSelector(({ buyerReducer }) => buyerReducer);
-  const itemReducer = useSelector(({ itemReducer }) => itemReducer);
-  const itemunitReducer = useSelector(({ itemunitReducer }) => itemunitReducer);
-  const phbuyerReducer = useSelector(({ phbuyerReducer }) => phbuyerReducer);
-  const supplierReducer = useSelector(({ supplierReducer }) => supplierReducer);
-  const prconfirmbuyerReducer = useSelector(
-    ({ prconfirmbuyerReducer }) => prconfirmbuyerReducer
-  );
-
   const initialStatePRNumber = {
-    vPRSelectNumber: "",
-    vWarehouse: "",
-    vCostCenter: "",
-    vPHGroup: "",
-    vMonth: "",
-    vStatus: "",
+    vPRSelectNumber: null,
+    vWarehouse: null,
+    vDepartment: null,
+    vCostCenter: null,
+    vPHGroup: null,
+    vMonth: null,
+    vStatus: null,
   };
   const [prnumber, setPRNumber] = useState(initialStatePRNumber);
   const initialStatePRHead = {
@@ -142,6 +121,7 @@ export default (props) => {
   };
   const [prhead, setPRHead] = useState(initialStatePRHead);
   const initialStateItemPRDetail = {
+    vPRNumber: "",
     vItemLine: "",
     vItemNo: "",
     vItemDesc1: "",
@@ -163,28 +143,16 @@ export default (props) => {
     vRemarkDetail: "",
   };
   const [itemprdetail, setItemPRDetail] = useState(initialStateItemPRDetail);
-  const [searchdisable, setSearchDisable] = useState(false);
-  const [newdisable, setNewDisable] = useState(false);
-  const [editdisable, setEditDisable] = useState(true);
-  const [createdisable, setCreateDisable] = useState(true);
-  const [cancelprdisable, setCancelPRDisable] = useState(true);
-  const [savedisable, setSaveDisable] = useState(false);
-  const [confirmdisable, setConfirmDisable] = useState(false);
+
   const [search, setSearch] = useState(false);
   const [cancle, setCancle] = useState(false);
-  const [create, setCreate] = useState(false);
-  const [update, setUpdate] = useState(false);
-  const [confirm, setConfirm] = useState(false);
-  const [whsdisable, setWhsDisable] = useState(true);
-  const [deptdisable, setDeptDisable] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [prconfirmbuyer, setPRConfirmBuyer] = useState(null);
 
   useEffect(() => {
     dispatch(prnumberActions.getPRNumbersWithOutUser());
     dispatch(warehouseActions.getWarehouses());
-    dispatch(costcenterActions.getCostCentersWithOutDepartment());
+    dispatch(departmentActions.getDepartments());
     let phgroup = "PH";
     dispatch(phgroupActions.getPHGroups(phgroup));
     dispatch(monthActions.getMonths());
@@ -192,38 +160,6 @@ export default (props) => {
     prheadReducer.result = null;
     prdetailReducer.result = null;
   }, []);
-
-  useEffect(() => {
-    const prheads = prheadReducer.result ? prheadReducer.result : [];
-    prheads.map((item) => {
-      dispatch(itemActions.getItems(item.HD_IBWHLO));
-      let phgroup = "PH";
-      let department = item.HD_IBCOCE;
-      dispatch(phgroupActions.getPHGroups(phgroup));
-      dispatch(costcenterActions.getCostCenters(department));
-      setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
-      setPRHead({
-        ...prhead,
-        vPRNumber: item.HD_IBPLPN,
-        vDate: moment(item.HD_PURCDT).format("YYYY-MM-DD"),
-        vWarehouse: item.HD_IBWHLO,
-        vDepartment: item.HD_IBCOCE,
-        vMonth: item.HD_IBMTH,
-        vPlanUnPlan: item.HD_IBPRIP,
-        vBU: item.HD_BU,
-        vBuyer: item.HD_IBBUYE,
-        vGroup: item.HD_IBMODL,
-        vCAPNo: item.HD_CAPNO,
-        vRequestor: item.HD_IBPURC,
-        vRemark: item.HD_REM1,
-        vApprove1: item.HD_APP1,
-        vApprove2: item.HD_APP2,
-        vApprove3: item.HD_APP3,
-        vApprove4: item.HD_APP4,
-        vStatus: item.HD_STATUS,
-      });
-    });
-  }, [prheadReducer]);
 
   const prnumberbuyers = useMemo(() =>
     prnumberReducer.result ? prnumberReducer.result : []
@@ -233,9 +169,13 @@ export default (props) => {
     warehouseReducer.result ? warehouseReducer.result : []
   );
 
-  const costcenters = useMemo(() =>
-    costcenterReducer.result ? costcenterReducer.result : []
+  const departments = useMemo(() =>
+    departmentReducer.result ? departmentReducer.result : []
   );
+
+  // const costcenters = useMemo(() =>
+  //   costcenterReducer.result ? costcenterReducer.result : []
+  // );
 
   // const phgroups = useMemo(() =>
   //   phgroupReducer.result ? phgroupReducer.result : []
@@ -250,30 +190,24 @@ export default (props) => {
   );
 
   const handleSearch = () => {
-    let status = "10";
     setSearch(true);
-    dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
-    // dispatch(prdetailbuyerActions.getPRDetails(prnumber.vPRSelectNumber));
+    dispatch(
+      prheadActions.getPRHeadsMonitoring(
+        prnumber.vPRSelectNumber,
+        prnumber.vWarehouse,
+        prnumber.vDepartment,
+        prnumber.vMonth,
+        prnumber.vStatus
+      )
+    );
+    // dispatch(prdetailActions.getPRDetails(prnumber.vPRSelectNumber));
   };
 
-  const handleCancel = () => {
-    setSearchDisable(false);
-    setNewDisable(false);
-    setEditDisable(true);
-    setCreateDisable(true);
-    setCancelPRDisable(true);
-    setWhsDisable(true);
-    setDeptDisable(true);
-    setPRNumber({ ...prnumber, vPRSelectNumber: "" });
-    setPRHead({ ...initialStatePRHead });
-    dispatch(prdetailbuyerActions.getPRDetails("00"));
-  };
+  const handleCancel = () => {};
 
   const handleClose = () => {
     setItemPRDetail(initialStateItemPRDetail);
     setOpenDialog(false);
-    setSaveDisable(false);
-    setConfirmDisable(false);
   };
 
   const NumberFormatCustom = (props) => {
@@ -321,12 +255,12 @@ export default (props) => {
                     id="vSelectPRNumber"
                     label="PR Number"
                     value={prnumber.vPRSelectNumber}
-                    values={(values.vPRSelectNumber = prnumber.vPRSelectNumber)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
                         ...prnumber,
-                        vPRSelectNumber: event.target.value,
+                        vPRSelectNumber:
+                          event.target.value == "" ? null : event.target.value,
                       });
                     }}
                     InputLabelProps={{ shrink: true }}
@@ -352,12 +286,12 @@ export default (props) => {
                     id="vWarehouse"
                     label="Warehouse"
                     value={prnumber.vWarehouse}
-                    values={(values.vWarehouse = prnumber.vWarehouse)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
                         ...prnumber,
-                        vWarehouse: event.target.value,
+                        vWarehouse:
+                          event.target.value == "" ? null : event.target.value,
                       });
                     }}
                     InputLabelProps={{ shrink: true }}
@@ -380,15 +314,15 @@ export default (props) => {
                     size="small"
                     variant="outlined"
                     // required
-                    id="vCostCenter"
-                    label="Cost Center"
-                    value={prnumber.vCostCenter}
-                    values={(values.vCostCenter = prnumber.vCostCenter)}
+                    id="vDepartment"
+                    label="Department"
+                    value={prnumber.vDepartment}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
                         ...prnumber,
-                        vCostCenter: event.target.value,
+                        vDepartment:
+                          event.target.value == "" ? null : event.target.value,
                       });
                     }}
                     InputLabelProps={{ shrink: true }}
@@ -397,44 +331,13 @@ export default (props) => {
                     }}
                   >
                     <option />
-                    {costcenters.map((option) => (
-                      <option key={option.ID} value={option.S2AITM}>
-                        {option.COSTCENTER}
+                    {departments.map((option) => (
+                      <option key={option.ID} value={option.S1STID}>
+                        {option.DEPARTMENT}
                       </option>
                     ))}
                   </TextField>
                 </Grid>
-                {/* <Grid item xs={12} sm={1} className={classes.margin}>
-                  <TextField
-                    fullWidth
-                    select
-                    size="small"
-                    variant="outlined"
-                    // required
-                    id="vPHGroup"
-                    label="PH Group"
-                    value={prnumber.vPHGroup}
-                    onChange={(event) => {
-                      // console.log(event.target.value);
-                      setPRNumber({
-                        ...prnumber,
-                        vPHGroup: event.target.value,
-                      });
-                    }}
-                    InputLabelProps={{ shrink: true }}
-                    SelectProps={{
-                      native: true,
-                    }}
-                  >
-                    <option />
-                    {phgroups.map((option) => (
-                      <option key={option.ID} value={option.US_GRP}>
-                        {option.US_GRP}
-                      </option>
-                    ))}
-                  </TextField>
-                </Grid> */}
-
                 <Grid item xs={12} sm={1} className={classes.margin}>
                   <TextField
                     fullWidth
@@ -445,12 +348,12 @@ export default (props) => {
                     id="vMonth"
                     label="vMonth"
                     value={prnumber.vMonth}
-                    values={(values.vMonth = prnumber.vMonth)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
                         ...prnumber,
-                        vMonth: event.target.value,
+                        vMonth:
+                          event.target.value == "" ? null : event.target.value,
                       });
                     }}
                     InputLabelProps={{ shrink: true }}
@@ -476,12 +379,12 @@ export default (props) => {
                     id="vStatus"
                     label="Status"
                     value={prnumber.vStatus}
-                    values={(values.vStatus = prnumber.vStatus)}
                     onChange={(event) => {
                       // console.log(event.target.value);
                       setPRNumber({
                         ...prnumber,
-                        vStatus: event.target.value,
+                        vStatus:
+                          event.target.value == "" ? null : event.target.value,
                       });
                     }}
                     InputLabelProps={{ shrink: true }}
@@ -543,14 +446,11 @@ export default (props) => {
       return "";
     }
 
-    const items = itemReducer.result ? itemReducer.result : [];
-    const itemunits = itemunitReducer.result ? itemunitReducer.result : [];
-    const phgroups = phgroupReducer.result ? phgroupReducer.result : [];
-    const phbuyers = phbuyerReducer.result ? phbuyerReducer.result : [];
-    const suppliers = supplierReducer.result ? supplierReducer.result : [];
     return (
       <Dialog
         open={openDialog}
+        maxWidth="xl"
+        scroll="paper"
         keepMounted
         onClose={() => {}}
         aria-labelledby="alert-dialog-slide-title"
@@ -558,500 +458,56 @@ export default (props) => {
       >
         <form onSubmit={handleSubmit}>
           <DialogTitle id="alert-dialog-slide-title">
-            PR Number : {prhead.vPRNumber}
-            {itemprdetail.vItemLine
-              ? ` - Line : ${itemprdetail.vItemLine}`
-              : ""}
+            PR Number : {itemprdetail.vPRNumber}
           </DialogTitle>
           <DialogContent>
-            <Grid container item xs={12} spacing={2}>
-              <Grid item xs={5}>
-                <Autocomplete
-                  className={classes.margin}
-                  autoFocus
-                  required
-                  fullWidth
-                  size="small"
-                  id="vItemNoAuto"
-                  options={items}
-                  getOptionLabel={(option) => option.ITEM}
-                  value={itemprdetail.vItemDesc2}
-                  values={(values.vItemNo = itemprdetail.vItemNo)}
-                  onChange={(event, values) => {
-                    // console.log(values);
-                    if (values) {
-                      // console.log(
-                      //   "Price: " +
-                      //     values.MMPUPR +
-                      //     " : Order Type: " +
-                      //     values.MBORTY +
-                      //     " Currency: " +
-                      //     values.MMCUCD
-                      // );
-
-                      setItemPRDetail({
-                        ...itemprdetail,
-                        vQty: "",
-                        vTotal: "",
-                        // vItemNo: { MMITNO: values.MMITNO },
-                        vItemNo: values.MMITNO,
-                        vItemDesc1: values.MMITDS,
-                        vItemDesc2: { ITEM: values.ITEM },
-                        vUnit: values.MMUNMS,
-                        vSupplierNo: values.MMSUNO,
-                        vSupplierName: values.SASUNM,
-                        vSupplierDesc: { SUPPLIER: values.SUPPLIER },
-                        vPrice: values.MMPUPR,
-                        vVat: values.MMVTCS,
-                        vCurrency: values.MMCUCD,
-                        vOrdertype: values.MBORTY,
-                      });
-                      dispatch(itemunitActions.getItemUnits(values.MMITNO));
-
-                      if (values.MMPUPR < 0) {
-                        setSaveDisable(true);
-                        setConfirmDisable(true);
-                        alert("Price must be enter, Please contact ICT.");
-                      }
-
-                      if (values.MBORTY === "") {
-                        setSaveDisable(true);
-                        setConfirmDisable(true);
-                        alert("Order Type must be enter, Please contact ICT.");
-                      }
-
-                      if (values.MMCUCD === "") {
-                        setSaveDisable(true);
-                        setConfirmDisable(true);
-                        alert("Currency must be enter, Please contact ICT.");
-                      }
-                    }
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      id="vItemNo"
-                      label="Item No"
-                      required
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  className={classes.margin}
-                  // required
-                  fullWidth
-                  disabled="true"
-                  margin="dense"
-                  id="vItemName"
-                  label="Item Name"
-                  type="text"
-                  value={itemprdetail.vItemDesc1}
-                  values={(values.vItemDesc1 = itemprdetail.vItemDesc1)}
-                />
-              </Grid>
-            </Grid>
-            <Grid container item xs={12} spacing={2}>
-              <Grid item xs={5}>
-                <TextField
-                  required
-                  fullWidth
-                  // disabled="true"
-                  margin="dense"
-                  id="vQty"
-                  label="Qty"
-                  type="number"
-                  value={itemprdetail.vQty}
-                  values={(values.vQty = itemprdetail.vQty)}
-                  onChange={(event) => {
-                    // console.log(event.target.value);
-                    let qty = event.target.value;
-                    let price = itemprdetail.vPrice;
-                    setItemPRDetail({
-                      ...itemprdetail,
-                      vQty: event.target.value,
-                      vTotal: (qty * price).toFixed(4),
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  className={classes.margin}
-                  disabled={editdisable}
-                  fullWidth
-                  disabled="true"
-                  required
-                  select
-                  margin="dense"
-                  variant="standard"
-                  size="small"
-                  required
-                  id="vUnit"
-                  label="Unit"
-                  value={itemprdetail.vUnit}
-                  values={(values.vUnit = itemprdetail.vUnit)}
-                  onChange={(event) => {
-                    // console.log(event.target.value);
-                    setItemPRDetail({
-                      ...itemprdetail,
-                      vUnit: event.target.value,
-                    });
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                  SelectProps={{
-                    native: true,
-                  }}
-                >
-                  <option />
-                  {itemunits.map((option) => (
-                    <option key={option.ID} value={option.MMUNMS}>
-                      {option.MMUNMS}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-            <TextField
-              required
-              fullWidth
-              margin="dense"
-              type="date"
-              size="small"
-              id="vDeliveryDate"
-              label="Delivery Date"
-              variant="standard"
-              defaultValue={prhead.vDate}
-              value={itemprdetail.vDateDetail}
-              values={(values.vDateDetail = itemprdetail.vDateDetail)}
-              onChange={(event) => {
-                var dateNow = new Date();
-                if (event.target.value < moment(dateNow).format("YYYY-MM-DD")) {
-                  alert("Date not less than present day.");
-                } else {
-                  setItemPRDetail({
-                    ...itemprdetail,
-                    vDateDetail: event.target.value,
-                  });
-                }
-              }}
-              InputLabelProps={{ shrink: true, required: true }}
-            />
-            <Grid container item xs={12} spacing={2}>
-              <Grid item xs={5}>
-                <Autocomplete
-                  className={classes.margin}
-                  autoFocus
-                  required
-                  fullWidth
-                  size="small"
-                  id="vSupplierNoAuto"
-                  options={suppliers}
-                  // getOptionLabel={(option) => option.IDSUNO}
-                  // value={itemprdetail.vSupplierNo}
-                  // values={(values.vSupplierNo = itemprdetail.vSupplierNo)}
-                  getOptionLabel={(option) => option.SUPPLIER}
-                  value={itemprdetail.vSupplierDesc}
-                  values={(values.vSupplierNo = itemprdetail.vSupplierNo)}
-                  onChange={(event, values) => {
-                    // console.log(values);
-                    if (values) {
-                      setItemPRDetail({
-                        ...itemprdetail,
-                        // vSupplierNo: { IDSUNO: values.IDSUNO },
-                        vSupplierNo: values.IDSUNO,
-                        vSupplierName: values.SASUNM,
-                        vSupplierDesc: { SUPPLIER: values.SUPPLIER },
-                      });
-                      // dispatch(itemunitActions.getItemUnits(values.IDSUNO));
-                      // dispatch(
-                      //   itemprdetailActions.getItems(
-                      //     prhead.vWarehouse,
-                      //     values.MMITNO
-                      //   )
-                      // );
-                    }
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      id="vSupplierNo"
-                      label="Supplier No"
-                      required
-                    />
-                  )}
-                />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  // required
-                  fullWidth
-                  disabled="true"
-                  margin="dense"
-                  id="vSupplierName"
-                  label="Supplier Name"
-                  type="text"
-                  value={itemprdetail.vSupplierName}
-                  values={(values.vSupplierName = itemprdetail.vSupplierName)}
-                />
-              </Grid>
-            </Grid>
-            <Grid container item xs={12} spacing={2}>
-              <Grid item xs={4}>
-                <TextField
-                  required
-                  fullWidth
-                  // disabled="true"
-                  margin="dense"
-                  id="vPrice"
-                  label="Price"
-                  type="number"
-                  value={itemprdetail.vPrice}
-                  values={(values.vPrice = itemprdetail.vPrice)}
-                  onChange={(event) => {
-                    // console.log(event.target.value);
-                    let price = event.target.value;
-                    let qty = itemprdetail.vQty;
-                    setItemPRDetail({
-                      ...itemprdetail,
-                      vPrice: event.target.value,
-                      vTotal: (qty * price).toFixed(4),
-                    });
-                  }}
-                />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  required
-                  fullWidth
-                  disabled="true"
-                  margin="dense"
-                  id="vVat"
-                  label="Vat"
-                  type="text"
-                  value={itemprdetail.vVat}
-                  values={(values.vVat = itemprdetail.vVat)}
-                />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  required
-                  fullWidth
-                  disabled="true"
-                  margin="dense"
-                  id="vCurrency"
-                  label="Currency"
-                  type="text"
-                  value={itemprdetail.vCurrency}
-                  values={(values.vCurrency = itemprdetail.vCurrency)}
-                />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  required
-                  fullWidth
-                  disabled="true"
-                  margin="dense"
-                  id="vOrderType"
-                  label="Order Type"
-                  type="text"
-                  value={itemprdetail.vOrdertype}
-                  values={(values.vOrdertype = itemprdetail.vOrdertype)}
-                />
-              </Grid>
-            </Grid>
-
-            {/* <TextField
-              required
-              fullWidth
-              disabled="true"
-              margin="dense"
-              id="vTotal"
-              label="Total"
-              type="number"
-              value={itemprdetail.vTotal}
-              values={(values.vTotal = itemprdetail.vTotal)}
-            /> */}
-
-            <TextField
-              required
-              fullWidth
-              disabled="true"
-              margin="dense"
-              id="vTotal"
-              label="Total"
-              value={itemprdetail.vTotal}
-              values={(values.vTotal = itemprdetail.vTotal)}
-              InputLabelProps={{ shrink: true }}
-              InputProps={{
-                inputComponent: NumberFormatCustom,
-              }}
-            />
-
-            <Grid container item xs={12} spacing={2}>
-              <Grid item xs={5}>
-                <TextField
-                  className={classes.margin}
-                  disabled={editdisable}
-                  fullWidth
-                  required
-                  select
-                  margin="dense"
-                  variant="standard"
-                  size="small"
-                  required
-                  id="vPHGroup"
-                  label="PH Group"
-                  value={itemprdetail.vPHGroupDetail}
-                  values={(values.vPHGroupDetail = itemprdetail.vPHGroupDetail)}
-                  onChange={(event) => {
-                    // console.log(event.target.value);
-                    let phgroup = "PH";
-                    setItemPRDetail({
-                      ...itemprdetail,
-                      vPHGroupDetail: event.target.value,
-                    });
-                    dispatch(
-                      phbuyerActions.getPHBuyers(phgroup, event.target.value)
-                    );
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                  SelectProps={{
-                    native: true,
-                  }}
-                >
-                  <option />
-                  {phgroups.map((option) => (
-                    <option key={option.ID} value={option.US_GRP}>
-                      {option.US_GRP}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  className={classes.margin}
-                  disabled={editdisable}
-                  fullWidth
-                  required
-                  select
-                  margin="dense"
-                  variant="standard"
-                  size="small"
-                  required
-                  id="vBuyer"
-                  label="Buyer"
-                  value={itemprdetail.vBuyerDetail}
-                  values={(values.vBuyerDetail = itemprdetail.vBuyerDetail)}
-                  onChange={(event) => {
-                    // console.log(event.target.value);
-                    setItemPRDetail({
-                      ...itemprdetail,
-                      vBuyerDetail: event.target.value,
-                    });
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                  SelectProps={{
-                    native: true,
-                  }}
-                >
-                  <option />
-                  {phbuyers.map((option) => (
-                    <option key={option.ID} value={option.US_LOGIN}>
-                      {option.US_LOGIN}
-                    </option>
-                  ))}
-                </TextField>
-              </Grid>
-            </Grid>
-
-            <TextField
-              className={classes.margin}
-              disabled={editdisable}
-              fullWidth
-              required
-              select
-              margin="dense"
-              variant="standard"
-              size="small"
-              required
-              id="vCostcenter"
-              label="Cost center"
-              value={itemprdetail.vCostcenterDetail}
-              values={
-                (values.vCostcenterDetail = itemprdetail.vCostcenterDetail)
-              }
-              onChange={(event) => {
-                // console.log(event.target.value);
-                setItemPRDetail({
-                  ...itemprdetail,
-                  vCostcenterDetail: event.target.value,
-                });
-              }}
-              InputLabelProps={{ shrink: true }}
-              SelectProps={{
-                native: true,
-              }}
-            >
-              <option />
-              {costcenters.map((option) => (
-                <option key={option.ID} value={option.S2AITM}>
-                  {option.COSTCENTER}
-                </option>
-              ))}
-            </TextField>
-
-            <TextField
-              // required
-              fullWidth
-              // disabled="true"
-              margin="dense"
-              id="vRemarkDetail"
-              label="Remark"
-              type="text"
-              value={itemprdetail.vRemarkDetail}
-              values={(values.vRemarkDetail = itemprdetail.vRemarkDetail)}
-              onChange={(event) => {
-                // console.log(event.target.value);
-                setItemPRDetail({
-                  ...itemprdetail,
-                  vRemarkDetail: event.target.value,
-                });
+            <MaterialTable
+              id="root_prdetail"
+              title={`Detail`}
+              columns={columnsdetail}
+              data={prdetailReducer.result ? prdetailReducer.result : []}
+              options={{
+                // exportButton: true,
+                // toolbar: false,
+                paging: true,
+                headerStyle: {
+                  textAlign: "center",
+                  borderLeft: 1,
+                  borderRight: 1,
+                  borderBottom: 1,
+                  borderTop: 1,
+                  borderColor: "#E0E0E0",
+                  borderStyle: "solid",
+                  // backgroundColor: "red",
+                  // padding: "5px",
+                  // whiteSpace: "normal",
+                  // wordWrap: "break-word",
+                  // wordBreak: "break-all"
+                },
+                cellStyle: {
+                  textAlign: "center",
+                  borderLeft: 1,
+                  borderRight: 1,
+                  borderBottom: 1,
+                  borderTop: 1,
+                  borderColor: "#E0E0E0",
+                  borderStyle: "solid",
+                },
+                // rowStyle: rowData => ({
+                //   // backgroundColor:
+                //   //   selectedRow && selectedRow.tableData.id === rowData.tableData.id
+                //   //     ? "#EEE"
+                //   //     : "#FFF"
+                // }),
+                fixedColumns: {
+                  // left: 2
+                },
               }}
             />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="default">
               Cancel
-            </Button>
-            <Button
-              disabled={savedisable}
-              type="submit"
-              color="primary"
-              onClick={(event) => {
-                if (itemprdetail.vItemLine === "") {
-                  setCreate(true);
-                } else {
-                  setUpdate(true);
-                }
-              }}
-            >
-              Save
-            </Button>
-            <Button
-              disabled={confirmdisable}
-              type="submit"
-              color="secondary"
-              onClick={(event) => {
-                setConfirm(true);
-                // dispatch(
-                //   prconfirmbuyerActions.getPRConfirmBuyers(prhead.vPRNumber)
-                // );
-              }}
-              style={{ display: "" }}
-            >
-              Confirm
             </Button>
           </DialogActions>
         </form>
@@ -1061,9 +517,9 @@ export default (props) => {
 
   const columns = [
     {
-      title: "Line",
-      field: "PR_IBPLPS",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      title: "PR Number",
+      field: "HD_IBPLPN",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "center",
         borderLeft: 1,
@@ -1075,35 +531,35 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBPLPS}
+          {item.HD_IBPLPN}
         </Typography>
       ),
     },
     {
-      title: "Confirm",
-      field: "PR_CONFIRM",
-      headerStyle: { maxWidth: 80, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_CONFIRM}
-        </Typography>
-      ),
-    },
-    {
-      title: "Item No",
-      field: "PR_IBITNO",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      title: "Requestor",
+      field: "HD_IBPURC",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_IBPURC}
+        </Typography>
+      ),
+    },
+    {
+      title: "Whs.",
+      field: "HD_IBWHLO",
+      headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1122,6 +578,421 @@ export default (props) => {
       // ),
       render: (item) => (
         <Typography variant="body1" noWrap>
+          {item.HD_IBWHLO}
+        </Typography>
+      ),
+    },
+    {
+      title: "Dept.",
+      field: "HD_IBCOCE",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_IBCOCE}
+        </Typography>
+      ),
+    },
+    // {
+    //   title: "HD_IBBUYE",
+    //   field: "HD_IBBUYE",
+    //   headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+    //   cellStyle: {
+    //     textAlign: "center",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       {item.HD_IBBUYE}
+    //     </Typography>
+    //   ),
+    // },
+    // {
+    //   title: "HD_IBMODL",
+    //   field: "HD_IBMODL",
+    //   // type: "numeric",
+    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
+    //   cellStyle: {
+    //     textAlign: "right",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       {item.HD_IBMODL}
+    //     </Typography>
+    //   ),
+    // },
+    {
+      title: "Month",
+      field: "HD_IBMTH",
+      // type: "numeric",
+      headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_IBMTH}
+        </Typography>
+      ),
+    },
+    {
+      title: "Date",
+      field: "HD_PURCDT",
+      type: "date",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {moment(item.HD_PURCDT).format("DD/MM/YYYY")}
+        </Typography>
+      ),
+    },
+    {
+      title: "Plan/UnPln.",
+      field: "HD_IBPRIP",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_IBPRIP}
+        </Typography>
+      ),
+    },
+    {
+      title: "BU",
+      field: "HD_BU",
+      headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_BU}
+        </Typography>
+      ),
+    },
+    {
+      title: "CAP. No",
+      field: "HD_CAPNO",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_CAPNO}
+        </Typography>
+      ),
+    },
+    {
+      title: "Aprove1",
+      field: "HD_APP1",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APP1}
+        </Typography>
+      ),
+    },
+
+    {
+      title: "Aprove Date1",
+      field: "HD_APPDT1",
+      // type: "numeric",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APPDT1 === "0"
+            ? ""
+            : moment(item.HD_APPDT1).format("DD/MM/YYYY")}
+        </Typography>
+      ),
+    },
+    {
+      title: "Aprove2",
+      field: "HD_APP2",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APP2}
+        </Typography>
+      ),
+    },
+    {
+      title: "Aprove Date2",
+      field: "HD_APPDT2",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APPDT2 === "0"
+            ? ""
+            : moment(item.HD_APPDT2).format("DD/MM/YYYY")}
+        </Typography>
+      ),
+    },
+    {
+      title: "Aprove3",
+      field: "HD_APP3",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APP3}
+        </Typography>
+      ),
+    },
+    {
+      title: "Aprove Date3",
+      field: "HD_APPDT3",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APPDT3 === "0"
+            ? ""
+            : moment(item.HD_APPDT3).format("DD/MM/YYYY")}
+        </Typography>
+      ),
+    },
+    {
+      title: "Aprove4",
+      field: "HD_APP4",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APP4}
+        </Typography>
+      ),
+    },
+    {
+      title: "Aprove Date4",
+      field: "HD_APPDT4",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_APPDT4 === "0"
+            ? ""
+            : moment(item.HD_APPDT4).format("DD/MM/YYYY")}
+        </Typography>
+      ),
+    },
+    {
+      title: "Status",
+      field: "HD_STATUS",
+      headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.HD_STATUS}
+        </Typography>
+      ),
+    },
+  ];
+
+  const columnsdetail = [
+    {
+      title: "GRN",
+      field: "GRN",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.GRN}
+        </Typography>
+      ),
+    },
+    {
+      title: "PO Number",
+      field: "PR_IBPUNO",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBPUNO}
+        </Typography>
+      ),
+    },
+    {
+      title: "Line",
+      field: "PR_IBPLPS",
+      headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBPLPS}
+        </Typography>
+      ),
+    },
+    {
+      title: "Item No",
+      field: "PR_IBITNO",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
           {item.PR_IBITNO}
         </Typography>
       ),
@@ -1129,9 +1000,10 @@ export default (props) => {
     {
       title: "Item Name",
       field: "PR_IBPITT",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      // type: "numeric",
+      headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "left",
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1148,7 +1020,8 @@ export default (props) => {
     {
       title: "Unit",
       field: "PR_IBPUUN",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      type: "date",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "center",
         borderLeft: 1,
@@ -1165,32 +1038,11 @@ export default (props) => {
       ),
     },
     {
-      title: "Stock Rem.",
-      field: "MBSTQT",
-      // type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.MBSTQT}
-        </Typography>
-      ),
-    },
-    {
       title: "Qty",
       field: "PR_IBORQA",
-      // type: "numeric",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "right",
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1205,10 +1057,9 @@ export default (props) => {
       ),
     },
     {
-      title: "Deli. Date",
-      field: "PR_IBDWDT",
-      type: "date",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      title: "U/P",
+      field: "PR_IBPTCD",
+      headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "center",
         borderLeft: 1,
@@ -1220,16 +1071,75 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {moment(item.PR_IBDWDT).format("DD/MM/YYYY")}
+          {item.HD_BU}
+        </Typography>
+      ),
+    },
+    {
+      title: "PR_IBPTCD",
+      field: "PR_IBPTCD",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBPTCD}
+        </Typography>
+      ),
+    },
+    {
+      title: "Vat.",
+      field: "PR_IBVTCD",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBVTCD}
+        </Typography>
+      ),
+    },
+
+    {
+      title: "PR_IBPRIP",
+      field: "PR_IBPRIP",
+      // type: "numeric",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBPRIP}
         </Typography>
       ),
     },
     {
       title: "Order Typ.",
       field: "PR_IBORTY",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "center",
+        textAlign: "left",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1244,8 +1154,8 @@ export default (props) => {
       ),
     },
     {
-      title: "Cost Cen.",
-      field: "PR_IBCOCE",
+      title: "Deli. Date",
+      field: "PR_IBDWDT",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "center",
@@ -1258,16 +1168,18 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBCOCE}
+          {item.HD_APPDT2 === "0"
+            ? ""
+            : moment(item.PR_IBDWDT).format("DD/MM/YYYY")}
         </Typography>
       ),
     },
     {
-      title: "Group",
-      field: "PR_IBMODL",
+      title: "PR_VTCLM",
+      field: "PR_VTCLM",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "center",
+        textAlign: "left",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1277,13 +1189,13 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBMODL}
+          {item.PR_VTCLM}
         </Typography>
       ),
     },
     {
-      title: "Buyer",
-      field: "PR_IBBUYE",
+      title: "PR_REM3",
+      field: "PR_REM3",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "left",
@@ -1296,18 +1208,16 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBBUYE}
+          {item.PR_REM3}
         </Typography>
       ),
     },
-
     {
-      title: "U/P",
-      field: "PR_IBPUPR",
-      // type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      title: "PR_REM5",
+      field: "PR_REM5",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "right",
+        textAlign: "left",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1317,16 +1227,16 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBPUPR}
+          {item.PR_REM5}
         </Typography>
       ),
     },
     {
-      title: "Total",
-      field: "PR_IBTOTA",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      title: "PR_IBPNLI",
+      field: "PR_IBPNLI",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "right",
+        textAlign: "left",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1336,50 +1246,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBTOTA}
+          {item.PR_IBPNLI}
         </Typography>
       ),
     },
     {
-      title: "Vat.",
-      field: "PR_IBVTCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBVTCD}
-        </Typography>
-      ),
-    },
-    {
-      title: "Curr.",
-      field: "PR_IBCUCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBCUCD}
-        </Typography>
-      ),
-    },
-    {
-      title: "Supp. No",
+      title: "PR_IBSUNO",
       field: "PR_IBSUNO",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
@@ -1398,8 +1270,8 @@ export default (props) => {
       ),
     },
     {
-      title: "Supp. Name",
-      field: "SASUNM",
+      title: "IDSUNM",
+      field: "IDSUNM",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "left",
@@ -1412,109 +1284,24 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.SASUNM}
+          {item.IDSUNM}
         </Typography>
       ),
     },
-    // {
-    //   title: "PR Rem3.",
-    //   field: "PR_REM3",
-    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-    //   cellStyle: {
-    //     textAlign: "left",
-    //     borderLeft: 1,
-    //     borderRight: 1,
-    //     borderBottom: 1,
-    //     borderTop: 1,
-    //     borderColor: "#E0E0E0",
-    //     borderStyle: "solid",
-    //   },
-    //   render: (item) => (
-    //     <Typography variant="body1" noWrap>
-    //       {item.PR_REM3}
-    //     </Typography>
-    //   ),
-    // },
-    // {
-    //   title: "PR Rem5.",
-    //   field: "PR_REM5",
-    //   // type: "numeric",
-    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-    //   cellStyle: {
-    //     textAlign: "right",
-    //     borderLeft: 1,
-    //     borderRight: 1,
-    //     borderBottom: 1,
-    //     borderTop: 1,
-    //     borderColor: "#E0E0E0",
-    //     borderStyle: "solid",
-    //   },
-    //   render: (item) => (
-    //     <Typography variant="body1" noWrap>
-    //       {item.PR_REM5}
-    //     </Typography>
-    //   ),
-    // },
   ];
 
   return (
     <div className={classes.root}>
       {/* Grid */}
-      <p>#Debug prnumber {JSON.stringify(prnumber)}</p>
-      <Formik
-        initialValues={{
-          vPRSelectNumber: "",
-          vWarehouse: "",
-          vCostcenter: "",
-          vMonth: "",
-          vStatus: "",
-        }}
-        onSubmit={(values, { setSubmitting }) => {
-          // alert(JSON.stringify(values));
-          let formData = new FormData();
-          formData.append("vPRNumber", values.vPRSelectNumber);
-          formData.append("vWarehouse", values.vWarehouse);
-          formData.append("vCostcenter", values.vCostcenter);
-          formData.append("vMonth", values.vMonth);
-          formData.append("vStatus", values.vStatus);
+      {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
+      <Formik>{(props) => showForm(props)}</Formik>
 
-          if (search) {
-            // console.log("create");
-            dispatch(prdetailbuyerActions.addPRDetail(formData, props.history));
-            // setTimeout(() => {
-            //   setItemPRDetail({ ...initialStateItemPRDetail });
-            //   dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
-            //   setOpenDialog(false);
-            // }, 500);
-            setSearch(false);
-          } else {
-            // console.log("confirm");
-            // dispatch(
-            //   prdetailbuyerActions.updatePRDetail(formData, props.history)
-            // );
-            // setTimeout(() => {
-            //   setItemPRDetail({ ...initialStateItemPRDetail });
-            //   // let status = "10";
-            //   // dispatch(prnumberActions.getPRNumbers(status));
-            //   dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
-            //   dispatch(
-            //     prconfirmbuyerActions.getPRConfirmBuyers(prhead.vPRNumber)
-            //   );
-            //   setOpenDialog(false);
-            // }, 500);
-            setCancle(false);
-          }
-        }}
-      >
-        {(props) => showForm(props)}
-      </Formik>
       {/* Plan PR Table */}
-      {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
       <MaterialTable
         id="root_pr"
-        title={`Plan PR : ${prhead.vStatus}`}
+        title={`Monthly Plan Monitoring `}
         columns={columns}
-        data={prdetailReducer.result ? prdetailReducer.result : []}
+        data={prheadReducer.result ? prheadReducer.result : []}
         options={{
           // exportButton: true,
           // toolbar: false,
@@ -1542,135 +1329,32 @@ export default (props) => {
             borderColor: "#E0E0E0",
             borderStyle: "solid",
           },
-          // rowStyle: rowData => ({
-          //   // backgroundColor:
-          //   //   selectedRow && selectedRow.tableData.id === rowData.tableData.id
-          //   //     ? "#EEE"
-          //   //     : "#FFF"
-          // }),
           fixedColumns: {
             // left: 2
           },
         }}
-        localization={
-          {
-            // body: {
-            //   emptyDataSourceMessage: getMessage('label.no.records.to.display'),
-            //   dateTimePickerLocalization: resolvedLocaleMap,
-            //   muiDatePickerProps: {
-            //     okLabel: getMessage('label.ok'),
-            //     cancelLabel: getMessage('label.cancel'),
-            //     clearLabel: getMessage('label.clear'),
-            //   },
-            // },
-          }
-        }
-        editable={{
-          //Edit data in line
-          // isEditable: rowData => rowData.name === "a", // only name(a) rows would be editable
-          // isDeletable: rowData => rowData.name === "b", // only name(a) rows would be deletable
-          // onRowAdd: newData =>
-          //   new Promise((resolve, reject) => {
-          //     console.log("onRowAdd");
-          //     setTimeout(() => {
-          //       {
-          //         const data = this.state.data;
-          //         data.push(newData);
-          //         this.setState({ data }, () => resolve());
-          //       }
-          //       resolve();
-          //     }, 500);
-          //   }),
-          // onRowUpdate: (newData, oldData) =>
-          //   new Promise((resolve, reject) => {
-          //     console.log("onRowUpdate: " + JSON.stringify(newData));
-          //     props.history.push("/stock/edit/" + newData.product_id);
-          //     setTimeout(() => {
-          //       const data = [newData];
-          //       data.map((item) => {
-          //         // dispatch(prdetailActions.getPRDetails(item.PR_IBPLPN, "00"));
-          //       });
-          //       resolve();
-          //     }, 500);
-          //   }),
-          onRowDelete: (oldData) =>
-            new Promise((resolve, reject) => {
-              // console.log("onRowDelete: " + JSON.stringify(oldData));
-              let data = [oldData];
-              data.map((item) => {
-                dispatch(
-                  prdetailbuyerActions.deletePRDetail(
-                    item.PR_IBPLPN,
-                    item.PR_IBPLPS
-                  )
-                );
-              });
-
-              setTimeout(() => {
-                {
-                  setItemPRDetail({ ...initialStateItemPRDetail });
-                  dispatch(prdetailbuyerActions.getPRDetails(prhead.vPRNumber));
-                }
-                resolve();
-              }, 500);
-            }),
-        }}
         actions={[
           (rowData) => ({
-            icon: "edit",
-            tooltip: "Edit row",
+            icon: "search",
+            tooltip: "Search row",
             onClick: (event, rowData) => {
               // console.log("rowData: " + JSON.stringify([rowData]));
-
               let data = [rowData];
-              let phgroup = "PH";
               data.map((item) => {
-                // setItemDetail({ ...itemdetail, MMITNO: item.PR_IBITNO });
-                // setItemPRDetail({
-                //   ...itemprdetail,
-                //   vItemNo: { MMITNO: item.PR_IBITNO },
-                // });
-                // dispatch(itemActions.getItems(prhead.vWarehouse));
-                dispatch(itemunitActions.getItemUnits(item.PR_IBITNO));
-                // dispatch(phgroupActions.getPHGroups(phgroup));
-                dispatch(phbuyerActions.getPHBuyers(phgroup, item.PR_IBMODL));
+                setItemPRDetail({ ...itemprdetail, vPRNumber: item.HD_IBPLPN });
+                dispatch(
+                  prdetailActions.getPRDetailsMonitoring(item.HD_IBPLPN)
+                );
               });
-
-              setTimeout(() => {
-                data.map((item) => {
-                  setItemPRDetail({
-                    ...itemprdetail,
-                    vItemLine: item.PR_IBPLPS,
-                    // vItemNo: { MMITNO: item.PR_IBITNO },
-                    vItemNo: item.PR_IBITNO,
-                    vItemDesc1: item.PR_IBPITT,
-                    vItemDesc2: { ITEM: item.ITEM },
-                    vQty: item.PR_IBORQA,
-                    vUnit: item.PR_IBPUUN,
-                    vDateDetail: item.PR_IBDWDT,
-                    // vSupplierNo: { IDSUNO: item.PR_IBSUNO },
-                    vSupplierNo: item.PR_IBSUNO,
-                    vSupplierName: item.SASUNM,
-                    vSupplierDesc: { SUPPLIER: item.SUPPLIER },
-                    vPrice: item.PR_IBPUPR,
-                    vVat: item.PR_IBVTCD,
-                    vCurrency: item.PR_IBCUCD,
-                    vOrdertype: item.PR_IBORTY,
-                    vTotal: (item.PR_IBORQA * item.PR_IBPUPR).toFixed(4),
-                    vCostcenterDetail: item.PR_IBCOCE,
-                    vPHGroupDetail: item.PR_IBMODL,
-                    vBuyerDetail: item.PR_IBBUYE,
-                    vRemarkDetail: item.PR_REM3,
-                  });
-                });
-              }, 500);
-
               setSelectedProduct("rowData");
               setOpenDialog(true);
             },
           }),
         ]}
       />
+
+      {/* Dialog */}
+      <Formik>{(props) => showDialog(props)}</Formik>
     </div>
   );
 };

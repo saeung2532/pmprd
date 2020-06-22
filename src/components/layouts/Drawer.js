@@ -177,7 +177,7 @@ const MiniDrawer = (props) => {
       <CssBaseline />
       <AppBar
         color={
-          process.env.REACT_APP_IS_PRODUCTION === 1 ? "primary" : "secondary"
+          process.env.REACT_APP_IS_PRODUCTION === "1" ? "primary" : "secondary"
         }
         position="fixed"
         className={clsx(classes.appBar, {

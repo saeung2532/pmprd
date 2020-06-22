@@ -105,6 +105,7 @@ export default (props) => {
   const [approve, setApprove] = useState(false);
   const [approveDisable, setApproveDisable] = useState(true);
   const [rejectDisable, setRejectDisable] = useState(true);
+  const [viewMPRDisable, setViewMPRDisable] = useState(true);
 
   useEffect(() => {
     let params = props.match.params;
@@ -137,13 +138,15 @@ export default (props) => {
     );
 
     // console.log("prheadapproves: " + prheadapproveReducer.result);
-    if (prheadapproveReducer.result === null) {
-      setApproveDisable(true);
-      setRejectDisable(true);
-    } else {
-      setApproveDisable(false);
-      setRejectDisable(false);
-    }
+    // if (prheadapproveReducer.result === null) {
+    //   setApproveDisable(true);
+    //   setRejectDisable(true);
+    //   setViewMPRDisable(true);
+    // } else {
+    //   setApproveDisable(false);
+    //   setRejectDisable(false);
+    //   setViewMPRDisable(false);
+    // }
   }, []);
 
   useEffect(() => {
@@ -182,6 +185,11 @@ export default (props) => {
         vApproveDate4: moment(item.HD_APPDT4).format("YYYY-MM-DD"),
         vStatus: item.HD_STATUS,
       });
+
+      if (item.HD_IBPLPN != "") {
+        setViewMPRDisable(false);
+      }
+
       // console.log("item.HD_APPCK: " + item.HD_APPCK);
       if (item.HD_APPCK > 0) {
         setApproveDisable(true);
@@ -497,7 +505,7 @@ export default (props) => {
 
               <MaterialTable
                 id="root_pr"
-                title={`Plan PR : ${prhead.vStatus}`}
+                title={`Approve MPR : ${prhead.vStatus}`}
                 columns={columns}
                 data={prdetailReducer.result ? prdetailReducer.result : []}
                 components={{
@@ -505,7 +513,12 @@ export default (props) => {
                     <div>
                       <MTableToolbar {...props} />
                       <a
-                        href={`${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`}
+                        href={
+                          viewMPRDisable
+                            ? ""
+                            : `${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`
+                        }
+                        // href={`${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`}
                         target="_blank"
                         style={{ textDecoration: "none" }}
                       >
@@ -513,6 +526,7 @@ export default (props) => {
                           fullWidth
                           variant="contained"
                           color="primary"
+                          disabled={viewMPRDisable}
                           startIcon={<SearchIcon />}
                           onClick={viewPR}
                         >
@@ -633,7 +647,11 @@ export default (props) => {
                 </Grid>
 
                 <Grid className={classes.margin}>
-                  <TextField style={{ width: "200px" }} placeholder="Reason" />
+                  <TextField
+                    disabled={rejectDisable}
+                    style={{ width: "200px" }}
+                    placeholder="Reason"
+                  />
                 </Grid>
               </Grid>
             </Paper>
@@ -776,7 +794,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBORQA}
+          <NumberFormat
+            value={item.PR_IBORQA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -795,7 +818,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBVTCD}
+          <NumberFormat
+            value={item.PR_IBVTCD}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -815,7 +843,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBPUPR}
+          <NumberFormat
+            value={item.PR_IBPUPR}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -834,7 +867,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBTOTA}
+          <NumberFormat
+            value={item.PR_IBTOTA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -853,7 +891,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_VTCHARGE}
+          <NumberFormat
+            value={item.PR_VTCHARGE}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -872,7 +915,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBTOTA2}
+          <NumberFormat
+            value={item.PR_IBTOTA2}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },

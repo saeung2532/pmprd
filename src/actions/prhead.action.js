@@ -34,9 +34,7 @@ export const getPRHeads = (prno, status) => {
 
 const doGetPRHeads = async (dispatch, prno, status) => {
   try {
-    let result = await httpClient.get(
-      `${server.PRHEAD_URL}/${prno}/${status}`
-    );
+    let result = await httpClient.get(`${server.PRHEAD_URL}/${prno}/${status}`);
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRHeadToSuccess(result.data));
   } catch (err) {
@@ -84,18 +82,25 @@ export const updateStsPRHead = (prno, status) => {
   };
 };
 
-export const getPRHeadsMonitoring = (prno, status) => {
+export const getPRHeadsMonitoring = (prno, whs, costcenter, month, status) => {
   return async (dispatch) => {
     // console.log("PR: " + prno + " STS: " + status);
     dispatch(setStatePRHeadToFetching());
-    doGetPRHeadsMonitoring(dispatch, prno, status);
+    doGetPRHeadsMonitoring(dispatch, prno, whs, costcenter, month, status);
   };
 };
 
-const doGetPRHeadsMonitoring = async (dispatch, prno, status) => {
+const doGetPRHeadsMonitoring = async (
+  dispatch,
+  prno,
+  whs,
+  costcenter,
+  month,
+  status
+) => {
   try {
     let result = await httpClient.get(
-      `${server.PRHEADMONITORRING_URL}/${prno}/${status}`
+      `${server.PRHEADMONITORING_URL}/${prno}/${whs}/${costcenter}/${month}/${status}`
     );
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRHeadToSuccess(result.data));

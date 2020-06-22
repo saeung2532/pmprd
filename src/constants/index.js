@@ -209,7 +209,6 @@ export const server = {
   COSTCENTERWITHOUTDEPARTMENT_URL: `api_data/costcenterwithoutdepartment`,
   MONTH_URL: `api_data/month`,
   STATUS_URL: `api_data/status`,
-  PRHEAD_URL: `api_data/prhead`,
   PRHEADMONITORING_URL: `api_data/prheadmonitoring`,
   PRDETAILMONITORING_URL: `api_data/prdetailmonitoring`,
 

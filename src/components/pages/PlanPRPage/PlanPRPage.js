@@ -388,7 +388,7 @@ export default (props) => {
                     variant="outlined"
                     required
                     id="vSelectPRNumber"
-                    label="PR Number"
+                    label="MPR Number"
                     disabled={searchdisable}
                     value={prnumber.vPRSelectNumber}
                     onChange={(event) => {
@@ -476,7 +476,7 @@ export default (props) => {
                   disabled="true"
                   size="small"
                   id="vPRNumber"
-                  label="PR Number"
+                  label="MPR Number"
                   placeholder="Placeholder"
                   variant="outlined"
                   value={prhead.vPRNumber}
@@ -493,7 +493,7 @@ export default (props) => {
                   className={classes.margin}
                   style={{ maxWidth: 180 }}
                   required
-                  disabled={editdisable}
+                  disabled="true"
                   type="date"
                   size="small"
                   id="vDate"
@@ -1620,7 +1620,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.MBSTQT}
+          <NumberFormat
+            value={item.MBSTQT}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1640,7 +1645,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBORQA}
+          <NumberFormat
+            value={item.PR_IBORQA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1757,7 +1767,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBPUPR}
+          <NumberFormat
+            value={item.PR_IBPUPR}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1776,7 +1791,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBTOTA}
+          <NumberFormat
+            value={item.PR_IBTOTA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1795,7 +1815,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBVTCD}
+          <NumberFormat
+            value={item.PR_IBVTCD}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1970,7 +1995,7 @@ export default (props) => {
       {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
       <MaterialTable
         id="root_pr"
-        title={`Plan PR : ${prhead.vStatus}`}
+        title={`Monthly Plan : ${prhead.vStatus}`}
         columns={columns}
         data={prdetailReducer.result ? prdetailReducer.result : []}
         components={{
