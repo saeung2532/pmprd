@@ -119,7 +119,6 @@ export default function App() {
         <PrivateRoute exact path="/monitoring" component={MonitoringPage} />
         <PublicRoute
           exact
-          // path="/approve"
           path="/approve/:cono/:divi/:prno/:status/:approve"
           component={ApprovePage}
         />

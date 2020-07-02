@@ -199,6 +199,7 @@ export const server = {
   PRHEAD_URL: `api_data/prhead`,
   PRHEADAPPROVE_URL: `api_data/prheadapprove`,
   PRDETAIL_URL: `api_data/prdetail`,
+  PRCONFIRMDETAIL_URL: `api_data/prconfirmdetail`,
   PRDETAILAPPROVE_URL: `api_data/prdetailapprove`,
   PRDETAILBUYER_URL: `api_data/prdetailbuyer`,
   PRCONFIRMBUYER_URL: `api_data/prconfirmbuyer`,

@@ -24,17 +24,19 @@ const setStatePRHeadToClear = () => ({
   type: HTTP_PRHEAD_CLEAR,
 });
 
-export const getPRHeads = (prno, status) => {
+export const getPRHeads = (prno, fromstatus, toStatus) => {
   return async (dispatch) => {
     // console.log("PR: " + prno + " STS: " + status);
     dispatch(setStatePRHeadToFetching());
-    doGetPRHeads(dispatch, prno, status);
+    doGetPRHeads(dispatch, prno, fromstatus, toStatus);
   };
 };
 
-const doGetPRHeads = async (dispatch, prno, status) => {
+const doGetPRHeads = async (dispatch, prno, fromstatus, toStatus) => {
   try {
-    let result = await httpClient.get(`${server.PRHEAD_URL}/${prno}/${status}`);
+    let result = await httpClient.get(
+      `${server.PRHEAD_URL}/${prno}/${fromstatus}/${toStatus}`
+    );
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRHeadToSuccess(result.data));
   } catch (err) {

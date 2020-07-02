@@ -151,6 +151,7 @@ export default (props) => {
     vPHGroupDetail: "",
     vBuyerDetail: "",
     vRemarkDetail: "",
+    vAddFreeItem: "",
   };
   const [itemprdetail, setItemPRDetail] = useState(initialStateItemPRDetail);
   const [searchdisable, setSearchDisable] = useState(false);
@@ -160,9 +161,11 @@ export default (props) => {
   const [cancelprdisable, setCancelPRDisable] = useState(true);
   const [savedisable, setSaveDisable] = useState(false);
   const [confirmdisable, setConfirmDisable] = useState(false);
+  const [addfreeitem, setAddFreeItem] = useState(false);
   const [create, setCreate] = useState(false);
   const [update, setUpdate] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [reject, setReject] = useState(false);
   const [whsdisable, setWhsDisable] = useState(true);
   const [deptdisable, setDeptDisable] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
@@ -171,20 +174,27 @@ export default (props) => {
 
   useEffect(() => {
     // console.log("dispatch prnumberbuyerActions");
-    let status = "10";
-    dispatch(prnumberbuyerActions.getPRNumbers(status));
+    let fromStatus = "05";
+    let toStatus = "10";
+    dispatch(prnumberbuyerActions.getPRNumbers(fromStatus, toStatus));
     dispatch(warehouseActions.getWarehouses());
     dispatch(departmentActions.getDepartments());
     dispatch(approveActions.getApproves());
     dispatch(buyerActions.getBuyers());
     dispatch(supplierActions.getSuppliers());
+    // console.log(loginActions.getTokenUsername());
+    // loginActions.getTokenUsername();
     prheadReducer.result = null;
     prdetailbuyerReducer.result = null;
   }, []);
 
   useEffect(() => {
     const prheads = prheadReducer.result ? prheadReducer.result : [];
+
     prheads.map((item) => {
+      console.log("prheads.vStatus: " + item.HD_STATUS);
+
+      // if (item.HD_STATUS === "10") {
       dispatch(itemActions.getItems(item.HD_IBWHLO));
       let phgroup = "PH";
       let department = item.HD_IBCOCE;
@@ -211,6 +221,12 @@ export default (props) => {
         vApprove4: item.HD_APP4,
         vStatus: item.HD_STATUS,
       });
+      // } else {
+      // console.log("prheads.vStatus: false");
+      // setPRHead({ ...initialStatePRHead });
+      // dispatch(prdetailbuyerActions.getPRDetails("00"));
+      // handleCancel();
+      // }
     });
   }, [prheadReducer]);
 
@@ -223,8 +239,9 @@ export default (props) => {
       setPRConfirmBuyer(item.PR_CONFIRM);
       if (item.PR_CONFIRM === "0") {
         console.log("prconfirm: true");
-        let statusprnumber = "10";
-        dispatch(prnumberbuyerActions.getPRNumbers(statusprnumber));
+        let fromStatus = "05";
+        let toStatus = "10";
+        dispatch(prnumberbuyerActions.getPRNumbers(fromStatus, toStatus));
         let statusprhead = "20";
         dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, statusprhead));
         prheadReducer.result = null;
@@ -257,20 +274,32 @@ export default (props) => {
   );
 
   const handleSearch = () => {
-    if (prnumber.vPRSelectNumber === "") {
+    let reject = null;
+    if (prnumber.vPRSelectNumber.substr(8) === "Reject") {
+      // console.log("Reject true");
+      reject = true;
+    } else {
+      // console.log("Reject false");
+      reject = false;
+    }
+
+    if (prnumber.vPRSelectNumber === "" || reject === true) {
       setEditDisable(true);
       setCreateDisable(true);
       setPRHead({
         ...initialStatePRHead,
       });
-      dispatch(prdetailbuyerActions.getPRDetails("0"));
+      dispatch(prdetailbuyerActions.getPRDetails("00"));
     } else {
       setNewDisable(true);
       setEditDisable(false);
       setCreateDisable(false);
       setCancelPRDisable(false);
-      let status = "10";
-      dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
+      let fromStatus = "05";
+      let toStatus = "10";
+      dispatch(
+        prheadActions.getPRHeads(prnumber.vPRSelectNumber, fromStatus, toStatus)
+      );
       dispatch(prdetailbuyerActions.getPRDetails(prnumber.vPRSelectNumber));
     }
   };
@@ -306,9 +335,10 @@ export default (props) => {
     setOpenDialog(false);
     setSaveDisable(false);
     setConfirmDisable(false);
+    setAddFreeItem(false);
   };
 
-  const handleCancelPR = () => {
+  const handleRejectPR = () => {
     setSearchDisable(false);
     setNewDisable(false);
     setEditDisable(true);
@@ -316,13 +346,21 @@ export default (props) => {
     setCancelPRDisable(true);
     setWhsDisable(true);
     setDeptDisable(true);
-    let status = "00";
+    let status = "05"; //Reject
     dispatch(prheadActions.updateStsPRHead(prhead.vPRNumber, status));
+    dispatch(
+      prdetailbuyerActions.updatePRConfirmDetail(
+        prhead.vPRNumber,
+        loginActions.getTokenUsername()
+      )
+    );
     setTimeout(() => {
       setCancelPRDisable(true);
       setPRNumber({ ...prnumber, vPRSelectNumber: "" });
       setPRHead({ ...initialStatePRHead });
-      dispatch(prnumberbuyerActions.getPRNumbers("10"));
+      let fromStatus = "05";
+      let toStatus = "10";
+      dispatch(prnumberbuyerActions.getPRNumbers(fromStatus, toStatus));
       dispatch(prdetailbuyerActions.getPRDetails("00"));
       alert("Reject Complete");
     }, 500);
@@ -412,8 +450,8 @@ export default (props) => {
                   >
                     <option />
                     {prnumberbuyers.map((option) => (
-                      <option key={option.ID} value={option.PR_IBPLPN}>
-                        {option.PR_IBPLPN}
+                      <option key={option.ID} value={option.PRNUMBER}>
+                        {option.PRNUMBER}
                       </option>
                     ))}
                   </TextField>
@@ -498,7 +536,7 @@ export default (props) => {
                     color="secondary"
                     startIcon={<DeleteIcon />}
                     disabled={cancelprdisable}
-                    onClick={handleCancelPR}
+                    onClick={handleRejectPR}
                   >
                     Cancel PR
                   </Button>
@@ -813,7 +851,6 @@ export default (props) => {
                   }}
                 />
               </Grid>
-
               <Grid container item xs className={classes.margin}>
                 <TextField
                   className={classes.margin}
@@ -958,7 +995,7 @@ export default (props) => {
                     // style={{ backgroundColor: green[500] }}
                     startIcon={<DeleteIcon />}
                     disabled={cancelprdisable}
-                    onClick={handleCancelPR}
+                    onClick={handleRejectPR}
                   >
                     Cancel PR
                   </Button>
@@ -986,7 +1023,7 @@ export default (props) => {
                     // style={{ backgroundColor: green[500] }}
                     startIcon={<DeleteIcon />}
                     disabled={cancelprdisable}
-                    onClick={handleCancelPR}
+                    onClick={handleRejectPR}
                   >
                     Reject PR
                   </Button>
@@ -1052,6 +1089,7 @@ export default (props) => {
                   autoFocus
                   required
                   fullWidth
+                  disabled={addfreeitem}
                   size="small"
                   id="vItemNoAuto"
                   options={items}
@@ -1082,7 +1120,8 @@ export default (props) => {
                         vSupplierNo: values.MMSUNO,
                         vSupplierName: values.SASUNM,
                         vSupplierDesc: { SUPPLIER: values.SUPPLIER },
-                        vPrice: values.MMPUPR,
+                        // vPrice: values.MMPUPR,
+                        vPrice: addfreeitem ? values.MMPUPR : "0",
                         vVat: values.MMVTCS,
                         vCurrency: values.MMCUCD,
                         vOrdertype: values.MBORTY,
@@ -1197,6 +1236,7 @@ export default (props) => {
             <TextField
               required
               fullWidth
+              disabled="true"
               margin="dense"
               type="date"
               size="small"
@@ -1516,6 +1556,7 @@ export default (props) => {
                 } else {
                   setUpdate(true);
                 }
+                setConfirmDisable(false);
               }}
             >
               Save
@@ -2056,13 +2097,15 @@ export default (props) => {
                   startIcon={<AddCircleIcon />}
                   onClick={(event, rowData) => {
                     // let phgroup = "PH";
+                    setItemPRDetail({ ...itemprdetail, vAddFreeItem: "1" });
                     setSelectedProduct("rowData");
+                    setConfirmDisable(true);
                     setOpenDialog(true);
                     // dispatch(itemActions.getItems(prhead.vWarehouse));
                     // dispatch(phgroupActions.getPHGroups(phgroup));
                   }}
                 >
-                  Create
+                  Add Free Item
                 </Button>
               </div>
             </div>
@@ -2219,6 +2262,7 @@ export default (props) => {
               }, 500);
 
               setSelectedProduct("rowData");
+              setAddFreeItem(true);
               setOpenDialog(true);
             },
           }),
@@ -2270,6 +2314,7 @@ export default (props) => {
           formData.append("vPHGroupDetail", values.vPHGroupDetail);
           formData.append("vBuyerDetail", values.vBuyerDetail);
           formData.append("vRemarkDetail", values.vRemarkDetail);
+          formData.append("vAddFreeItem", itemprdetail.vAddFreeItem);
           formData.append("vConfirm", confirm ? "1" : "0");
           formData.append("vStatus", "10");
 

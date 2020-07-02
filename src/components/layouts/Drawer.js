@@ -199,7 +199,7 @@ const MiniDrawer = (props) => {
 
           <Typography variant="h6" noWrap>
             Smart Purchase : Monthly Plan - Ver {process.env.REACT_APP_VERSION}
-            <Typography variant="body1">{props.company} </Typography>
+            <Typography variant="body1">{props.company}</Typography>
           </Typography>
 
           <div className={classes.grow} />
@@ -264,7 +264,7 @@ const MiniDrawer = (props) => {
             <ListItemIcon>
               <StoreIcon />
             </ListItemIcon>
-            <ListItemText primary="Plan Stock" />
+            <ListItemText primary="Plan MPR" />
           </ListItem>
 
           <ListItem button onClick={handleClick}>
@@ -286,7 +286,7 @@ const MiniDrawer = (props) => {
                 <ListItemIcon>
                   <StarBorder />
                 </ListItemIcon>
-                <ListItemText primary="Confirm PR" />
+                <ListItemText primary="Confirm MPR" />
               </ListItem>
             </List>
           </Collapse>

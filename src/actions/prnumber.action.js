@@ -24,16 +24,18 @@ const setStatePRNumberToClear = () => ({
   type: HTTP_PRNUMBER_CLEAR,
 });
 
-export const getPRNumbers = (status) => {
+export const getPRNumbers = (fromStatus, toStatus) => {
   return async (dispatch) => {
     dispatch(setStatePRNumberToFetching());
-    doGetPRNumbers(dispatch, status);
+    doGetPRNumbers(dispatch, fromStatus, toStatus);
   };
 };
 
-const doGetPRNumbers = async (dispatch, status) => {
+const doGetPRNumbers = async (dispatch, fromStatus, toStatus) => {
   try {
-    let result = await httpClient.get(`${server.PRNUMBER_URL}/${status}`);
+    let result = await httpClient.get(
+      `${server.PRNUMBER_URL}/${fromStatus}/${toStatus}`
+    );
     dispatch(setStatePRNumberToSuccess(result.data));
     // alert(JSON.stringify(result.data));
   } catch (err) {

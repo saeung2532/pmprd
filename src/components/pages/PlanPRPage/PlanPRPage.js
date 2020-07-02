@@ -164,8 +164,9 @@ export default (props) => {
 
   useEffect(() => {
     // console.log("dispatch prnumberActions");
-    let status = "00";
-    dispatch(prnumberActions.getPRNumbers(status));
+    let fromStatus = "00";
+    let toStatus = "05";
+    dispatch(prnumberActions.getPRNumbers(fromStatus, toStatus));
     dispatch(warehouseActions.getWarehouses());
     dispatch(departmentActions.getDepartments());
     dispatch(approveActions.getApproves());
@@ -251,8 +252,11 @@ export default (props) => {
       setEditDisable(false);
       setCreateDisable(false);
       setCancelPRDisable(false);
-      let status = "00";
-      dispatch(prheadActions.getPRHeads(prnumber.vPRSelectNumber, status));
+      let fromStatus = "00";
+      let toStatus = "05";
+      dispatch(
+        prheadActions.getPRHeads(prnumber.vPRSelectNumber, fromStatus, toStatus)
+      );
       dispatch(prdetailActions.getPRDetails(prnumber.vPRSelectNumber));
     }
   };
@@ -1995,7 +1999,7 @@ export default (props) => {
       {/* <p>#Debug {JSON.stringify(selectedProduct)}</p> */}
       <MaterialTable
         id="root_pr"
-        title={`Monthly Plan : ${prhead.vStatus}`}
+        title={`Plan MPR Stock & Non Stock : ${prhead.vStatus}`}
         columns={columns}
         data={prdetailReducer.result ? prdetailReducer.result : []}
         components={{
@@ -2224,7 +2228,8 @@ export default (props) => {
           formData.append("vPHGroupDetail", values.vPHGroupDetail);
           formData.append("vBuyerDetail", values.vBuyerDetail);
           formData.append("vRemarkDetail", values.vRemarkDetail);
-          formData.append("vConfirm", confirm ? "1" : "");
+          formData.append("vAddFreeItem", "");
+          formData.append("vConfirm", "0");
           formData.append("vStatus", "10");
 
           if (create) {

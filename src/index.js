@@ -11,7 +11,7 @@ import logger from "redux-logger";
 
 var middlewares = null;
 
-if (process.env.REACT_APP_IS_PRODUCTION === 1) {
+if (process.env.REACT_APP_IS_PRODUCTION === "1") {
   console.log("REACT_APP_PRD");
   middlewares = applyMiddleware(thunk);
 } else {

@@ -253,7 +253,7 @@ export default (props) => {
                     variant="outlined"
                     // required
                     id="vSelectPRNumber"
-                    label="PR Number"
+                    label="MPR Number"
                     value={prnumber.vPRSelectNumber}
                     onChange={(event) => {
                       // console.log(event.target.value);
@@ -463,7 +463,7 @@ export default (props) => {
           <DialogContent>
             <MaterialTable
               id="root_prdetail"
-              title={`Detail`}
+              title={`MPR Detail`}
               columns={columnsdetail}
               data={prdetailReducer.result ? prdetailReducer.result : []}
               options={{
@@ -945,7 +945,7 @@ export default (props) => {
       field: "PR_IBPUNO",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "left",
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1003,7 +1003,7 @@ export default (props) => {
       // type: "numeric",
       headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "center",
+        textAlign: "left",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1052,13 +1052,18 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBORQA}
+          <NumberFormat
+            value={item.PR_IBORQA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
     {
       title: "U/P",
-      field: "PR_IBPTCD",
+      field: "PR_IBPUPR",
       headerStyle: { maxWidth: 70, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
         textAlign: "center",
@@ -1071,7 +1076,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.HD_BU}
+          <NumberFormat
+            value={item.PR_IBPUPR}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1099,7 +1109,7 @@ export default (props) => {
       field: "PR_IBVTCD",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "left",
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1109,7 +1119,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBVTCD}
+          <NumberFormat
+            value={item.PR_IBVTCD}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1139,7 +1154,7 @@ export default (props) => {
       field: "PR_IBORTY",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "left",
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1179,7 +1194,7 @@ export default (props) => {
       field: "PR_VTCLM",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "left",
+        textAlign: "right",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1189,7 +1204,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_VTCLM}
+          <NumberFormat
+            value={item.PR_VTCLM}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1227,7 +1247,12 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_REM5}
+          <NumberFormat
+            value={item.PR_REM5}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1236,7 +1261,7 @@ export default (props) => {
       field: "PR_IBPNLI",
       headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
       cellStyle: {
-        textAlign: "left",
+        textAlign: "center",
         borderLeft: 1,
         borderRight: 1,
         borderBottom: 1,
@@ -1299,7 +1324,7 @@ export default (props) => {
       {/* Plan PR Table */}
       <MaterialTable
         id="root_pr"
-        title={`Monthly Plan Monitoring `}
+        title={`MPR Monitoring`}
         columns={columns}
         data={prheadReducer.result ? prheadReducer.result : []}
         options={{

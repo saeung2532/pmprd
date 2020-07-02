@@ -193,9 +193,9 @@ const LoginPage = (props) => {
         </Button>
         {/* {isSubmitting && <CircularProgress style={{ marginTop: 10 }} />} */}
         <Grid container justify="flex-end">
-          <Link component={RouterLink} to="/register" variant="body2">
+          {/* <Link component={RouterLink} to="/register" variant="body2">
             Register
-          </Link>
+          </Link> */}
         </Grid>
       </form>
     );
@@ -211,7 +211,7 @@ const LoginPage = (props) => {
 
       <CardContent>
         {/* <p>#Debug prhead {JSON.stringify(company)}</p> */}
-        <Typography variant="h4">Login</Typography>
+        <Typography variant="h5">Login Monthly Plan</Typography>
         {/* HOC */}
         <Formik
           initialValues={{ username: "", password: "", company: "" }}
