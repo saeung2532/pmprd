@@ -162,6 +162,7 @@ export default (props) => {
   const [savedisable, setSaveDisable] = useState(false);
   const [confirmdisable, setConfirmDisable] = useState(false);
   const [addfreeitem, setAddFreeItem] = useState(false);
+  const [editnamedisable, setEditNameDisable] = useState(true);
   const [create, setCreate] = useState(false);
   const [update, setUpdate] = useState(false);
   const [confirm, setConfirm] = useState(false);
@@ -273,6 +274,29 @@ export default (props) => {
     approveReducer.result ? approveReducer.result : []
   );
 
+  const ValidationTextField = withStyles({
+    root: {
+      "& input:valid + fieldset": {
+        borderColor: "green",
+        borderWidth: 2,
+      },
+      "& input:invalid + fieldset": {
+        borderColor: "red",
+        borderWidth: 2,
+      },
+      "& input:valid:focus + fieldset": {
+        borderLeftWidth: 6,
+        padding: "4px !important", // override inline-style
+      },
+    },
+  })(TextField);
+
+  const theme = createMuiTheme({
+    palette: {
+      primary: green,
+    },
+  });
+
   const handleSearch = () => {
     let reject = null;
     if (prnumber.vPRSelectNumber.substr(8) === "Reject") {
@@ -331,11 +355,12 @@ export default (props) => {
   };
 
   const handleClose = () => {
-    setItemPRDetail(initialStateItemPRDetail);
     setOpenDialog(false);
+    setItemPRDetail(initialStateItemPRDetail);
     setSaveDisable(false);
     setConfirmDisable(false);
     setAddFreeItem(false);
+    setEditNameDisable(true);
   };
 
   const handleRejectPR = () => {
@@ -381,7 +406,7 @@ export default (props) => {
         setCancelPRDisable(true);
         setPRNumber({ ...prnumber, vPRSelectNumber: "" });
         setPRHead({ ...initialStatePRHead });
-        dispatch(prnumberbuyerActions.getPRNumbers("00"));
+        dispatch(prnumberbuyerActions.getPRNumbers("00", "00"));
         dispatch(prdetailbuyerActions.getPRDetails("00"));
         alert("Submit Complete");
       }, 500);
@@ -920,10 +945,11 @@ export default (props) => {
                   ))}
                 </TextField>
 
-                {/* <TextField
+                <TextField
                   className={classes.margin}
                   style={{ width: "200px" }}
-                  disabled={editdisable}
+                  // disabled={editdisable}
+                  disabled={true}
                   select
                   size="small"
                   variant="outlined"
@@ -932,21 +958,21 @@ export default (props) => {
                   id="vApprove2"
                   label="Approve2"
                   value={prhead.vApprove3}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
 
                     setPRHead({
                       ...prhead,
-                      vApprove3: event.target.value
+                      vApprove3: event.target.value,
                     });
                   }}
-                    InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {approves.map(option => (
+                  {approves.map((option) => (
                     <option key={option.ID} value={option.US_LOGIN}>
                       {option.US_LOGIN}
                     </option>
@@ -956,7 +982,8 @@ export default (props) => {
                 <TextField
                   className={classes.margin}
                   style={{ width: "200px" }}
-                  disabled={editdisable}
+                  // disabled={editdisable}
+                  disabled={true}
                   select
                   size="small"
                   variant="outlined"
@@ -965,26 +992,26 @@ export default (props) => {
                   id="vApprove3"
                   label="Approve3"
                   value={prhead.vApprove4}
-                  onChange={event => {
+                  onChange={(event) => {
                     // console.log(event.target.value);
 
                     setPRHead({
                       ...prhead,
-                      vApprove4: event.target.value
+                      vApprove4: event.target.value,
                     });
                   }}
-                    InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {approves.map(option => (
+                  {approves.map((option) => (
                     <option key={option.ID} value={option.US_LOGIN}>
                       {option.US_LOGIN}
                     </option>
                   ))}
-                </TextField> */}
+                </TextField>
                 <Grid className={classes.margin}>
                   {/* <Button
                     // fullWidth
@@ -1162,13 +1189,20 @@ export default (props) => {
                   className={classes.margin}
                   // required
                   fullWidth
-                  disabled="true"
+                  disabled={editnamedisable}
                   margin="dense"
                   id="vItemName"
                   label="Item Name"
                   type="text"
                   value={itemprdetail.vItemDesc1}
                   values={(values.vItemDesc1 = itemprdetail.vItemDesc1)}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
+                    setItemPRDetail({
+                      ...itemprdetail,
+                      vItemDesc1: event.target.value,
+                    });
+                  }}
                 />
               </Grid>
             </Grid>
@@ -1177,7 +1211,7 @@ export default (props) => {
                 <TextField
                   required
                   fullWidth
-                  // disabled="true"
+                  disabled={editnamedisable}
                   margin="dense"
                   id="vQty"
                   label="Qty"
@@ -1346,7 +1380,7 @@ export default (props) => {
                 <TextField
                   required
                   fullWidth
-                  disabled="true"
+                  disabled={editnamedisable}
                   margin="dense"
                   id="vVat"
                   label="Vat"
@@ -1544,7 +1578,7 @@ export default (props) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="default">
-              Cancel
+              Close
             </Button>
             <Button
               disabled={savedisable}
@@ -1583,25 +1617,6 @@ export default (props) => {
 
   const columns = [
     {
-      title: "Line",
-      field: "PR_IBPLPS",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBPLPS}
-        </Typography>
-      ),
-    },
-    {
       title: "Confirm",
       field: "PR_CONFIRM",
       headerStyle: { maxWidth: 80, whiteSpace: "nowrap", textAlign: "center" },
@@ -1617,6 +1632,25 @@ export default (props) => {
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_CONFIRM}
+        </Typography>
+      ),
+    },
+    {
+      title: "Line",
+      field: "PR_IBPLPS",
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBPLPS}
         </Typography>
       ),
     },
@@ -1686,31 +1720,31 @@ export default (props) => {
         </Typography>
       ),
     },
-    {
-      title: "Stock Rem.",
-      field: "MBSTQT",
-      // type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          <NumberFormat
-            value={item.MBSTQT}
-            displayType={"text"}
-            thousandSeparator={true}
-            // prefix={"$"}
-          />
-        </Typography>
-      ),
-    },
+    // {
+    //   title: "Stock Rem.",
+    //   field: "MBSTQT",
+    //   // type: "numeric",
+    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
+    //   cellStyle: {
+    //     textAlign: "right",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       <NumberFormat
+    //         value={item.MBSTQT}
+    //         displayType={"text"}
+    //         thousandSeparator={true}
+    //         // prefix={"$"}
+    //       />
+    //     </Typography>
+    //   ),
+    // },
     {
       title: "Qty",
       field: "PR_IBORQA",
@@ -1739,6 +1773,98 @@ export default (props) => {
       ),
     },
     {
+      title: "U/P",
+      field: "PR_IBPUPR",
+      // type: "numeric",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          <NumberFormat
+            value={item.PR_IBPUPR}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
+        </Typography>
+      ),
+    },
+    {
+      title: "Vat.",
+      field: "PR_IBVTCD",
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          <NumberFormat
+            value={item.PR_IBVTCD}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
+        </Typography>
+      ),
+    },
+    {
+      title: "Amt.",
+      field: "PR_IBTOTA",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          <NumberFormat
+            value={item.PR_IBTOTA}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
+        </Typography>
+      ),
+    },
+    {
+      title: "Curr.",
+      field: "PR_IBCUCD",
+      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBCUCD}
+        </Typography>
+      ),
+    },
+    {
       title: "Deli. Date",
       field: "PR_IBDWDT",
       type: "date",
@@ -1759,6 +1885,44 @@ export default (props) => {
       ),
     },
     {
+      title: "Supp. No",
+      field: "PR_IBSUNO",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.PR_IBSUNO}
+        </Typography>
+      ),
+    },
+    {
+      title: "Supp. Name",
+      field: "SASUNM",
+      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "left",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.SASUNM}
+        </Typography>
+      ),
+    },
+    {
       title: "Order Typ.",
       field: "PR_IBORTY",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
@@ -1774,6 +1938,30 @@ export default (props) => {
       render: (item) => (
         <Typography variant="body1" noWrap>
           {item.PR_IBORTY}
+        </Typography>
+      ),
+    },
+    {
+      title: "V Amt.",
+      field: "PR_VTCHARGE",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "right",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          <NumberFormat
+            value={item.PR_VTCHARGE}
+            displayType={"text"}
+            thousandSeparator={true}
+            // prefix={"$"}
+          />
         </Typography>
       ),
     },
@@ -1835,136 +2023,6 @@ export default (props) => {
       ),
     },
 
-    {
-      title: "U/P",
-      field: "PR_IBPUPR",
-      // type: "numeric",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          <NumberFormat
-            value={item.PR_IBPUPR}
-            displayType={"text"}
-            thousandSeparator={true}
-            // prefix={"$"}
-          />
-        </Typography>
-      ),
-    },
-    {
-      title: "Total",
-      field: "PR_IBTOTA",
-      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "right",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          <NumberFormat
-            value={item.PR_IBTOTA}
-            displayType={"text"}
-            thousandSeparator={true}
-            // prefix={"$"}
-          />
-        </Typography>
-      ),
-    },
-    {
-      title: "Vat.",
-      field: "PR_IBVTCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          <NumberFormat
-            value={item.PR_IBVTCD}
-            displayType={"text"}
-            thousandSeparator={true}
-            // prefix={"$"}
-          />
-        </Typography>
-      ),
-    },
-    {
-      title: "Curr.",
-      field: "PR_IBCUCD",
-      headerStyle: { maxWidth: 50, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "center",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBCUCD}
-        </Typography>
-      ),
-    },
-    {
-      title: "Supp. No",
-      field: "PR_IBSUNO",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "left",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.PR_IBSUNO}
-        </Typography>
-      ),
-    },
-    {
-      title: "Supp. Name",
-      field: "SASUNM",
-      headerStyle: { maxWidth: 150, whiteSpace: "nowrap", textAlign: "center" },
-      cellStyle: {
-        textAlign: "left",
-        borderLeft: 1,
-        borderRight: 1,
-        borderBottom: 1,
-        borderTop: 1,
-        borderColor: "#E0E0E0",
-        borderStyle: "solid",
-      },
-      render: (item) => (
-        <Typography variant="body1" noWrap>
-          {item.SASUNM}
-        </Typography>
-      ),
-    },
     // {
     //   title: "PR Rem3.",
     //   field: "PR_REM3",
@@ -2064,8 +2122,9 @@ export default (props) => {
               setDeptDisable(true);
               setPRNumber({ ...prnumber, vPRSelectNumber: "" });
               setPRHead({ ...initialStatePRHead });
-              let status = "00";
-              dispatch(prnumberbuyerActions.getPRNumbers(status));
+              let fromStatus = "05";
+              let toStatus = "10";
+              dispatch(prnumberbuyerActions.getPRNumbers(fromStatus, toStatus));
             }, 500);
           } else if (searchdisable === false) {
             dispatch(prheadActions.updatePRHead(formData, props.history));
@@ -2099,6 +2158,7 @@ export default (props) => {
                     // let phgroup = "PH";
                     setItemPRDetail({ ...itemprdetail, vAddFreeItem: "1" });
                     setSelectedProduct("rowData");
+                    setEditNameDisable(false);
                     setConfirmDisable(true);
                     setOpenDialog(true);
                     // dispatch(itemActions.getItems(prhead.vWarehouse));

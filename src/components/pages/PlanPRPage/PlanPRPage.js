@@ -299,8 +299,8 @@ export default (props) => {
   };
 
   const handleClose = () => {
-    setItemPRDetail(initialStateItemPRDetail);
     setOpenDialog(false);
+    setItemPRDetail(initialStateItemPRDetail);
     setSaveDisable(false);
     setConfirmDisable(false);
   };
@@ -319,7 +319,7 @@ export default (props) => {
       setCancelPRDisable(true);
       setPRNumber({ ...prnumber, vPRSelectNumber: "" });
       setPRHead({ ...initialStatePRHead });
-      dispatch(prnumberActions.getPRNumbers("00"));
+      dispatch(prnumberActions.getPRNumbers("00", "00"));
       dispatch(prdetailActions.getPRDetails("00"));
       alert("Cancel Complete");
     }, 500);
@@ -340,7 +340,7 @@ export default (props) => {
         setCancelPRDisable(true);
         setPRNumber({ ...prnumber, vPRSelectNumber: "" });
         setPRHead({ ...initialStatePRHead });
-        dispatch(prnumberActions.getPRNumbers("00"));
+        dispatch(prnumberActions.getPRNumbers("00", "00"));
         dispatch(prdetailActions.getPRDetails("00"));
         alert("Submit Complete");
       }, 500);
@@ -842,7 +842,7 @@ export default (props) => {
                   ))}
                 </TextField>
 
-                {/* <TextField
+                <TextField
                   className={classes.margin}
                   style={{ width: "200px" }}
                   disabled={editdisable}
@@ -850,25 +850,25 @@ export default (props) => {
                   size="small"
                   variant="outlined"
                   margin="normal"
-                  required
+                  // required
                   id="vApprove2"
                   label="Approve2"
                   value={prhead.vApprove3}
-                  onChange={event => {
+                  values={(values.vApprove3 = prhead.vApprove3)}
+                  onChange={(event) => {
                     // console.log(event.target.value);
-
                     setPRHead({
                       ...prhead,
-                      vApprove3: event.target.value
+                      vApprove3: event.target.value,
                     });
                   }}
-                    InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {approves.map(option => (
+                  {approves.map((option) => (
                     <option key={option.ID} value={option.US_LOGIN}>
                       {option.US_LOGIN}
                     </option>
@@ -883,30 +883,31 @@ export default (props) => {
                   size="small"
                   variant="outlined"
                   margin="normal"
-                  required
+                  // required
                   id="vApprove3"
                   label="Approve3"
                   value={prhead.vApprove4}
-                  onChange={event => {
+                  values={(values.vApprove4 = prhead.vApprove4)}
+                  onChange={(event) => {
                     // console.log(event.target.value);
-
                     setPRHead({
                       ...prhead,
-                      vApprove4: event.target.value
+                      vApprove4: event.target.value,
                     });
                   }}
-                    InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true }}
                   SelectProps={{
-                    native: true
+                    native: true,
                   }}
                 >
                   <option />
-                  {approves.map(option => (
+                  {approves.map((option) => (
                     <option key={option.ID} value={option.US_LOGIN}>
                       {option.US_LOGIN}
                     </option>
                   ))}
-                </TextField> */}
+                </TextField>
+
                 <Grid className={classes.margin}>
                   <Button
                     // fullWidth
@@ -1470,7 +1471,7 @@ export default (props) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="default">
-              Cancel
+              Close
             </Button>
             <Button
               disabled={savedisable}
@@ -1949,6 +1950,8 @@ export default (props) => {
           vRemark: "",
           vApprove1: "",
           vApprove2: "",
+          vApprove3: "",
+          vApprove4: "",
         }}
         onSubmit={(values, { setSubmitting }) => {
           // alert(JSON.stringify(values));
@@ -1970,6 +1973,8 @@ export default (props) => {
           formData.append("vRemark", values.vRemark);
           formData.append("vApprove1", values.vApprove1);
           formData.append("vApprove2", values.vApprove2);
+          formData.append("vApprove3", values.vApprove3);
+          formData.append("vApprove4", values.vApprove4);
           formData.append("vStatus", prhead.vStatus ? prhead.vStatus : "00");
 
           if (newpr) {
@@ -1984,11 +1989,59 @@ export default (props) => {
               setPRNumber({ ...prnumber, vPRSelectNumber: "" });
               setPRHead({ ...initialStatePRHead });
               setNewPR(false);
-              let status = "00";
-              dispatch(prnumberActions.getPRNumbers(status));
+              let fromStatus = "00";
+              let toStatus = "05";
+              dispatch(prnumberActions.getPRNumbers(fromStatus, toStatus));
             }, 500);
           } else {
-            dispatch(prheadActions.updatePRHead(formData, props.history));
+            // Check approve duplicate
+            let checkApprove = false;
+
+            if (
+              values.vApprove1 === values.vApprove2 ||
+              values.vApprove1 === values.vApprove3 ||
+              values.vApprove1 === values.vApprove4
+            ) {
+              alert("vApprove1 Duplicate");
+            } else if (
+              values.vApprove2 === values.vApprove1 ||
+              values.vApprove2 === values.vApprove3 ||
+              values.vApprove2 === values.vApprove4
+            ) {
+              alert("vApprove2 Duplicate");
+            } else if (values.vApprove3) {
+              if (
+                values.vApprove3 === values.vApprove1 ||
+                values.vApprove3 === values.vApprove2 ||
+                values.vApprove3 === values.vApprove4
+              ) {
+                alert("vApprove3 Duplicate");
+              } else {
+                checkApprove = true;
+              }
+            } else if (values.vApprove4) {
+              if (values.vApprove3 === "") {
+                alert("vApprove3 should be enter");
+                return;
+              }
+
+              if (
+                values.vApprove4 === values.vApprove1 ||
+                values.vApprove4 === values.vApprove2 ||
+                values.vApprove4 === values.vApprove3
+              ) {
+                alert("vApprove4 Duplicate");
+              } else {
+                checkApprove = true;
+              }
+            } else {
+              checkApprove = true;
+            }
+
+            if (checkApprove) {
+              dispatch(prheadActions.updatePRHead(formData, props.history));
+              checkApprove = false;
+            }
           }
         }}
       >

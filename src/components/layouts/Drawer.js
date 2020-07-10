@@ -30,6 +30,7 @@ import LayersIcon from "@material-ui/icons/Layers";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
+import PrintIcon from "@material-ui/icons/Print";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import StarBorder from "@material-ui/icons/StarBorder";
@@ -345,6 +346,19 @@ const MiniDrawer = (props) => {
               <BarChartIcon />
             </ListItemIcon>
             <ListItemText primary="Monitoring" />
+          </ListItem>
+
+          <ListItem
+            component={NavLink}
+            to="/printreport"
+            button
+            key="printreport"
+            activeClassName={classes.isActive}
+          >
+            <ListItemIcon>
+              <PrintIcon />
+            </ListItemIcon>
+            <ListItemText primary="Print Report" />
           </ListItem>
         </List>
       </Drawer>

@@ -513,12 +513,12 @@ export default (props) => {
                     <div>
                       <MTableToolbar {...props} />
                       <a
-                        href={
-                          viewMPRDisable
-                            ? ""
-                            : `${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`
-                        }
-                        // href={`${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`}
+                        // href={
+                        //   viewMPRDisable
+                        //     ? ""
+                        //     : `${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`
+                        // }
+                        href={`${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`}
                         target="_blank"
                         style={{ textDecoration: "none" }}
                       >
@@ -526,7 +526,7 @@ export default (props) => {
                           fullWidth
                           variant="contained"
                           color="primary"
-                          disabled={viewMPRDisable}
+                          // disabled={viewMPRDisable}
                           startIcon={<SearchIcon />}
                           onClick={viewPR}
                         >
