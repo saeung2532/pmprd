@@ -21,15 +21,9 @@ import PrintIcon from "@material-ui/icons/Print";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Formik, Form, Field } from "formik";
 import { red, green, purple } from "@material-ui/core/colors/";
+import * as loginActions from "./../../../actions/login.action";
 import * as prnumberActions from "./../../../actions/prnumber.action";
 import * as prheadActions from "./../../../actions/prhead.action";
-import * as prdetailActions from "./../../../actions/prdetail.action";
-import * as monthActions from "./../../../actions/month.action";
-import * as statusActions from "./../../../actions/status.action";
-import * as warehouseActions from "./../../../actions/warehouse.action";
-import * as departmentActions from "./../../../actions/department.action";
-import * as costcenterActions from "./../../../actions/costcenter.action";
-import * as phgroupActions from "./../../../actions/phgroup.action";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -138,7 +132,11 @@ export default (props) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
-    dispatch(prnumberActions.getPRNumbersWithOutUser());
+    let status = "20";
+    dispatch(
+      prnumberActions.getPRNumbersUser(loginActions.getTokenUsername()),
+      status
+    );
     prheadReducer.result = null;
   }, []);
 
@@ -173,7 +171,7 @@ export default (props) => {
           <Grid item xs={12}>
             <Paper className={classes.paper}>
               <Grid container item xs={12} className={classes.margin}>
-                <Grid item xs={12} sm={1} className={classes.margin}>
+                <Grid item xs={12} sm={2} className={classes.margin}>
                   <TextField
                     fullWidth
                     select
@@ -205,25 +203,13 @@ export default (props) => {
                   </TextField>
                 </Grid>
 
-                <Grid item xs sm={1} className={classes.margin}>
-                  {/* <Button
-                    fullWidth
-                    size="medium"
-                    id="vSearch"
-                    variant="contained"
-                    color="primary"
-                    startIcon={<PrintIcon />}
-                    onClick={handleSearch}
-                  >
-                    Print
-                  </Button> */}
+                <Grid className={classes.margin}>
                   <a
-                    // href={
-                    //   viewMPRDisable
-                    //     ? ""
-                    //     : `${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`
-                    // }
-                    // href={`${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`}
+                    href={`${
+                      process.env.REACT_APP_API_URL
+                    }/br_api/api_report/viewmpr/${loginActions.getTokenCono()}/${loginActions.getTokenDivi()}/${
+                      prnumber.vPRSelectNumber
+                    }`}
                     target="_blank"
                     style={{ textDecoration: "none" }}
                   >

@@ -30,6 +30,7 @@ import * as prnumberActions from "./../../../actions/prnumber.action";
 import * as prheadActions from "./../../../actions/prhead.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
 import * as warehouseActions from "./../../../actions/warehouse.action";
+import * as buActions from "./../../../actions/bu.action";
 import * as departmentActions from "./../../../actions/department.action";
 import * as costcenterActions from "./../../../actions/costcenter.action";
 import * as approveActions from "./../../../actions/approve.action";
@@ -89,6 +90,7 @@ export default (props) => {
   const warehouseReducer = useSelector(
     ({ warehouseReducer }) => warehouseReducer
   );
+  const buReducer = useSelector(({ buReducer }) => buReducer);
   const departmentReducer = useSelector(
     ({ departmentReducer }) => departmentReducer
   );
@@ -168,7 +170,7 @@ export default (props) => {
     let toStatus = "05";
     dispatch(prnumberActions.getPRNumbers(fromStatus, toStatus));
     dispatch(warehouseActions.getWarehouses());
-    dispatch(departmentActions.getDepartments());
+    dispatch(buActions.getBUs());
     dispatch(approveActions.getApproves());
     dispatch(buyerActions.getBuyers());
     dispatch(supplierActions.getSuppliers());
@@ -185,9 +187,11 @@ export default (props) => {
       setPRNumber({ ...prnumber, vPRSelectNumber: item.HD_IBPLPN });
       dispatch(itemActions.getItems(item.HD_IBWHLO));
       let phgroup = "PH";
+      let bu = item.HD_BU;
       let department = item.HD_IBCOCE;
       dispatch(phgroupActions.getPHGroups(phgroup));
       dispatch(costcenterActions.getCostCenters(department));
+      dispatch(departmentActions.getDepartments(bu));
       setPRHead({
         ...prhead,
         vPRNumber: item.HD_IBPLPN,
@@ -226,6 +230,8 @@ export default (props) => {
   const warehouses = useMemo(() =>
     warehouseReducer.result ? warehouseReducer.result : []
   );
+
+  const bus = useMemo(() => (buReducer.result ? buReducer.result : []));
 
   const departments = useMemo(() =>
     departmentReducer.result ? departmentReducer.result : []
@@ -493,6 +499,7 @@ export default (props) => {
                     });
                   }}
                 />
+
                 <TextField
                   className={classes.margin}
                   style={{ maxWidth: 180 }}
@@ -526,6 +533,7 @@ export default (props) => {
                   }}
                   InputLabelProps={{ shrink: true, required: true }}
                 />
+
                 <TextField
                   className={classes.margin}
                   style={{ width: "150px" }}
@@ -561,6 +569,43 @@ export default (props) => {
 
                 <TextField
                   className={classes.margin}
+                  style={{ maxWidth: 100 }}
+                  required
+                  disabled={deptdisable}
+                  select
+                  size="small"
+                  id="vBU"
+                  label="BU"
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  value={prhead.vBU}
+                  values={(values.vBU = prhead.vBU)}
+                  onChange={(event) => {
+                    // console.log(event.target.value);
+                    setPRHead({
+                      ...prhead,
+                      vBU: event.target.value,
+                    });
+
+                    dispatch(
+                      departmentActions.getDepartments(event.target.value)
+                    );
+                  }}
+                  InputLabelProps={{ shrink: true }}
+                  SelectProps={{
+                    native: true,
+                  }}
+                >
+                  <option />
+                  {bus.map((option) => (
+                    <option key={option.ID} value={option.S1STID}>
+                      {option.BU}
+                    </option>
+                  ))}
+                </TextField>
+
+                <TextField
+                  className={classes.margin}
                   style={{ width: "150px" }}
                   disabled={deptdisable}
                   select
@@ -586,7 +631,7 @@ export default (props) => {
                 >
                   <option />
                   {departments.map((option) => (
-                    <option key={option.ID} value={option.S1STID}>
+                    <option key={option.ID} value={option.S2AITM}>
                       {option.DEPARTMENT}
                     </option>
                   ))}
@@ -633,27 +678,6 @@ export default (props) => {
                     //   ...prhead,
                     //   vPlanUnPlan: event.target.value
                     // });
-                  }}
-                />
-
-                <TextField
-                  className={classes.margin}
-                  style={{ maxWidth: 100 }}
-                  required
-                  disabled={editdisable}
-                  size="small"
-                  id="vBU"
-                  label="Bu"
-                  placeholder="Placeholder"
-                  variant="outlined"
-                  value={prhead.vBU}
-                  values={(values.vBU = prhead.vBU)}
-                  onChange={(event) => {
-                    // console.log(event.target.value);
-                    setPRHead({
-                      ...prhead,
-                      vBU: event.target.value,
-                    });
                   }}
                 />
 

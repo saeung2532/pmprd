@@ -10,6 +10,12 @@ export const HTTP_WAREHOUSE_FAILED = "HTTP_WAREHOUSE_FAILED";
 export const HTTP_WAREHOUSE_SUCCESS = "HTTP_WAREHOUSE_SUCCESS";
 export const HTTP_WAREHOUSE_CLEAR = "HTTP_WAREHOUSE_CLEAR";
 
+// BU
+export const HTTP_BU_FETCHING = "HTTP_BU_FETCHING";
+export const HTTP_BU_FAILED = "HTTP_BU_FAILED";
+export const HTTP_BU_SUCCESS = "HTTP_BU_SUCCESS";
+export const HTTP_BU_CLEAR = "HTTP_BU_CLEAR";
+
 // DEPARTMENT
 export const HTTP_DEPARTMENT_FETCHING = "HTTP_DEPARTMENT_FETCHING";
 export const HTTP_DEPARTMENT_FAILED = "HTTP_DEPARTMENT_FAILED";
@@ -183,6 +189,8 @@ export const imageUrl = "http://localhost:8080";
 export const server = {
   HTTP_LOGIN_URL: `api_auth/login`,
   COMPANY_URL: `api_data/company`,
+  COMPANYWITHCONODIVI_URL: `api_data/companywithconodivi`,
+  BU_URL: `api_data/bu`,
   WAREHOUSE_URL: `api_data/warehouse`,
   DEPARTMENT_URL: `api_data/department`,
   COSTCENTER_URL: `api_data/costcenter`,
@@ -207,6 +215,7 @@ export const server = {
   CHECKPRAPPROVE_URL: `api_data/checkprapprove`,
   PRREJECT_URL: `api_data/prreject`,
   PRNUMBERWITHOUTUSER_URL: `api_data/prnumberwithoutuser`,
+  PRNUMBERUSER_URL: `api_data/prnumberuser`,
   COSTCENTERWITHOUTDEPARTMENT_URL: `api_data/costcenterwithoutdepartment`,
   MONTH_URL: `api_data/month`,
   STATUS_URL: `api_data/status`,
@@ -219,5 +228,6 @@ export const server = {
   TRANSACTION_URL: `transaction`,
   REPORT_URL: `report`,
   TOKEN_KEY: `token`,
+  APPROVE_TOKEN_KEY: `approve_token`,
   REFRESH_TOKEN_KEY: `refresh_token`,
 };

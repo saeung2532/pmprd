@@ -12,21 +12,21 @@ import { useSelector } from "react-redux";
 // const loginReducer = useSelector(({ loginReducer }) => loginReducer);
 
 // Information being sent to Reducer
-export const setLoginStateToFetching = () => ({
+export const setStateLoginToFetching = () => ({
   type: HTTP_LOGIN_FETCHING,
 });
 
-export const setLoginStateToFailed = (payload) => ({
+export const setStateLoginToFailed = (payload) => ({
   type: HTTP_LOGIN_FAILED,
   payload,
 });
 
-export const setLoginStateToSuccess = (payload) => ({
+export const setStateLoginToSuccess = (payload) => ({
   type: HTTP_LOGIN_SUCCESS,
   payload,
 });
 
-export const setLoginStateToLogout = () => ({
+export const setStateLoginToLogout = () => ({
   type: HTTP_LOGIN_LOGOUT,
 });
 
@@ -35,7 +35,7 @@ export const setLoginStateToLogout = () => ({
 // export const login = (value, history) => {
 //   return async dispatch => {
 //     try {
-//       dispatch(setLoginStateToFetching()); // fetching
+//       dispatch(setStateLoginToFetching()); // fetching
 //       let result = await httpClient.post(server.HTTP_LOGIN_URL, value);
 //       // console.log(JSON.stringify(result));
 //       if (result.data.result === "ok") {
@@ -44,20 +44,20 @@ export const setLoginStateToLogout = () => ({
 //           server.REFRESH_TOKEN_KEY,
 //           result.data.refreshToken
 //         );
-//         dispatch(setLoginStateToSuccess(result));
+//         dispatch(setStateLoginToSuccess(result));
 //         history.push("/pr_stock");
 //       } else {
-//         dispatch(setLoginStateToFailed());
+//         dispatch(setStateLoginToFailed());
 //       }
 //     } catch (err) {
 //       alert(JSON.stringify(err));
-//       dispatch(setLoginStateToFailed());
+//       dispatch(setStateLoginToFailed());
 //     }
 //   };
 // };
 export const login = (value, history) => {
   return async (dispatch) => {
-    dispatch(setLoginStateToFetching()); // fetching
+    dispatch(setStateLoginToFetching()); // fetching
     doGetLogins(dispatch, value, history);
   };
 };
@@ -69,15 +69,15 @@ const doGetLogins = async (dispatch, value, history) => {
     if (result.data.result === "ok") {
       localStorage.setItem(server.TOKEN_KEY, result.data.token);
       localStorage.setItem(server.REFRESH_TOKEN_KEY, result.data.refreshToken);
-      dispatch(setLoginStateToSuccess(result));
+      dispatch(setStateLoginToSuccess(result));
       history.push("/");
     } else {
       // console.log(JSON.stringify(result.data.message));
-      dispatch(setLoginStateToFailed(result.data.message));
+      dispatch(setStateLoginToFailed(result.data.message));
     }
   } catch (err) {
     alert(JSON.stringify(err));
-    dispatch(setLoginStateToFailed());
+    dispatch(setStateLoginToFailed());
   }
 };
 
@@ -85,7 +85,7 @@ export const logout = (history) => {
   return (dispatch) => {
     // console.log(history);
     localStorage.removeItem(server.TOKEN_KEY);
-    dispatch(setLoginStateToLogout());
+    dispatch(setStateLoginToLogout());
     history.push("/login");
   };
 };
@@ -124,9 +124,41 @@ export const isLoggedIn = () => {
   }
 };
 
+export const getTokenCono = () => {
+  try {
+    let token = localStorage.getItem(server.TOKEN_KEY);
+    var decodedToken = jwt.decode(token, { complete: true });
+    var getCono = decodedToken.payload.role.toString().split(":");
+    return getCono[0].trim();
+  } catch (e) {
+    return false;
+  }
+};
+
+export const getTokenDivi = () => {
+  try {
+    let token = localStorage.getItem(server.TOKEN_KEY);
+    var decodedToken = jwt.decode(token, { complete: true });
+    var getDivi = decodedToken.payload.role.toString().split(":");
+    return getDivi[1].trim();
+  } catch (e) {
+    return false;
+  }
+};
+
 export const getTokenCompany = () => {
   try {
     let token = localStorage.getItem(server.TOKEN_KEY);
+    var decodedToken = jwt.decode(token, { complete: true });
+    return decodedToken.payload.role;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const getApproveTokenCompany = () => {
+  try {
+    let token = localStorage.getItem(server.APPROVE_TOKEN_KEY);
     var decodedToken = jwt.decode(token, { complete: true });
     return decodedToken.payload.role;
   } catch (e) {

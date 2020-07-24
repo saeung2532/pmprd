@@ -4,36 +4,36 @@ import {
   HTTP_DEPARTMENT_FETCHING,
   HTTP_DEPARTMENT_FAILED,
   HTTP_DEPARTMENT_CLEAR,
-  server
+  server,
 } from "../constants";
 
-export const setStateDepartmentToSuccess = payload => ({
+export const setStateDepartmentToSuccess = (payload) => ({
   type: HTTP_DEPARTMENT_SUCCESS,
-  payload
+  payload,
 });
 
 const setStateDepartmentToFetching = () => ({
-  type: HTTP_DEPARTMENT_FETCHING
+  type: HTTP_DEPARTMENT_FETCHING,
 });
 
 const setStateDepartmentToFailed = () => ({
-  type: HTTP_DEPARTMENT_FAILED
+  type: HTTP_DEPARTMENT_FAILED,
 });
 
 const setStateDepartmentToClear = () => ({
-  type: HTTP_DEPARTMENT_CLEAR
+  type: HTTP_DEPARTMENT_CLEAR,
 });
 
-export const getDepartments = () => {
-  return async dispatch => {
+export const getDepartments = (bu) => {
+  return async (dispatch) => {
     dispatch(setStateDepartmentToFetching());
-    doGetDepartments(dispatch);
+    doGetDepartments(dispatch, bu);
   };
 };
 
-const doGetDepartments = async dispatch => {
+const doGetDepartments = async (dispatch, bu) => {
   try {
-    let result = await httpClient.get(`${server.DEPARTMENT_URL}`);
+    let result = await httpClient.get(`${server.DEPARTMENT_URL}/${bu}`);
     dispatch(setStateDepartmentToSuccess(result.data));
     // alert(JSON.stringify(result.data));
   } catch (err) {

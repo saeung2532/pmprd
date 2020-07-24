@@ -91,7 +91,7 @@ export default function App() {
         (props) => (
           // loginActions.isLoggedIn() ? (
           <div className={classes.root}>
-            <Header />
+            <Header company={loginActions.getApproveTokenCompany()} />
             <Container className={classes.content} maxWidth={false}>
               <Component {...props} />
             </Container>
@@ -121,7 +121,7 @@ export default function App() {
         <PrivateRoute exact path="/printreport" component={PrintReportPage} />
         <PublicRoute
           exact
-          path="/approve/:cono/:divi/:prno/:status/:approve"
+          path="/approve/:cono/:divi/:prno/:status/:approve/:token"
           component={ApprovePage}
         />
         {/* The Default not found component */}

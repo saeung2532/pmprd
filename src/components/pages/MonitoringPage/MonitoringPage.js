@@ -26,6 +26,7 @@ import * as prdetailActions from "./../../../actions/prdetail.action";
 import * as monthActions from "./../../../actions/month.action";
 import * as statusActions from "./../../../actions/status.action";
 import * as warehouseActions from "./../../../actions/warehouse.action";
+import * as buActions from "./../../../actions/bu.action";
 import * as departmentActions from "./../../../actions/department.action";
 import * as costcenterActions from "./../../../actions/costcenter.action";
 import * as phgroupActions from "./../../../actions/phgroup.action";
@@ -81,6 +82,7 @@ export default (props) => {
   const departmentReducer = useSelector(
     ({ departmentReducer }) => departmentReducer
   );
+  const buReducer = useSelector(({ buReducer }) => buReducer);
   const costcenterReducer = useSelector(
     ({ costcenterReducer }) => costcenterReducer
   );
@@ -93,6 +95,7 @@ export default (props) => {
   const initialStatePRNumber = {
     vPRSelectNumber: null,
     vWarehouse: null,
+    vBU: null,
     vDepartment: null,
     vCostCenter: null,
     vPHGroup: null,
@@ -152,7 +155,7 @@ export default (props) => {
   useEffect(() => {
     dispatch(prnumberActions.getPRNumbersWithOutUser());
     dispatch(warehouseActions.getWarehouses());
-    dispatch(departmentActions.getDepartments());
+    dispatch(buActions.getBUs());
     let phgroup = "PH";
     dispatch(phgroupActions.getPHGroups(phgroup));
     dispatch(monthActions.getMonths());
@@ -168,6 +171,8 @@ export default (props) => {
   const warehouses = useMemo(() =>
     warehouseReducer.result ? warehouseReducer.result : []
   );
+
+  const bus = useMemo(() => (buReducer.result ? buReducer.result : []));
 
   const departments = useMemo(() =>
     departmentReducer.result ? departmentReducer.result : []
@@ -195,6 +200,7 @@ export default (props) => {
       prheadActions.getPRHeadsMonitoring(
         prnumber.vPRSelectNumber,
         prnumber.vWarehouse,
+        prnumber.vBU,
         prnumber.vDepartment,
         prnumber.vMonth,
         prnumber.vStatus
@@ -245,7 +251,7 @@ export default (props) => {
           <Grid item xs={12}>
             <Paper className={classes.paper}>
               <Grid container item xs={12} className={classes.margin}>
-                <Grid item xs={12} sm={1} className={classes.margin}>
+                <Grid item xs={12} sm={2} className={classes.margin}>
                   <TextField
                     fullWidth
                     select
@@ -312,6 +318,41 @@ export default (props) => {
                     fullWidth
                     select
                     size="small"
+                    id="vBU"
+                    label="BU"
+                    placeholder="Placeholder"
+                    variant="outlined"
+                    value={prnumber.vBU}
+                    onChange={(event) => {
+                      // console.log(event.target.value);
+                      setPRNumber({
+                        ...prnumber,
+                        vBU:
+                          event.target.value == "" ? null : event.target.value,
+                      });
+
+                      dispatch(
+                        departmentActions.getDepartments(event.target.value)
+                      );
+                    }}
+                    InputLabelProps={{ shrink: true }}
+                    SelectProps={{
+                      native: true,
+                    }}
+                  >
+                    <option />
+                    {bus.map((option) => (
+                      <option key={option.ID} value={option.S1STID}>
+                        {option.BU}
+                      </option>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} sm={1} className={classes.margin}>
+                  <TextField
+                    fullWidth
+                    select
+                    size="small"
                     variant="outlined"
                     // required
                     id="vDepartment"
@@ -332,7 +373,7 @@ export default (props) => {
                   >
                     <option />
                     {departments.map((option) => (
-                      <option key={option.ID} value={option.S1STID}>
+                      <option key={option.ID} value={option.S2AITM}>
                         {option.DEPARTMENT}
                       </option>
                     ))}
@@ -458,7 +499,7 @@ export default (props) => {
       >
         <form onSubmit={handleSubmit}>
           <DialogTitle id="alert-dialog-slide-title">
-            PR Number : {itemprdetail.vPRNumber}
+            MPR Number : {itemprdetail.vPRNumber}
           </DialogTitle>
           <DialogContent>
             <MaterialTable
@@ -1330,7 +1371,7 @@ export default (props) => {
         options={{
           // exportButton: true,
           // toolbar: false,
-          paging: false,
+          paging: true,
           headerStyle: {
             textAlign: "center",
             borderLeft: 1,

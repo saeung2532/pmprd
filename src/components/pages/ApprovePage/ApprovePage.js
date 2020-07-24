@@ -29,6 +29,8 @@ import { Formik, Form, Field } from "formik";
 import { red, green, purple } from "@material-ui/core/colors/";
 import * as prheadapproveActions from "./../../../actions/prheadapprove.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
+import * as companyActions from "./../../../actions/company.action";
+import { server } from "../../../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -68,6 +70,7 @@ export default (props) => {
     prno: "",
     status: "",
     approve: "",
+    token: "",
   };
   const [params, setParams] = useState(initialStateParams);
   const initialStatePRHead = {
@@ -117,7 +120,15 @@ export default (props) => {
       prno: params.prno,
       status: params.status,
       approve: params.approve,
+      token: params.token,
     });
+
+    localStorage.setItem(server.APPROVE_TOKEN_KEY, params.token);
+
+    // if (prheadapproveReducer.result === null) {
+    // dispatch(companyActions.getCompanysWithConoDivi(params.cono, params.divi));
+    // }
+
     dispatch(
       prheadapproveActions.getPRHeadApproves(
         params.cono,

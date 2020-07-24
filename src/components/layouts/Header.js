@@ -160,7 +160,8 @@ const MiniDrawer = (props) => {
 
           <Typography variant="h6" noWrap>
             Smart Purchase : Monthly Plan - Ver {process.env.REACT_APP_VERSION}
-            <Typography variant="body1"> Approve </Typography>
+            {/* <Typography variant="body1"> Approve </Typography> */}
+            <Typography variant="body1">{props.company}</Typography>
           </Typography>
 
           <div className={classes.grow} />

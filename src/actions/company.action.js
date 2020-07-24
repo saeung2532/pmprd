@@ -42,3 +42,23 @@ const doGetCompanys = async (dispatch) => {
     dispatch(setStateCompanyToFailed());
   }
 };
+
+export const getCompanysWithConoDivi = (cono, divi) => {
+  return async (dispatch) => {
+    dispatch(setStateCompanyToFetching());
+    doGetCompanysWithConoDivi(dispatch, cono, divi);
+  };
+};
+
+const doGetCompanysWithConoDivi = async (dispatch, cono, divi) => {
+  try {
+    let result = await httpClient.get(
+      `${server.COMPANYWITHCONODIVI_URL}/${cono}/${divi}`
+    );
+    dispatch(setStateCompanyToSuccess(result.data));
+    // alert(JSON.stringify(result.data));
+  } catch (err) {
+    // alert(JSON.stringify(err));
+    dispatch(setStateCompanyToFailed());
+  }
+};

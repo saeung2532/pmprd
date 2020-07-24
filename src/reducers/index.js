@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import companyReducer from "./company.reducer";
 import warehouseReducer from "./warehouse.reducer";
+import buReducer from "./bu.reducer";
 import departmentReducer from "./department.reducer";
 import costcenterReducer from "./costcenter.reducer";
 import approveReducer from "./approve.reducer";
@@ -25,6 +26,7 @@ import statusReducer from "./status.reducer";
 export default combineReducers({
   companyReducer,
   warehouseReducer,
+  buReducer,
   departmentReducer,
   costcenterReducer,
   approveReducer,

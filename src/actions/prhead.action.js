@@ -84,11 +84,18 @@ export const updateStsPRHead = (prno, status) => {
   };
 };
 
-export const getPRHeadsMonitoring = (prno, whs, costcenter, month, status) => {
+export const getPRHeadsMonitoring = (
+  prno,
+  whs,
+  bu,
+  department,
+  month,
+  status
+) => {
   return async (dispatch) => {
-    // console.log("PR: " + prno + " STS: " + status);
+    // console.log(prno + " " + whs + " " + bu + " " + department + " " + month + " " + status);
     dispatch(setStatePRHeadToFetching());
-    doGetPRHeadsMonitoring(dispatch, prno, whs, costcenter, month, status);
+    doGetPRHeadsMonitoring(dispatch, prno, whs, bu, department, month, status);
   };
 };
 
@@ -96,13 +103,14 @@ const doGetPRHeadsMonitoring = async (
   dispatch,
   prno,
   whs,
-  costcenter,
+  bu,
+  department,
   month,
   status
 ) => {
   try {
     let result = await httpClient.get(
-      `${server.PRHEADMONITORING_URL}/${prno}/${whs}/${costcenter}/${month}/${status}`
+      `${server.PRHEADMONITORING_URL}/${prno}/${whs}/${bu}/${department}/${month}/${status}`
     );
     // alert(JSON.stringify(result.data));
     dispatch(setStatePRHeadToSuccess(result.data));
