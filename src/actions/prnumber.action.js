@@ -67,7 +67,7 @@ const doGetPRNumbersWithOutUser = async (dispatch) => {
 export const getPRNumbersUser = (user, status) => {
   return async (dispatch) => {
     dispatch(setStatePRNumberToFetching(user, status));
-    doGetPRNumbersUser(dispatch);
+    doGetPRNumbersUser(dispatch, user, status);
   };
 };
 

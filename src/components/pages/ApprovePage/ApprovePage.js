@@ -27,6 +27,7 @@ import SendIcon from "@material-ui/icons/Send";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { Formik, Form, Field } from "formik";
 import { red, green, purple } from "@material-ui/core/colors/";
+import * as loginActions from "./../../../actions/login.action";
 import * as prheadapproveActions from "./../../../actions/prheadapprove.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
 import * as companyActions from "./../../../actions/company.action";
@@ -119,9 +120,13 @@ export default (props) => {
       divi: params.divi,
       prno: params.prno,
       status: params.status,
-      approve: params.approve,
+      // approve: params.approve,
+      approve: loginActions.getApproveTokenUsername(),
       token: params.token,
     });
+
+    // alert(loginActions.getApproveTokenUsername());
+    // alert("approve: " + params.approve);
 
     localStorage.setItem(server.APPROVE_TOKEN_KEY, params.token);
 

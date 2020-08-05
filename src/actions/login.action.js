@@ -156,6 +156,16 @@ export const getTokenCompany = () => {
   }
 };
 
+export const getTokenUsername = () => {
+  try {
+    let token = localStorage.getItem(server.TOKEN_KEY);
+    var decodedToken = jwt.decode(token, { complete: true });
+    return decodedToken.payload.aud;
+  } catch (e) {
+    return false;
+  }
+};
+
 export const getApproveTokenCompany = () => {
   try {
     let token = localStorage.getItem(server.APPROVE_TOKEN_KEY);
@@ -166,9 +176,9 @@ export const getApproveTokenCompany = () => {
   }
 };
 
-export const getTokenUsername = () => {
+export const getApproveTokenUsername = () => {
   try {
-    let token = localStorage.getItem(server.TOKEN_KEY);
+    let token = localStorage.getItem(server.APPROVE_TOKEN_KEY);
     var decodedToken = jwt.decode(token, { complete: true });
     return decodedToken.payload.aud;
   } catch (e) {

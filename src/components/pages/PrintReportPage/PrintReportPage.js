@@ -134,8 +134,7 @@ export default (props) => {
   useEffect(() => {
     let status = "20";
     dispatch(
-      prnumberActions.getPRNumbersUser(loginActions.getTokenUsername()),
-      status
+      prnumberActions.getPRNumbersUser(loginActions.getTokenUsername(), status)
     );
     prheadReducer.result = null;
   }, []);
