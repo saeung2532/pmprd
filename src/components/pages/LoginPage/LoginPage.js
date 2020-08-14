@@ -211,7 +211,7 @@ const LoginPage = (props) => {
 
       <CardContent>
         {/* <p>#Debug prhead {JSON.stringify(company)}</p> */}
-        <Typography variant="h5">Login Monthly Plan</Typography>
+        <Typography variant="h5">Login Smart Approve</Typography>
         {/* HOC */}
         <Formik
           initialValues={{ username: "", password: "", company: "" }}

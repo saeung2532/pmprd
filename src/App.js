@@ -12,14 +12,10 @@ import {
 } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import Drawer from "./components/layouts/Drawer";
-import Header from "./components/layouts/Header";
 import * as loginActions from "./actions/login.action";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import HomePage from "./components/pages/HomePage/HomePage";
-import PlanPRPage from "./components/pages/PlanPRPage/PlanPRPage";
-import ConfirmPRPage from "./components/pages/ConfirmPRPage/ConfirmPRPage";
-import MonitoringPage from "./components/pages/MonitoringPage/MonitoringPage";
-import PrintReportPage from "./components/pages/PrintReportPage/PrintReportPage";
+import FinalApprovePage from "./components/pages/FinalApprovePage/FinalApprovePage";
 import ApprovePage from "./components/pages/ApprovePage/ApprovePage";
 
 const useStyles = makeStyles((theme) => ({
@@ -83,45 +79,19 @@ export default function App() {
     />
   );
 
-  //Public Route
-  const PublicRoute = ({ component: Component, ...rest }) => (
-    <Route
-      {...rest}
-      render={
-        (props) => (
-          // loginActions.isLoggedIn() ? (
-          <div className={classes.root}>
-            <Header company={loginActions.getApproveTokenCompany()} />
-            <Container className={classes.content} maxWidth={false}>
-              <Component {...props} />
-            </Container>
-          </div>
-        )
-        // ) : (
-        //   <Redirect
-        //     to={{ pathname: "/login", state: { from: props.location } }}
-        //   />
-        // )
-      }
-    />
-  );
-
   return (
     <Router
       basename={
-        process.env.REACT_APP_IS_PRODUCTION === "1" ? "/monthlyplan" : ""
+        process.env.REACT_APP_IS_PRODUCTION === "1" ? "/approvempr" : ""
       }
     >
       <Switch>
         <LoginRoute exact path="/login" component={LoginPage} />
         <PrivateRoute exact path="/" component={HomePage} />
-        <PrivateRoute exact path="/plan_pr" component={PlanPRPage} />
-        <PrivateRoute exact path="/confirm_pr" component={ConfirmPRPage} />
-        <PrivateRoute exact path="/monitoring" component={MonitoringPage} />
-        <PrivateRoute exact path="/printreport" component={PrintReportPage} />
-        <PublicRoute
+        <PrivateRoute exact path="/finalapprove" component={FinalApprovePage} />
+        <PrivateRoute
           exact
-          path="/approve/:cono/:divi/:prno/:status/:approve/:token"
+          path="/approve/:cono/:divi/:prno/:status/:approve/"
           component={ApprovePage}
         />
         {/* The Default not found component */}

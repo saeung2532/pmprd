@@ -1,7 +1,7 @@
 {
-  "name": "epr-systems",
+  "name": "smartpurchase",
   "version": "0.1.0",
-  "homepage": "/monthlyplan",
+  "homepage": "/approvempr",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.4",

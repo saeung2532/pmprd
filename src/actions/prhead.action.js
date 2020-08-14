@@ -119,3 +119,21 @@ const doGetPRHeadsMonitoring = async (
     dispatch(setStatePRHeadToFailed());
   }
 };
+
+export const getPRHeadsApproveFinal = (prno, status) => {
+  return async (dispatch) => {
+    dispatch(setStatePRHeadToFetching());
+    doGetPRHeadsApproveFinal(dispatch, status);
+  };
+};
+
+const doGetPRHeadsApproveFinal = async (dispatch, status) => {
+  try {
+    let result = await httpClient.get(`${server.PRAPPROVEFINAL_URL}/${status}`);
+    // alert(JSON.stringify(result.data));
+    dispatch(setStatePRHeadToSuccess(result.data));
+  } catch (err) {
+    // alert(JSON.stringify(err));
+    dispatch(setStatePRHeadToFailed());
+  }
+};

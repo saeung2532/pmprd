@@ -57,7 +57,7 @@ export const approvePRHead = (formData, history) => {
     try {
       let result = await httpClient.put(server.PRAPPROVE_URL, formData);
       alert(JSON.stringify(result.data));
-      // history.goBack();
+      history.goBack();
     } catch (err) {
       alert(JSON.stringify(err));
     }

@@ -12,25 +12,15 @@ import {
 } from "@material-ui/core/styles";
 import { Typography, Grid, Paper, TextField, Button } from "@material-ui/core";
 import { Card, CardMedia } from "@material-ui/core/";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import SearchIcon from "@material-ui/icons/Search";
 import DeleteIcon from "@material-ui/icons/Delete";
-import AddCircleIcon from "@material-ui/icons/AddCircle";
-import EditIcon from "@material-ui/icons/Edit";
-import CancelIcon from "@material-ui/icons/Cancel";
-import SaveIcon from "@material-ui/icons/Save";
 import SendIcon from "@material-ui/icons/Send";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import { Formik, Form, Field } from "formik";
 import { red, green, purple } from "@material-ui/core/colors/";
 import * as loginActions from "./../../../actions/login.action";
 import * as prheadapproveActions from "./../../../actions/prheadapprove.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
-import * as companyActions from "./../../../actions/company.action";
 import { server } from "../../../constants";
 
 const useStyles = makeStyles((theme) => ({
@@ -115,6 +105,7 @@ export default (props) => {
     let params = props.match.params;
     let statusDetail = "10";
     // console.log(params);
+
     setParams({
       cono: params.cono,
       divi: params.divi,
@@ -124,9 +115,6 @@ export default (props) => {
       approve: loginActions.getApproveTokenUsername(),
       token: params.token,
     });
-
-    // alert(loginActions.getApproveTokenUsername());
-    // alert("approve: " + params.approve);
 
     localStorage.setItem(server.APPROVE_TOKEN_KEY, params.token);
 
@@ -552,7 +540,27 @@ export default (props) => {
                     </div>
                   ),
                 }}
-                options={{ paging: false }}
+                options={{
+                  paging: false,
+                  headerStyle: {
+                    textAlign: "center",
+                    borderLeft: 1,
+                    borderRight: 1,
+                    borderBottom: 1,
+                    borderTop: 1,
+                    borderColor: "#E0E0E0",
+                    borderStyle: "solid",
+                    paddingLeft: "6px",
+                    paddingRight: "6px",
+                    paddingBottom: "12px",
+                    paddingTop: "12px",
+                    // backgroundColor: "red",
+                    // padding: "5px",
+                    // whiteSpace: "normal",
+                    // wordWrap: "break-word",
+                    // wordBreak: "break-all"
+                  },
+                }}
               />
               <br />
               <Grid
@@ -670,6 +678,31 @@ export default (props) => {
                   />
                 </Grid>
               </Grid>
+
+              <Grid
+                className={classes.margin}
+                container
+                direction="row"
+                justify="flex-end"
+                alignItems="center"
+                item
+                xs={12}
+                spacing={3}
+              >
+                <Grid className={classes.margin}>
+                  <Button
+                    style={{ width: "100px" }}
+                    size="small"
+                    startIcon={<ArrowBackIosIcon />}
+                    component={Link}
+                    to="/finalapprove"
+                    color="secondary"
+                    raised
+                  >
+                    Back
+                  </Button>
+                </Grid>
+              </Grid>
             </Paper>
           </Grid>
         </Grid>
@@ -690,6 +723,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -709,6 +746,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -728,6 +769,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -747,6 +792,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -767,6 +816,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -774,26 +827,6 @@ export default (props) => {
         </Typography>
       ),
     },
-    // {
-    //   title: "Stock Rem.",
-    //   field: "MBSTQT",
-    //   // type: "numeric",
-    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
-    //   cellStyle: {
-    //     textAlign: "right",
-    //     borderLeft: 1,
-    //     borderRight: 1,
-    //     borderBottom: 1,
-    //     borderTop: 1,
-    //     borderColor: "#E0E0E0",
-    //     borderStyle: "solid",
-    //   },
-    //   render: (item) => (
-    //     <Typography variant="body1" noWrap>
-    //       {item.MBSTQT}
-    //     </Typography>
-    //   ),
-    // },
     {
       title: "Qty",
       field: "PR_IBORQA",
@@ -807,6 +840,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -831,6 +868,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -856,6 +897,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -880,6 +925,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -904,6 +953,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -928,6 +981,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -952,6 +1009,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -971,6 +1032,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -990,6 +1055,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -1009,6 +1078,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -1028,6 +1101,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -1047,6 +1124,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -1066,6 +1147,10 @@ export default (props) => {
         borderTop: 1,
         borderColor: "#E0E0E0",
         borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
@@ -1100,11 +1185,15 @@ export default (props) => {
 
           if (approve) {
             // console.log("approve");
-            dispatch(prheadapproveActions.approvePRHead(formData));
+            dispatch(
+              prheadapproveActions.approvePRHead(formData, props.history)
+            );
             setTimeout(() => {
               dispatch(prheadapproveActions.checkApprovePRHead(formData));
             }, 1000);
+
             setApprove(false);
+            // props.history.goBack();
           } else {
             // console.log("reject");
             dispatch(prheadapproveActions.rejectPRHead(formData));
