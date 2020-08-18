@@ -91,7 +91,7 @@ export default function App() {
         <PrivateRoute exact path="/finalapprove" component={FinalApprovePage} />
         <PrivateRoute
           exact
-          path="/approve/:cono/:divi/:prno/:status/:approve/"
+          path="/approve/:cono/:divi/:prno/:approve/"
           component={ApprovePage}
         />
         {/* The Default not found component */}

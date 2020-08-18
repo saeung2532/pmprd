@@ -648,7 +648,7 @@ export default (props) => {
   return (
     <div className={classes.root}>
       {/* Grid */}
-      {/* <p>#Debug prnumber {JSON.stringify(prnumber)}</p> */}
+      {/* <p>#Debug prhead {JSON.stringify(prhead)}</p> */}
       {/* <Formik>{(props) => showForm(props)}</Formik> */}
 
       {/* Plan PR Table */}
@@ -687,6 +687,7 @@ export default (props) => {
           (rowData) => ({
             icon: "search",
             tooltip: "Search row",
+            iconProps: { color: "secondary" },
             onClick: (event, rowData) => {
               // alert(
               //   JSON.stringify(
@@ -699,11 +700,12 @@ export default (props) => {
               //       rowData.HD_STATUS
               //   )
               // );
-
+              let fromStatus = "15";
+              let toStatus = "20";
               props.history.push(
                 `/approve/${loginActions.getTokenCono()}/${loginActions.getTokenDivi()}/${
                   rowData.HD_IBPLPN
-                }/${rowData.HD_STATUS}/${loginActions.getTokenUsername()}`
+                }/${loginActions.getTokenUsername()}`
               );
 
               // props.history.push("/approve/`{{loginActions.getTokenCono()} }`/loginActions.getTokenDivi()/rowData.HD_IBPLPN/rowData.HD_STATUS/ROSANN_SUC"),
