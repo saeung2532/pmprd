@@ -219,7 +219,7 @@ export const server = {
   PRCONFIRMBUYER_URL: `api_data/prconfirmbuyer`,
   PRAPPROVE_URL: `api_data/prapprove`,
   CHECKPRAPPROVE_URL: `api_data/checkprapprove`,
-  PRREJECT_URL: `api_data/prreject`,
+  PRREJECT_URL: `api_data/prrejectapprove`,
   PRNUMBERWITHOUTUSER_URL: `api_data/prnumberwithoutuser`,
   PRNUMBERUSER_URL: `api_data/prnumberuser`,
   COSTCENTERWITHOUTDEPARTMENT_URL: `api_data/costcenterwithoutdepartment`,

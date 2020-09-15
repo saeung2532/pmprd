@@ -19,6 +19,7 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import { Formik, Form, Field } from "formik";
 import { red, green, purple } from "@material-ui/core/colors/";
 import * as loginActions from "./../../../actions/login.action";
+import * as prheadActions from "./../../../actions/prhead.action";
 import * as prheadapproveActions from "./../../../actions/prheadapprove.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
 import { server } from "../../../constants";
@@ -191,12 +192,8 @@ export default (props) => {
         vStatus: item.HD_STATUS,
       });
 
-      if (item.HD_IBPLPN != "") {
-        setViewMPRDisable(false);
-      }
-
       // console.log("item.HD_APPCK: " + item.HD_APPCK);
-      if (item.HD_APPCK > 0) {
+      if (item.HD_APPCK > 0 || item.HD_IBPLPN === "") {
         setApproveDisable(true);
         setRejectDisable(true);
       } else {
@@ -731,7 +728,8 @@ export default (props) => {
       },
       render: (item) => (
         <Typography variant="body1" noWrap>
-          {item.PR_IBPLPS}
+          {item.PR_IBPLPS === "999" ? "" : item.PR_IBPLPS}
+          {/* {item.PR_IBPLPS} */}
         </Typography>
       ),
     },
@@ -828,6 +826,26 @@ export default (props) => {
         </Typography>
       ),
     },
+    // {
+    //   title: "Stock Rem.",
+    //   field: "MBSTQT",
+    //   // type: "numeric",
+    //   headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "left" },
+    //   cellStyle: {
+    //     textAlign: "right",
+    //     borderLeft: 1,
+    //     borderRight: 1,
+    //     borderBottom: 1,
+    //     borderTop: 1,
+    //     borderColor: "#E0E0E0",
+    //     borderStyle: "solid",
+    //   },
+    //   render: (item) => (
+    //     <Typography variant="body1" noWrap>
+    //       {item.MBSTQT}
+    //     </Typography>
+    //   ),
+    // },
     {
       title: "Qty",
       field: "PR_IBORQA",
@@ -1114,6 +1132,29 @@ export default (props) => {
       ),
     },
     {
+      title: "Cost Name",
+      field: "S2TX15",
+      headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
+      cellStyle: {
+        textAlign: "center",
+        borderLeft: 1,
+        borderRight: 1,
+        borderBottom: 1,
+        borderTop: 1,
+        borderColor: "#E0E0E0",
+        borderStyle: "solid",
+        paddingLeft: "6px",
+        paddingRight: "6px",
+        paddingBottom: "12px",
+        paddingTop: "12px",
+      },
+      render: (item) => (
+        <Typography variant="body1" noWrap>
+          {item.S2TX15}
+        </Typography>
+      ),
+    },
+    {
       title: "Group",
       field: "PR_IBMODL",
       headerStyle: { maxWidth: 100, whiteSpace: "nowrap", textAlign: "center" },
@@ -1195,14 +1236,14 @@ export default (props) => {
             );
             setTimeout(() => {
               dispatch(prheadapproveActions.checkApprovePRHead(formData));
+              setApprove(false);
             }, 1000);
-
-            setApprove(false);
-            // props.history.goBack();
           } else {
             // console.log("reject");
             dispatch(prheadapproveActions.rejectPRHead(formData));
             setTimeout(() => {
+              dispatch(prheadapproveActions.checkApprovePRHead(formData));
+              alert("Reject complete.");
               setPRHead({ ...initialStatePRHead });
               let statusDetail = "10";
               dispatch(
@@ -1213,15 +1254,15 @@ export default (props) => {
                   statusDetail
                 )
               );
+              setApproveDisable(true);
+              setRejectDisable(true);
+              setReject(false);
             }, 1000);
-
-            setReject(false);
           }
 
           setTimeout(() => {
             let fromStatus = "15";
             let toStatus = "20";
-
             dispatch(
               prheadapproveActions.getPRHeadApproves(
                 params.cono,
