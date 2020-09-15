@@ -82,7 +82,7 @@ export default function App() {
   return (
     <Router
       basename={
-        process.env.REACT_APP_IS_PRODUCTION === "1" ? "/approvempr" : ""
+        process.env.REACT_APP_IS_PRODUCTION === "1" ? "/smartapprove" : ""
       }
     >
       <Switch>
