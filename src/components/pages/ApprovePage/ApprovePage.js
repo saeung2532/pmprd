@@ -23,6 +23,7 @@ import * as prheadActions from "./../../../actions/prhead.action";
 import * as prheadapproveActions from "./../../../actions/prheadapprove.action";
 import * as prdetailActions from "./../../../actions/prdetail.action";
 import { server } from "../../../constants";
+import { PrintRounded } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,6 +61,8 @@ export default (props) => {
     cono: "",
     divi: "",
     prno: "",
+    page: "",
+    link: "",
     approve: "",
     token: "",
   };
@@ -68,6 +71,7 @@ export default (props) => {
     vPRNumber: "",
     vDate: "",
     vWarehouse: "",
+    vCostcenter: "",
     vDepartment: "",
     vMonth: "",
     vPlanUnPlan: "",
@@ -93,6 +97,7 @@ export default (props) => {
     vApproveSign4: null,
     vApproveDate4: null,
     vStatus: "",
+    VReason: "",
   };
   const [prhead, setPRHead] = useState(initialStatePRHead);
   const [reject, setReject] = useState(false);
@@ -112,17 +117,20 @@ export default (props) => {
       cono: params.cono,
       divi: params.divi,
       prno: params.prno,
-      // approve: params.approve,
+      page: params.approvempr ? params.approvempr : params.approveepr,
       approve: loginActions.getApproveTokenUsername(),
       token: params.token,
     });
 
+    // console.log(JSON.stringify(params.page));
     localStorage.setItem(server.APPROVE_TOKEN_KEY, params.token);
 
     // if (prheadapproveReducer.result === null) {
     // dispatch(companyActions.getCompanysWithConoDivi(params.cono, params.divi));
     // }
 
+    // if (params.approvempr === "approvempr") {
+    //   // console.log("approvempr");
     dispatch(
       prheadapproveActions.getPRHeadApproves(
         params.cono,
@@ -130,7 +138,8 @@ export default (props) => {
         params.prno,
         fromStatus,
         toStatus,
-        params.approve
+        params.approve,
+        params.approvempr
       )
     );
 
@@ -139,9 +148,32 @@ export default (props) => {
         params.cono,
         params.divi,
         params.prno,
-        statusDetail
+        statusDetail,
+        params.approvempr
       )
     );
+    // } else {
+    //   // console.log("approveepr");
+    //   dispatch(
+    //     prheadapproveActions.getEPRHeadApproves(
+    //       params.cono,
+    //       params.divi,
+    //       params.prno,
+    //       fromStatus,
+    //       toStatus,
+    //       params.approve
+    //     )
+    //   );
+
+    //   dispatch(
+    //     prdetailActions.getEPRDetailApproves(
+    //       params.cono,
+    //       params.divi,
+    //       params.prno,
+    //       statusDetail
+    //     )
+    //   );
+    // }
 
     // console.log("prheadapproves: " + prheadapproveReducer.result);
     // if (prheadapproveReducer.result === null) {
@@ -153,6 +185,9 @@ export default (props) => {
     //   setRejectDisable(false);
     //   setViewMPRDisable(false);
     // }
+
+    prheadapproveReducer.result = null;
+    prdetailReducer.result = null;
   }, []);
 
   useEffect(() => {
@@ -166,7 +201,8 @@ export default (props) => {
         vPRNumber: item.HD_IBPLPN,
         vDate: moment(item.HD_PURCDT).format("YYYY-MM-DD"),
         vWarehouse: item.HD_IBWHLO,
-        vDepartment: item.HD_IBCOCE,
+        vCostcenter: params.page === "approvempr" ? "" : item.HD_IBCOCE,
+        vDepartment: params.page === "approvempr" ? item.HD_IBCOCE : "",
         vMonth: item.HD_IBMTH,
         vPlanUnPlan: item.HD_IBPRIP,
         vBU: item.HD_BU,
@@ -252,6 +288,20 @@ export default (props) => {
                   className={classes.margin}
                   style={{ width: "150px" }}
                   disabled={true}
+                  margin="normal"
+                  size="small"
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  id="vCostcenter"
+                  label="Costcenter"
+                  value={prhead.vCostcenter}
+                />
+
+                <TextField
+                  className={classes.margin}
+                  style={{ width: "150px" }}
+                  disabled={true}
                   size="small"
                   variant="outlined"
                   margin="normal"
@@ -284,6 +334,32 @@ export default (props) => {
                   placeholder="Placeholder"
                   variant="outlined"
                   value={prhead.vPlanUnPlan}
+                />
+
+                <TextField
+                  className={classes.margin}
+                  style={{ maxWidth: 120 }}
+                  required
+                  disabled={true}
+                  size="small"
+                  id="vBuyer"
+                  label="Buyer"
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  value={prhead.vBuyer}
+                />
+
+                <TextField
+                  className={classes.margin}
+                  style={{ maxWidth: 120 }}
+                  required
+                  disabled={true}
+                  size="small"
+                  id="vGroup"
+                  label="Group"
+                  placeholder="Placeholder"
+                  variant="outlined"
+                  value={prhead.vGroup}
                 />
 
                 <TextField
@@ -507,7 +583,9 @@ export default (props) => {
 
               <MaterialTable
                 id="root_pr"
-                title={`Approve MPR : ${prhead.vStatus}`}
+                title={`${
+                  params.page === "approvempr" ? "Approve mPR" : "Approve ePR"
+                } : ${prhead.vStatus}`}
                 columns={columns}
                 data={prdetailReducer.result ? prdetailReducer.result : []}
                 components={{
@@ -520,7 +598,12 @@ export default (props) => {
                         //     ? ""
                         //     : `${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`
                         // }
-                        href={`${process.env.REACT_APP_API_URL}/br_api/api_report/viewmpr/${params.cono}/${params.divi}/${params.prno}`}
+
+                        href={`${
+                          process.env.REACT_APP_API_URL
+                        }/br_api/api_report/${
+                          params.page === "approvempr" ? "viewmpr" : "viewepr"
+                        }/${params.cono}/${params.divi}/${params.prno}`}
                         target="_blank"
                         style={{ textDecoration: "none" }}
                       >
@@ -673,6 +756,14 @@ export default (props) => {
                     disabled={rejectDisable}
                     style={{ width: "200px" }}
                     placeholder="Reason"
+                    value={prhead.vReason}
+                    onChange={(event) => {
+                      // console.log(event.target.value);
+                      setPRHead({
+                        ...prhead,
+                        vReason: event.target.value,
+                      });
+                    }}
                   />
                 </Grid>
               </Grid>
@@ -693,7 +784,8 @@ export default (props) => {
                     size="small"
                     startIcon={<ArrowBackIosIcon />}
                     component={Link}
-                    to="/finalapprove"
+                    // to="/finalapprove"
+                    to={"/" + params.page}
                     color="secondary"
                     raised
                   >
@@ -1228,35 +1320,61 @@ export default (props) => {
             "vNextStatus",
             prhead.vStatus === "15" ? "20" : prhead.vStatus
           );
+          formData.append(
+            "vReason",
+            prhead.vReason ? prhead.vReason : "Reject"
+          );
 
           if (approve) {
             // console.log("approve");
             dispatch(
-              prheadapproveActions.approvePRHead(formData, props.history)
+              prheadapproveActions.approvePRHead(
+                formData,
+                props.history,
+                params.page
+              )
             );
             setTimeout(() => {
-              dispatch(prheadapproveActions.checkApprovePRHead(formData));
+              dispatch(
+                prheadapproveActions.checkApprovePRHead(
+                  formData,
+                  props.history,
+                  params.page
+                )
+              );
               setApprove(false);
             }, 1000);
           } else {
             // console.log("reject");
-            dispatch(prheadapproveActions.rejectPRHead(formData));
+            dispatch(
+              prheadapproveActions.rejectPRHead(
+                formData,
+                props.history,
+                params.page
+              )
+            );
             setTimeout(() => {
-              dispatch(prheadapproveActions.checkApprovePRHead(formData));
-              alert("Reject complete.");
-              setPRHead({ ...initialStatePRHead });
-              let statusDetail = "10";
               dispatch(
-                prdetailActions.getPRDetailApproves(
-                  params.cono,
-                  params.divi,
-                  params.prno,
-                  statusDetail
+                prheadapproveActions.checkApprovePRHead(
+                  formData,
+                  props.history,
+                  params.page
                 )
               );
-              setApproveDisable(true);
-              setRejectDisable(true);
-              setReject(false);
+              // alert("Reject complete.");
+              // setPRHead({ ...initialStatePRHead });
+              // let statusDetail = "10";
+              // dispatch(
+              //   prdetailActions.getMPRDetailApproves(
+              //     params.cono,
+              //     params.divi,
+              //     params.prno,
+              //     statusDetail
+              //   )
+              // );
+              // setApproveDisable(true);
+              // setRejectDisable(true);
+              // setReject(false);
             }, 1000);
           }
 
@@ -1270,7 +1388,8 @@ export default (props) => {
                 params.prno,
                 fromStatus,
                 toStatus,
-                params.approve
+                params.approve,
+                params.page
               )
             );
           }, 1000);

@@ -24,16 +24,39 @@ const setStateFinalApproveToClear = () => ({
   type: HTTP_FINALAPPROVE_CLEAR,
 });
 
-export const getPRApproveFinal = (status) => {
+export const getMPRApproveFinal = (fromstatus, tostatus) => {
   return async (dispatch) => {
     dispatch(setStateFinalApproveToFetching());
-    doGetPRApproveFinal(dispatch, status);
+    doGetMPRApproveFinal(dispatch, fromstatus, tostatus);
   };
 };
 
-const doGetPRApproveFinal = async (dispatch, status) => {
+const doGetMPRApproveFinal = async (dispatch, fromstatus, tostatus) => {
   try {
-    let result = await httpClient.get(`${server.PRAPPROVEFINAL_URL}/${status}`);
+    let result = await httpClient.get(
+      `${server.MPRAPPROVEFINAL_URL}/${fromstatus}/${tostatus}`
+    );
+    // alert(JSON.stringify(result.data));
+    dispatch(setStateFinalApproveToSuccess(result.data));
+  } catch (err) {
+    alert(JSON.stringify(err));
+    localStorage.removeItem(server.TOKEN_KEY);
+    dispatch(setStateFinalApproveToFailed());
+  }
+};
+
+export const getEPRApproveFinal = (fromstatus, tostatus) => {
+  return async (dispatch) => {
+    dispatch(setStateFinalApproveToFetching());
+    doGetEPRApproveFinal(dispatch, fromstatus, tostatus);
+  };
+};
+
+const doGetEPRApproveFinal = async (dispatch, fromstatus, tostatus) => {
+  try {
+    let result = await httpClient.get(
+      `${server.EPRAPPROVEFINAL_URL}/${fromstatus}/${tostatus}`
+    );
     // alert(JSON.stringify(result.data));
     dispatch(setStateFinalApproveToSuccess(result.data));
   } catch (err) {

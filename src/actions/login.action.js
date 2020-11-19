@@ -64,13 +64,13 @@ export const login = (value, history) => {
 
 const doGetLogins = async (dispatch, value, history) => {
   try {
-    let result = await httpClient.post(server.HTTP_LOGIN_URL, value);
+    let result = await httpClient.post(server.LOGIN_URL, value);
     // console.log(JSON.stringify(result));
     if (result.data.result === "ok") {
       localStorage.setItem(server.TOKEN_KEY, result.data.token);
       localStorage.setItem(server.REFRESH_TOKEN_KEY, result.data.refreshToken);
       dispatch(setStateLoginToSuccess(result));
-      history.push("/finalapprove");
+      history.push("/");
     } else {
       // console.log(JSON.stringify(result.data.message));
       dispatch(setStateLoginToFailed(result.data.message));

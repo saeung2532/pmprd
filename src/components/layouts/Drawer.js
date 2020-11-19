@@ -124,14 +124,14 @@ const useStyles = makeStyles((theme) => ({
 const MiniDrawer = (props) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [opendrawer, setOpenDrawer] = useState(false);
+  const [opendrawer, setOpenDrawer] = useState(true); // OpenDrawer
   const [openmenuph, setOpenMenuPH] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const isMenuOpen = Boolean(anchorEl);
 
   const handleDraweropendrawer = () => {
-    setOpenDrawer(false);
+    setOpenDrawer(true);
   };
 
   const handleDrawerClose = () => {
@@ -257,108 +257,29 @@ const MiniDrawer = (props) => {
           {/* Monthly Plan */}
           <ListItem
             component={NavLink}
-            to="/plan_pr"
+            to="/approvempr"
             button
-            key="plan_pr"
+            key="approvempr"
             activeClassName={classes.isActive}
           >
             <ListItemIcon>
               <StoreIcon />
             </ListItemIcon>
-            <ListItemText primary="Plan MPR" />
+            <ListItemText primary="Approve mPR" />
           </ListItem>
-
-          <ListItem button onClick={handleClick}>
-            <ListItemIcon>
-              <AttachMoneyIcon />
-            </ListItemIcon>
-            <ListItemText primary="PH Manage" />
-            {openmenuph ? <ExpandLess /> : <ExpandMore />}
-          </ListItem>
-          <Collapse in={openmenuph} timeout="auto" unmountOnExit>
-            <List component="div" disablePadding>
-              <ListItem
-                component={NavLink}
-                to="/confirm_pr"
-                button
-                key="confirm_pr"
-                activeClassName={classes.isActive}
-              >
-                <ListItemIcon>
-                  <StarBorder />
-                </ListItemIcon>
-                <ListItemText primary="Confirm MPR" />
-              </ListItem>
-            </List>
-          </Collapse>
-
-          {/* PR Stock */}
-          {/* <ListItem
-            component={NavLink}
-            to="/pr_stock"
-            button
-            key="pr_stock"
-            activeClassName={classes.isActive}
-          >
-            <ListItemIcon>
-              <ShopIcon />
-            </ListItemIcon>
-            <ListItemText primary="PR Stock" />
-          </ListItem> */}
-
-          {/* PR NonStock */}
-          {/* <ListItem
-            component={NavLink}
-            to="/pr_nonstock"
-            button
-            key="pr_nonstock"
-            activeClassName={classes.isActive}
-          >
-            <ListItemIcon>
-              <LayersIcon />
-            </ListItemIcon>
-            <ListItemText primary="PR NonStock" />
-          </ListItem> */}
-
-          {/* PH Manage */}
-          {/* <ListItem
-            component={NavLink}
-            to="/ph_manage"
-            button
-            key="ph_manage"
-            activeClassName={classes.isActive}
-          >
-            <ListItemIcon>
-              <AttachMoneyIcon />
-            </ListItemIcon>
-            <ListItemText primary="PH Manage" />
-          </ListItem> */}
 
           {/* Monitoring */}
           <ListItem
             component={NavLink}
-            to="/monitoring"
+            to="/approveepr"
             button
-            key="monitoring"
+            key="approveepr"
             activeClassName={classes.isActive}
           >
             <ListItemIcon>
               <BarChartIcon />
             </ListItemIcon>
-            <ListItemText primary="Monitoring" />
-          </ListItem>
-
-          <ListItem
-            component={NavLink}
-            to="/printreport"
-            button
-            key="printreport"
-            activeClassName={classes.isActive}
-          >
-            <ListItemIcon>
-              <PrintIcon />
-            </ListItemIcon>
-            <ListItemText primary="Print Report" />
+            <ListItemText primary="Approve ePR" />
           </ListItem>
         </List>
       </Drawer>

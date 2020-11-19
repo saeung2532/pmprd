@@ -15,6 +15,8 @@ import Drawer from "./components/layouts/Drawer";
 import * as loginActions from "./actions/login.action";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
 import HomePage from "./components/pages/HomePage/HomePage";
+import ApproveMPRPage from "./components/pages/ApproveMPRPage/ApproveMPRPage";
+import ApproveEPRPage from "./components/pages/ApproveEPRPage/ApproveEPRPage";
 import FinalApprovePage from "./components/pages/FinalApprovePage/FinalApprovePage";
 import ApprovePage from "./components/pages/ApprovePage/ApprovePage";
 
@@ -79,17 +81,57 @@ export default function App() {
     />
   );
 
+  //Public Route
+  const PublicRoute = ({ component: Component, ...rest }) => (
+    <Route
+      {...rest}
+      render={
+        (props) => (
+          // loginActions.isLoggedIn() ? (
+          <div className={classes.root}>
+            {/* <Header company={loginActions.getApproveTokenCompany()} /> */}
+            <Container className={classes.content} maxWidth={false}>
+              <Component {...props} />
+            </Container>
+          </div>
+        )
+        // ) : (
+        //   <Redirect
+        //     to={{ pathname: "/login", state: { from: props.location } }}
+        //   />
+        // )
+      }
+    />
+  );
+
   return (
-    <Router basename={process.env.REACT_APP_IS_PRODUCTION === "1" ? "" : ""}>
+    <Router
+      basename={
+        process.env.REACT_APP_IS_PRODUCTION === "1" ? "/smartapprove" : ""
+      }
+    >
       <Switch>
         <LoginRoute exact path="/login" component={LoginPage} />
         <PrivateRoute exact path="/" component={HomePage} />
-        <PrivateRoute exact path="/finalapprove" component={FinalApprovePage} />
+        <PrivateRoute exact path="/approvempr" component={ApproveMPRPage} />
         <PrivateRoute
           exact
-          path="/approve/:cono/:divi/:prno/:approve/"
+          path="/:approvempr/approve/:cono/:divi/:prno/:approve/"
           component={ApprovePage}
         />
+        <PrivateRoute exact path="/approveepr" component={ApproveEPRPage} />
+        <PrivateRoute
+          exact
+          path="/:approveepr/approve/:cono/:divi/:prno/:approve/"
+          component={ApprovePage}
+        />
+        <PublicRoute
+          exact
+          // path="/approve/:cono/:divi/:prno/:fromstatus/:tostatus/:approve/:token"
+          path="/emailapprove/:approveepr/:cono/:divi/:prno/:approve/:token"
+          component={FinalApprovePage}
+        />
+        {/* <PrivateRoute exact path="/finalapprove" component={FinalApprovePage} /> */}
         {/* The Default not found component */}
         {/* <Route render={(props) => <Redirect to="/" />} /> */}
       </Switch>
