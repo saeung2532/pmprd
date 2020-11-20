@@ -1290,7 +1290,7 @@ export default (props) => {
           </IconButton>
 
           <Typography variant="h6" noWrap>
-            Smart Approve : Monthly Plan - Ver {process.env.REACT_APP_VERSION}
+            Smart Approve - Ver {process.env.REACT_APP_VERSION}
             {/* <Typography variant="body1"> Approve </Typography> */}
             <Typography variant="body1">
               {loginActions.getApproveTokenCompany()}

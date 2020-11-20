@@ -61,29 +61,6 @@ export const getPRHeadApproves = (
   };
 };
 
-// export const getMPRHeadApproves = (
-//   cono,
-//   divi,
-//   prno,
-//   fromstatus,
-//   tostatus,
-//   approve
-// ) => {
-//   return async (dispatch) => {
-//     // console.log("PR: " + prno + " STS: " + status);
-//     dispatch(setStatePRHeadApproveToFetching());
-//     doGetMPRHeadApproves(
-//       dispatch,
-//       cono,
-//       divi,
-//       prno,
-//       fromstatus,
-//       tostatus,
-//       approve
-//     );
-//   };
-// };
-
 const doGetMPRHeadApproves = async (
   dispatch,
   cono,
@@ -104,29 +81,6 @@ const doGetMPRHeadApproves = async (
     dispatch(setStatePRHeadApproveToFailed());
   }
 };
-
-// export const getEPRHeadApproves = (
-//   cono,
-//   divi,
-//   prno,
-//   fromstatus,
-//   tostatus,
-//   approve
-// ) => {
-//   return async (dispatch) => {
-//     // console.log("PR: " + prno + " STS: " + status);
-//     dispatch(setStatePRHeadApproveToFetching());
-//     doGetEPRHeadApproves(
-//       dispatch,
-//       cono,
-//       divi,
-//       prno,
-//       fromstatus,
-//       tostatus,
-//       approve
-//     );
-//   };
-// };
 
 const doGetEPRHeadApproves = async (
   dispatch,

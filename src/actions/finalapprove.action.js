@@ -24,14 +24,14 @@ const setStateFinalApproveToClear = () => ({
   type: HTTP_FINALAPPROVE_CLEAR,
 });
 
-export const getMPRApproveFinal = (fromstatus, tostatus) => {
+export const getMPRFinalApprove = (fromstatus, tostatus) => {
   return async (dispatch) => {
     dispatch(setStateFinalApproveToFetching());
-    doGetMPRApproveFinal(dispatch, fromstatus, tostatus);
+    dogetMPRFinalApprove(dispatch, fromstatus, tostatus);
   };
 };
 
-const doGetMPRApproveFinal = async (dispatch, fromstatus, tostatus) => {
+const dogetMPRFinalApprove = async (dispatch, fromstatus, tostatus) => {
   try {
     let result = await httpClient.get(
       `${server.MPRAPPROVEFINAL_URL}/${fromstatus}/${tostatus}`
@@ -45,14 +45,14 @@ const doGetMPRApproveFinal = async (dispatch, fromstatus, tostatus) => {
   }
 };
 
-export const getEPRApproveFinal = (fromstatus, tostatus) => {
+export const getEPRFinalApprove = (fromstatus, tostatus) => {
   return async (dispatch) => {
     dispatch(setStateFinalApproveToFetching());
-    doGetEPRApproveFinal(dispatch, fromstatus, tostatus);
+    dogetEPRFinalApprove(dispatch, fromstatus, tostatus);
   };
 };
 
-const doGetEPRApproveFinal = async (dispatch, fromstatus, tostatus) => {
+const dogetEPRFinalApprove = async (dispatch, fromstatus, tostatus) => {
   try {
     let result = await httpClient.get(
       `${server.EPRAPPROVEFINAL_URL}/${fromstatus}/${tostatus}`

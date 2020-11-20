@@ -164,7 +164,7 @@ export default (props) => {
     // dispatch(statusActions.getStatuses());
     let fromStatus = "15";
     let toStatus = "20";
-    dispatch(finalapproveActions.getEPRApproveFinal(fromStatus, toStatus));
+    dispatch(finalapproveActions.getEPRFinalApprove(fromStatus, toStatus));
 
     prheadReducer.result = null;
     prdetailReducer.result = null;
@@ -173,7 +173,7 @@ export default (props) => {
   const handleSearch = () => {
     let fromStatus = "15";
     let toStatus = "20";
-    dispatch(finalapproveActions.getEPRApproveFinal(fromStatus, toStatus));
+    dispatch(finalapproveActions.getEPRFinalApprove(fromStatus, toStatus));
 
     prheadReducer.result = null;
     prdetailReducer.result = null;
