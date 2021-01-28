@@ -10,6 +10,18 @@ export const HTTP_COMPANY_FAILED = "HTTP_COMPANY_FAILED";
 export const HTTP_COMPANY_SUCCESS = "HTTP_COMPANY_SUCCESS";
 export const HTTP_COMPANY_CLEAR = "HTTP_COMPANY_CLEAR";
 
+// WONUMBER
+export const HTTP_WONUMBER_FETCHING = "HTTP_WONUMBER_FETCHING";
+export const HTTP_WONUMBER_FAILED = "HTTP_WONUMBER_FAILED";
+export const HTTP_WONUMBER_SUCCESS = "HTTP_WONUMBER_SUCCESS";
+export const HTTP_WONUMBER_CLEAR = "HTTP_WONUMBER_CLEAR";
+
+// WODETAIL
+export const HTTP_WODETAIL_FETCHING = "HTTP_WODETAIL_FETCHING";
+export const HTTP_WODETAIL_FAILED = "HTTP_WODETAIL_FAILED";
+export const HTTP_WODETAIL_SUCCESS = "HTTP_WODETAIL_SUCCESS";
+export const HTTP_WODETAIL_CLEAR = "HTTP_WODETAIL_CLEAR";
+
 // Error Code
 export const E_PICKER_CANCELLED = "E_PICKER_CANCELLED";
 export const E_PICKER_CANNOT_RUN_CAMERA_ON_SIMULATOR =
@@ -32,13 +44,15 @@ export const UPLOAD_PHOTO_FAIL_MESSAGE =
 
 // export const apiUrl = "http://localhost:8080/br_api/";
 // export const apiUrl = "http://192.200.9.106:8080/br_api/";
-export const apiUrl = `${process.env.REACT_APP_API_URL}/br_api/`;
+export const apiUrl = `${process.env.REACT_APP_API_URL}/test_api/`;
 // export const apiUrl = `${process.env.REACT_APP_API_URL}/br_apiv2/`;
 export const imageUrl = "http://localhost:8080";
 
 export const server = {
   LOGIN_URL: `api_auth/login`,
   COMPANY_URL: `api_data/company`,
+  WODETAIL_URL: `api_data/wodetail`,
+
   REFRESH_TOKEN_URL: `refresh/token`,
   TOKEN_KEY: `token`,
   APPROVE_TOKEN_KEY: `approve_token`,

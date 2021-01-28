@@ -1,7 +1,7 @@
 {
-  "name": "react-app",
+  "name": "pmprd",
   "version": "0.1.0",
-  "homepage": "/react-app",
+  "homepage": "/pmprd",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.9.4",
@@ -15,6 +15,7 @@
     "clsx": "^1.1.0",
     "cors": "^2.8.5",
     "formik": "^2.1.4",
+    "immutability-helper": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "material-table": "^1.57.2",
