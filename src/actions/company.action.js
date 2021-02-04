@@ -62,3 +62,10 @@ const doGetCompanysWithConoDivi = async (dispatch, cono, divi) => {
     dispatch(setStateCompanyToFailed());
   }
 };
+
+export const setCompanys = (companyName) => {
+  return async (dispatch) => {
+    dispatch(setStateCompanyToFetching());
+    dispatch(setStateCompanyToSuccess(companyName));
+  };
+};

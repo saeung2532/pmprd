@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   menuButton: {
-    marginRight: 36,
+    marginRight: 0,
   },
   hide: {
     display: "none",
@@ -124,11 +124,14 @@ const useStyles = makeStyles((theme) => ({
 const MiniDrawer = (props) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [opendrawer, setOpenDrawer] = useState(true); // OpenDrawer
+  const [opendrawer, setOpenDrawer] = useState(false); // OpenDrawer
   const [openmenuph, setOpenMenuPH] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const isMenuOpen = Boolean(anchorEl);
+
+  const companyReducer = useSelector(({ companyReducer }) => companyReducer);
+  const wonumberReducer = useSelector(({ wonumberReducer }) => wonumberReducer);
 
   const handleDraweropendrawer = () => {
     setOpenDrawer(true);
@@ -199,8 +202,14 @@ const MiniDrawer = (props) => {
           </IconButton>
 
           <Typography variant="h6" noWrap>
-            Smart Approve - Ver {process.env.REACT_APP_VERSION}
-            <Typography variant="body1">{props.company}</Typography>
+            PM PRD - Ver {process.env.REACT_APP_VERSION}
+            {/* <Typography variant="body1"> Approve </Typography> */}
+            <Typography variant="body1">
+              {companyReducer.result ? companyReducer.result : null}
+            </Typography>
+            <Typography variant="body2">
+              {wonumberReducer.result ? `WO : ${wonumberReducer.result}` : ""}
+            </Typography>
           </Typography>
 
           <div className={classes.grow} />

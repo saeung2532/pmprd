@@ -14,6 +14,7 @@ import Container from "@material-ui/core/Container";
 import Drawer from "./components/layouts/Drawer";
 import * as loginActions from "./actions/login.action";
 import LoginPage from "./components/pages/LoginPage/LoginPage";
+import WOListPage from "./components/pages/WOListPage/WOListPage";
 import HomePage from "./components/pages/HomePage/HomePage";
 import InspectPage from "./components/pages/InspectPage/InspectPage";
 const useStyles = makeStyles((theme) => ({
@@ -81,22 +82,14 @@ export default function App() {
   const PublicRoute = ({ component: Component, ...rest }) => (
     <Route
       {...rest}
-      render={
-        (props) => (
-          // loginActions.isLoggedIn() ? (
-          <div className={classes.root}>
-            {/* <Header company={loginActions.getApproveTokenCompany()} /> */}
-            <Container className={classes.content} maxWidth={false}>
-              <Component {...props} />
-            </Container>
-          </div>
-        )
-        // ) : (
-        //   <Redirect
-        //     to={{ pathname: "/login", state: { from: props.location } }}
-        //   />
-        // )
-      }
+      render={(props) => (
+        <div className={classes.root}>
+          <Drawer />
+          <Container className={classes.content} maxWidth={false}>
+            <Component {...props} />
+          </Container>
+        </div>
+      )}
     />
   );
 
@@ -105,10 +98,16 @@ export default function App() {
       basename={process.env.REACT_APP_IS_PRODUCTION === "1" ? "/pmprd" : ""}
     >
       <Switch>
-        <LoginRoute exact path="/login" component={LoginPage} />
+        {/* <LoginRoute exact path="/login" component={LoginPage} /> */}
         {/* <PrivateRoute exact path="/" component={HomePage} /> */}
-        <Route exact path="/" component={HomePage} />
-        <Route exact path="/inspect/:wonumber" component={InspectPage} />
+        <PublicRoute exact path="/" component={HomePage} />
+        <PublicRoute exact path="/wolist" component={WOListPage} />
+        <PublicRoute exact path="/wolist/:machine" component={WOListPage} />
+        <PublicRoute
+          exact
+          path="/wolist/inspect/:wonumber"
+          component={InspectPage}
+        />
         {/* The Default not found component */}
         {/* <Route render={(props) => <Redirect to="/" />} /> */}
       </Switch>

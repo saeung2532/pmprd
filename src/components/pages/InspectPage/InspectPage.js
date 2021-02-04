@@ -25,6 +25,9 @@ import MenuIcon from "@material-ui/icons/Menu";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
 import NumberFormat from "react-number-format";
+import { deviceType, browserName } from "react-device-detect";
+import * as companyActions from "./../../../actions/company.action";
+import * as wonumberActions from "./../../../actions/wonumber.action";
 import * as wodetailActions from "./../../../actions/wodetail.action";
 import { ColorLensOutlined } from "@material-ui/icons";
 
@@ -59,8 +62,8 @@ const useStyles = makeStyles((theme) => ({
     borderColor: "#E0E0E0",
     borderStyle: "solid",
   },
-  wrapper: {
-    margin: theme.spacing(1),
+  buttonSave: {
+    // margin: theme.spacing(1),
     position: "relative",
   },
   buttonSuccess: {
@@ -89,13 +92,14 @@ const useStyles = makeStyles((theme) => ({
 export default (props) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const companyReducer = useSelector(({ companyReducer }) => companyReducer);
+  const wonumberReducer = useSelector(({ wonumberReducer }) => wonumberReducer);
   const wodetailReducer = useSelector(({ wodetailReducer }) => wodetailReducer);
   const [wodetail, setWoDetail] = useState([]);
   const [rowdata, setRowData] = useState([]);
   const [opendrawer, setOpenDrawer] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [value, setValue] = useState("");
-  const [error, setError] = useState(false);
+  const [loadingsave, setLoadingSave] = useState(false);
   const [helperText, setHelperText] = useState("Please select value.");
 
   const handleDraweropendrawer = () => {
@@ -111,6 +115,8 @@ export default (props) => {
 
   useEffect(() => {
     if (wodetailReducer.result) {
+      dispatch(companyActions.setCompanys(wodetailReducer.result[0].CCCONM));
+      dispatch(wonumberActions.setWoNumbers(wodetailReducer.result[0].M7MWNO));
       setWoDetail(wodetailReducer.result);
       setLoading(false);
     }
@@ -221,22 +227,6 @@ export default (props) => {
         ></TextField>
       </div>
     );
-  };
-
-  const handleRadioChange = (event) => {
-    setValue(event.target.value);
-    setHelperText(" ");
-    setError(false);
-  };
-
-  const handleSubmit = (event) => {
-    console.log(event.target.value);
-    event.preventDefault();
-
-    if (value === "") {
-      setHelperText("Sorry, wrong answer!");
-      setError(true);
-    }
   };
 
   const showForm = ({
@@ -385,16 +375,22 @@ export default (props) => {
         {loading && (
           <CircularProgress size={24} className={classes.buttonProgress} />
         )}
-        <Button
-          className={classes.margin}
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          disabled={isSubmitting}
-        >
-          Save
-        </Button>
+
+        <Grid className={classes.buttonSave}>
+          <Button
+            className={classes.margin}
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            disabled={isSubmitting}
+          >
+            Save
+          </Button>
+          {loadingsave && (
+            <CircularProgress size={24} className={classes.buttonProgress} />
+          )}
+        </Grid>
       </form>
     );
   };
@@ -445,48 +441,18 @@ export default (props) => {
       )} */}
       {/* {console.log("rowdata: " + JSON.stringify(rowdata))} */}
 
-      <AppBar
-        color={
-          process.env.REACT_APP_IS_PRODUCTION === "1" ? "primary" : "secondary"
-        }
-        position="fixed"
-        className={clsx(classes.appBar, {
-          [classes.appBarShift]: opendrawer,
-        })}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="opendrawer drawer"
-            onClick={handleDraweropendrawer}
-            edge="start"
-            className={clsx(classes.menuButton, {
-              [classes.hide]: opendrawer,
-            })}
-          >
-            <MenuIcon />
-          </IconButton>
-
-          <Typography variant="h6" noWrap>
-            PM PRD - Ver {process.env.REACT_APP_VERSION}
-            {/* <Typography variant="body1"> Approve </Typography> */}
-            <Typography variant="body1">
-              {/* {loginActions.getApproveTokenCompany()} */}
-            </Typography>
-          </Typography>
-
-          <div className={classes.grow} />
-        </Toolbar>
-      </AppBar>
-
       <Formik
         initialValues={{ rowdata }}
         onSubmit={(values, { setSubmitting }) => {
-          alert(JSON.stringify(values));
+          // alert(JSON.stringify(values));
+          setLoadingSave(true);
+          let formData = new FormData();
+          formData.append("values", JSON.stringify(wodetail));
+          formData.append("device", deviceType + browserName);
+          dispatch(wodetailActions.addWODetails(formData));
         }}
       >
-        {(props) => showForm(props)}
-        {/* {wodetailReducer.result ? (props) => showForm(props) : ""} */}
+        {wodetailReducer.result ? (props) => showForm(props) : ""}
       </Formik>
     </div>
   );

@@ -41,3 +41,20 @@ const doGetWODetail = async (dispatch, wonumber) => {
     dispatch(setStateWODetailToFailed());
   }
 };
+
+export const addWODetails = (formData) => {
+  return async (dispatch) => {
+    doAddWODetail(dispatch, formData);
+  };
+};
+
+const doAddWODetail = async (dispatch, formData) => {
+  try {
+    let result = await httpClient.post(server.WODETAIL_URL, formData);
+    alert(JSON.stringify(result.data));
+    dispatch(setStateWODetailToSuccess(null));
+  } catch (err) {
+    alert(JSON.stringify(err));
+    dispatch(setStateWODetailToFailed());
+  }
+};
