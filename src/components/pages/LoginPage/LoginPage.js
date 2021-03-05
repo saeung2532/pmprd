@@ -15,6 +15,7 @@ import { Formik } from "formik";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import * as loginActions from "./../../../actions/login.action";
 import * as companyActions from "./../../../actions/company.action";
+import * as facilityActions from "./../../../actions/facility.action";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 290,
     backgroundSize: "auto",
+    display: "block",
   },
   textField: {
     width: 200,
@@ -37,7 +39,10 @@ const LoginPage = (props) => {
   const dispatch = useDispatch();
   const loginReducer = useSelector(({ loginReducer }) => loginReducer);
   const companyReducer = useSelector(({ companyReducer }) => companyReducer);
+  const facilityReducer = useSelector(({ facilityReducer }) => facilityReducer);
+  const historyReducer = useSelector(({ historyReducer }) => historyReducer);
   const [company, setCompany] = useState("");
+  const [facility, setFacility] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [alertDisable, setAlertDisable] = useState(false);
 
@@ -48,6 +53,18 @@ const LoginPage = (props) => {
   const companys = useMemo(() =>
     companyReducer.result ? companyReducer.result : []
   );
+
+  const facilitys = useMemo(() =>
+    facilityReducer.result ? facilityReducer.result : []
+  );
+
+  const historys = useMemo(() =>
+    historyReducer.result ? historyReducer.result : null
+  );
+
+  const handleCompanyChange = (cono, divi) => {
+    dispatch(facilityActions.getFacilitys(cono, divi));
+  };
 
   // const companys = [
   //   {
@@ -127,6 +144,7 @@ const LoginPage = (props) => {
         <TextField
           variant="outlined"
           margin="normal"
+          size="small"
           required
           fullWidth
           id="username"
@@ -138,6 +156,7 @@ const LoginPage = (props) => {
         <TextField
           variant="outlined"
           margin="normal"
+          size="small"
           required
           fullWidth
           id="password"
@@ -151,18 +170,22 @@ const LoginPage = (props) => {
           select
           variant="outlined"
           margin="normal"
+          size="small"
           required
           fullWidth
           id="company"
           label="Company"
           value={company}
-          onChange={
-            (handleChange = (event) => {
-              // console.log(event.target.value);
-              values.company = event.target.value;
-              setCompany(event.target.value);
-            })
-          }
+          onChange={(event) => {
+            // console.log(event.target.value);
+            values.company = event.target.value;
+            setCompany(event.target.value);
+
+            let getCompany = event.target.value.split(" : ");
+            let getCono = getCompany[0];
+            let getDivi = getCompany[1];
+            handleCompanyChange(getCono, getDivi);
+          }}
           SelectProps={{
             native: true,
           }}
@@ -171,6 +194,33 @@ const LoginPage = (props) => {
           {companys.map((option) => (
             <option key={option.ID} value={option.COMPANY}>
               {option.COMPANY}
+            </option>
+          ))}
+        </TextField>
+
+        <TextField
+          select
+          variant="outlined"
+          margin="normal"
+          size="small"
+          required
+          fullWidth
+          id="facility"
+          label="Facility"
+          value={facility}
+          onChange={(event) => {
+            // console.log(event.target.value);
+            values.facility = event.target.value;
+            setFacility(event.target.value);
+          }}
+          SelectProps={{
+            native: true,
+          }}
+        >
+          <option />
+          {facilitys.map((option) => (
+            <option key={option.ID} value={option.FACILITY}>
+              {option.FACILITY}
             </option>
           ))}
         </TextField>
@@ -208,16 +258,21 @@ const LoginPage = (props) => {
         image={`${process.env.PUBLIC_URL}/images/duck.png`}
         title="Smart Purchase"
       />
-
+      {"historyReducer: " + historys}
       <CardContent>
         {/* <p>#Debug prhead {JSON.stringify(company)}</p> */}
         <Typography variant="h5">Login Smart Approve</Typography>
         {/* HOC */}
         <Formik
-          initialValues={{ username: "", password: "", company: "" }}
+          initialValues={{
+            username: "",
+            password: "",
+            company: "",
+            facility: "",
+          }}
           onSubmit={(values, { setSubmitting }) => {
             // alert(JSON.stringify(values));
-            dispatch(loginActions.login(values, props.history));
+            dispatch(loginActions.login(values, props.history, historys));
             // setInterval(() => {
             setSubmitting(false);
             // }, 1000);

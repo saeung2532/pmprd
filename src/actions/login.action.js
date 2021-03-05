@@ -1,3 +1,4 @@
+import { useSelector, useDispatch } from "react-redux";
 import {
   HTTP_LOGIN_SUCCESS,
   HTTP_LOGIN_FETCHING,
@@ -7,9 +8,7 @@ import {
 import { server } from "../constants";
 import { httpClient } from "./../utils/HttpClient";
 import jwt from "jsonwebtoken";
-import { useSelector } from "react-redux";
-
-// const loginReducer = useSelector(({ loginReducer }) => loginReducer);
+import * as historyActions from "./../actions/history.action";
 
 // Information being sent to Reducer
 export const setStateLoginToFetching = () => ({
@@ -30,39 +29,15 @@ export const setStateLoginToLogout = () => ({
   type: HTTP_LOGIN_LOGOUT,
 });
 
-// Called by Login Component
-
-// export const login = (value, history) => {
-//   return async dispatch => {
-//     try {
-//       dispatch(setStateLoginToFetching()); // fetching
-//       let result = await httpClient.post(server.HTTP_LOGIN_URL, value);
-//       // console.log(JSON.stringify(result));
-//       if (result.data.result === "ok") {
-//         localStorage.setItem(server.TOKEN_KEY, result.data.token);
-//         localStorage.setItem(
-//           server.REFRESH_TOKEN_KEY,
-//           result.data.refreshToken
-//         );
-//         dispatch(setStateLoginToSuccess(result));
-//         history.push("/pr_stock");
-//       } else {
-//         dispatch(setStateLoginToFailed());
-//       }
-//     } catch (err) {
-//       alert(JSON.stringify(err));
-//       dispatch(setStateLoginToFailed());
-//     }
-//   };
-// };
-export const login = (value, history) => {
+export const login = (value, history, pathname) => {
+  // console.log("pathname: " + pathname);
   return async (dispatch) => {
     dispatch(setStateLoginToFetching()); // fetching
-    doGetLogins(dispatch, value, history);
+    doGetLogins(dispatch, value, history, pathname);
   };
 };
 
-const doGetLogins = async (dispatch, value, history) => {
+const doGetLogins = async (dispatch, value, history, pathname) => {
   try {
     let result = await httpClient.post(server.LOGIN_URL, value);
     // console.log(JSON.stringify(result));
@@ -70,8 +45,13 @@ const doGetLogins = async (dispatch, value, history) => {
       localStorage.setItem(server.TOKEN_KEY, result.data.token);
       localStorage.setItem(server.REFRESH_TOKEN_KEY, result.data.refreshToken);
       dispatch(setStateLoginToSuccess(result));
-      history.push("/");
+      if (pathname) {
+        history.push(pathname);
+      } else {
+        history.push("/wolist");
+      }
     } else {
+      console.log("err");
       // console.log(JSON.stringify(result.data.message));
       dispatch(setStateLoginToFailed(result.data.message));
     }
@@ -90,11 +70,17 @@ export const logout = (history) => {
   };
 };
 
-// export const isLoggedIn = () => {
-//   return true;
-// };
+export const isLoggedIn = (dispatch, props) => {
+  // Check location before login
+  if (props) {
+    // this.props.pathname = props.pathname
+    console.log("pathname: " + props.pathname);
+    dispatch(historyActions.addHistorys(props.pathname));
+  } else {
+    // console.log("pathname: null");
+    // dispatch(historyActions.addHistorys("ll"));
+  }
 
-export const isLoggedIn = () => {
   try {
     let token = localStorage.getItem(server.TOKEN_KEY);
     // console.log("getToken: " + token);
@@ -128,7 +114,7 @@ export const getTokenCono = () => {
   try {
     let token = localStorage.getItem(server.TOKEN_KEY);
     var decodedToken = jwt.decode(token, { complete: true });
-    var getCono = decodedToken.payload.role.toString().split(":");
+    var getCono = decodedToken.payload.sub.toString().split(":");
     return getCono[0].trim();
   } catch (e) {
     return false;
@@ -139,7 +125,7 @@ export const getTokenDivi = () => {
   try {
     let token = localStorage.getItem(server.TOKEN_KEY);
     var decodedToken = jwt.decode(token, { complete: true });
-    var getDivi = decodedToken.payload.role.toString().split(":");
+    var getDivi = decodedToken.payload.sub.toString().split(":");
     return getDivi[1].trim();
   } catch (e) {
     return false;
@@ -150,7 +136,21 @@ export const getTokenCompany = () => {
   try {
     let token = localStorage.getItem(server.TOKEN_KEY);
     var decodedToken = jwt.decode(token, { complete: true });
-    return decodedToken.payload.role;
+    let getTokenCompany = decodedToken.payload.sub.split(";");
+    let company = getTokenCompany[0];
+    return company;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const getTokenFacility = () => {
+  try {
+    let token = localStorage.getItem(server.TOKEN_KEY);
+    var decodedToken = jwt.decode(token, { complete: true });
+    let getTokenCompany = decodedToken.payload.sub.split(";");
+    let facility = getTokenCompany[1];
+    return facility;
   } catch (e) {
     return false;
   }
@@ -170,7 +170,7 @@ export const getApproveTokenCompany = () => {
   try {
     let token = localStorage.getItem(server.APPROVE_TOKEN_KEY);
     var decodedToken = jwt.decode(token, { complete: true });
-    return decodedToken.payload.role;
+    return decodedToken.payload.sub;
   } catch (e) {
     return false;
   }

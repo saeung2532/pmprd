@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   appBar: {
+    minHeight: "64px",
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(["width", "margin"], {
       easing: theme.transitions.easing.sharp,
@@ -129,8 +130,6 @@ const MiniDrawer = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const isMenuOpen = Boolean(anchorEl);
-
-  const companyReducer = useSelector(({ companyReducer }) => companyReducer);
   const wonumberReducer = useSelector(({ wonumberReducer }) => wonumberReducer);
 
   const handleDraweropendrawer = () => {
@@ -203,10 +202,10 @@ const MiniDrawer = (props) => {
 
           <Typography variant="h6" noWrap>
             PM PRD - Ver {process.env.REACT_APP_VERSION}
-            {/* <Typography variant="body1"> Approve </Typography> */}
-            <Typography variant="body1">
+            <Typography variant="body1">{props.company}</Typography>
+            {/* <Typography variant="body1">
               {companyReducer.result ? companyReducer.result : null}
-            </Typography>
+            </Typography> */}
             <Typography variant="body2">
               {wonumberReducer.result ? `WO : ${wonumberReducer.result}` : ""}
             </Typography>
@@ -236,6 +235,7 @@ const MiniDrawer = (props) => {
               <AccountCircle />
             </IconButton>
           </div>
+          {/* <MenuItem onClick={logout}>Logout</MenuItem> */}
         </Toolbar>
       </AppBar>
       {renderMenu}
@@ -263,32 +263,18 @@ const MiniDrawer = (props) => {
         </div>
         <Divider />
         <List>
-          {/* Monthly Plan */}
+          {/* WO List */}
           <ListItem
             component={NavLink}
-            to="/approvempr"
+            to="/wolist"
             button
-            key="approvempr"
+            key="wolist"
             activeClassName={classes.isActive}
           >
             <ListItemIcon>
               <StoreIcon />
             </ListItemIcon>
-            <ListItemText primary="Approve mPR" />
-          </ListItem>
-
-          {/* Monitoring */}
-          <ListItem
-            component={NavLink}
-            to="/approveepr"
-            button
-            key="approveepr"
-            activeClassName={classes.isActive}
-          >
-            <ListItemIcon>
-              <BarChartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Approve ePR" />
+            <ListItemText primary="WO List" />
           </ListItem>
         </List>
       </Drawer>

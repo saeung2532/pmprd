@@ -32,12 +32,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     display: "flex",
     justifyContent: "center",
-    padding: theme.spacing(3),
+    padding: theme.spacing(1),
   },
 }));
 
 export default function App() {
   const classes = useStyles();
+  const dispatch = useDispatch();
 
   // Login Route
   const LoginRoute = ({ component: Component, ...rest }) => (
@@ -62,7 +63,7 @@ export default function App() {
     <Route
       {...rest}
       render={(props) =>
-        loginActions.isLoggedIn() ? (
+        loginActions.isLoggedIn(dispatch, props.location) ? (
           <div className={classes.root}>
             <Drawer company={loginActions.getTokenCompany()} />
             <Container className={classes.content} maxWidth={false}>
@@ -98,12 +99,11 @@ export default function App() {
       basename={process.env.REACT_APP_IS_PRODUCTION === "1" ? "/pmprd" : ""}
     >
       <Switch>
-        {/* <LoginRoute exact path="/login" component={LoginPage} /> */}
-        {/* <PrivateRoute exact path="/" component={HomePage} /> */}
-        <PublicRoute exact path="/" component={HomePage} />
-        <PublicRoute exact path="/wolist" component={WOListPage} />
-        <PublicRoute exact path="/wolist/:machine" component={WOListPage} />
-        <PublicRoute
+        <LoginRoute exact path="/login" component={LoginPage} />
+        <PrivateRoute exact path="/" component={HomePage} />
+        <PrivateRoute exact path="/wolist" component={WOListPage} />
+        <PrivateRoute exact path="/wolist/:machine" component={WOListPage} />
+        <PrivateRoute
           exact
           path="/wolist/inspect/:wonumber"
           component={InspectPage}

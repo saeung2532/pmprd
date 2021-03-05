@@ -18,11 +18,9 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import IconButton from "@material-ui/core/IconButton";
-import MenuIcon from "@material-ui/icons/Menu";
+import { Link, NavLink } from "react-router-dom";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import moment from "moment";
 import NumberFormat from "react-number-format";
 import { deviceType, browserName } from "react-device-detect";
@@ -30,8 +28,6 @@ import * as companyActions from "./../../../actions/company.action";
 import * as wonumberActions from "./../../../actions/wonumber.action";
 import * as wodetailActions from "./../../../actions/wodetail.action";
 import { ColorLensOutlined } from "@material-ui/icons";
-
-const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -102,18 +98,15 @@ export default (props) => {
   const [loadingsave, setLoadingSave] = useState(false);
   const [helperText, setHelperText] = useState("Please select value.");
 
-  const handleDraweropendrawer = () => {
-    setOpenDrawer(false);
-  };
-
   useEffect(() => {
     let params = props.match.params;
-    // console.log(params);
+    console.log(params);
     dispatch(wodetailActions.getWODetails(params.wonumber));
     // setWoDetail(data);
   }, []);
 
   useEffect(() => {
+    // if (wodetailReducer.length > 0) {
     if (wodetailReducer.result) {
       dispatch(companyActions.setCompanys(wodetailReducer.result[0].CCCONM));
       dispatch(wonumberActions.setWoNumbers(wodetailReducer.result[0].M7MWNO));
@@ -133,6 +126,10 @@ export default (props) => {
     }
     console.log(wodetail);
   }, [wodetail]);
+
+  const handleGoBack = () => {
+    props.history.goBack();
+  };
 
   const handlePMRadioChange = (index, values) => {
     // console.log("index: " + index + " values: " + values);
@@ -239,12 +236,12 @@ export default (props) => {
     return (
       <form onSubmit={handleSubmit}>
         {wodetail.map((item, index) => (
-          <Grid key={item.PJSPOS} container spacing={3}>
+          <Grid key={index} container spacing={3}>
             {/* {console.log(rowdata)} */}
             <Grid item xs={12}>
               <Card>
                 <h3>
-                  {item.PJSPOS} {".) "} {item.PJTX40}
+                  {item.ID} {".) "} {item.PJTX40}
                 </h3>
                 <h4>{"Std. " + item.STD}</h4>
                 {/* <h6>{item.M7RVAL}</h6> */}
@@ -375,21 +372,49 @@ export default (props) => {
         {loading && (
           <CircularProgress size={24} className={classes.buttonProgress} />
         )}
-
-        <Grid className={classes.buttonSave}>
-          <Button
-            className={classes.margin}
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            disabled={isSubmitting}
-          >
-            Save
-          </Button>
-          {loadingsave && (
-            <CircularProgress size={24} className={classes.buttonProgress} />
-          )}
+        <Grid container spacing={3}>
+          <Grid className={classes.buttonSave} item xs={6}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              size="small"
+              color="primary"
+              disabled={wodetailReducer.result ? isSubmitting : true}
+            >
+              Save
+            </Button>
+            {loadingsave && (
+              <CircularProgress size={24} className={classes.buttonProgress} />
+            )}
+          </Grid>
+          <Grid item xs={6}>
+            <Button
+              fullWidth
+              variant="contained"
+              size="small"
+              color="secondary"
+              startIcon={<ArrowBackIosIcon />}
+              onClick={handleGoBack}
+              // component={Link}
+              // to={props.history.goBack()}
+              raised
+            >
+              Back
+            </Button>
+            {/* <Button
+              fullWidth
+              variant="contained"
+              size="small"
+              color="secondary"
+              startIcon={<ArrowBackIosIcon />}
+              component={Link}
+              to={"/wolist"}
+              raised
+            >
+              Back
+            </Button> */}
+          </Grid>
         </Grid>
       </form>
     );
@@ -444,16 +469,19 @@ export default (props) => {
       <Formik
         initialValues={{ rowdata }}
         onSubmit={(values, { setSubmitting }) => {
-          // alert(JSON.stringify(values));
+          // alert(JSON.stringify(wodetail));
           setLoadingSave(true);
           let formData = new FormData();
           formData.append("values", JSON.stringify(wodetail));
           formData.append("device", deviceType + browserName);
-          dispatch(wodetailActions.addWODetails(formData));
+          dispatch(wodetailActions.addWODetails(formData, props.history));
         }}
       >
         {wodetailReducer.result ? (props) => showForm(props) : ""}
       </Formik>
+      {/* {loading && (
+        <CircularProgress size={24} className={classes.buttonProgress} />
+      )} */}
     </div>
   );
 };

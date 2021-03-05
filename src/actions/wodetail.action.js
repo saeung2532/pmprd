@@ -37,24 +37,27 @@ const doGetWODetail = async (dispatch, wonumber) => {
     dispatch(setStateWODetailToSuccess(result.data));
     // alert(JSON.stringify(result.data));
   } catch (err) {
-    // alert(JSON.stringify(err));
+    alert(JSON.stringify(err));
+    localStorage.removeItem(server.TOKEN_KEY);
     dispatch(setStateWODetailToFailed());
   }
 };
 
-export const addWODetails = (formData) => {
+export const addWODetails = (formData, history) => {
   return async (dispatch) => {
-    doAddWODetail(dispatch, formData);
+    doAddWODetail(dispatch, formData, history);
   };
 };
 
-const doAddWODetail = async (dispatch, formData) => {
+const doAddWODetail = async (dispatch, formData, history) => {
+  // console.log(history);
   try {
     let result = await httpClient.post(server.WODETAIL_URL, formData);
     alert(JSON.stringify(result.data));
     dispatch(setStateWODetailToSuccess(null));
+    history.goBack();
   } catch (err) {
-    alert(JSON.stringify(err));
+    // alert(JSON.stringify(err));
     dispatch(setStateWODetailToFailed());
   }
 };
