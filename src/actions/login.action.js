@@ -45,13 +45,13 @@ const doGetLogins = async (dispatch, value, history, pathname) => {
       localStorage.setItem(server.TOKEN_KEY, result.data.token);
       localStorage.setItem(server.REFRESH_TOKEN_KEY, result.data.refreshToken);
       dispatch(setStateLoginToSuccess(result));
+      console.log("doGetLogins pathname: " + pathname);
       if (pathname) {
         history.push(pathname);
       } else {
         history.push("/wolist");
       }
     } else {
-      console.log("err");
       // console.log(JSON.stringify(result.data.message));
       dispatch(setStateLoginToFailed(result.data.message));
     }
@@ -74,7 +74,7 @@ export const isLoggedIn = (dispatch, props) => {
   // Check location before login
   if (props) {
     // this.props.pathname = props.pathname
-    console.log("pathname: " + props.pathname);
+    console.log("isLoggedIn pathname: " + props.pathname);
     dispatch(historyActions.addHistorys(props.pathname));
   } else {
     // console.log("pathname: null");

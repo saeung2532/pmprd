@@ -121,13 +121,11 @@ export default (props) => {
     let defaultWarehouse = null; // facility.substr(1, 1) + "91";
 
     if (selectwarehouseReducer.result) {
-      console.log("true");
+      // console.log("true");
       defaultWarehouse = selectwarehouseReducer.result;
-      // setWarehouse(selectwarehouseReducer.result);
     } else {
-      console.log("false");
+      // console.log("false");
       defaultWarehouse = facility.substr(1, 1) + "91";
-      // setWarehouse(defaultWarehouse);
     }
 
     setWarehouse(defaultWarehouse);

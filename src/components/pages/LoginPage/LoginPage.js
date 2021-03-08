@@ -258,10 +258,10 @@ const LoginPage = (props) => {
         image={`${process.env.PUBLIC_URL}/images/duck.png`}
         title="Smart Purchase"
       />
-      {"historyReducer: " + historys}
+      {/* {"historyReducer: " + historys} */}
       <CardContent>
         {/* <p>#Debug prhead {JSON.stringify(company)}</p> */}
-        <Typography variant="h5">Login Smart Approve</Typography>
+        <Typography variant="h5">Login PM PRD</Typography>
         {/* HOC */}
         <Formik
           initialValues={{

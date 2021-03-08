@@ -102,12 +102,13 @@ export default (props) => {
     let params = props.match.params;
     console.log(params);
     dispatch(wodetailActions.getWODetails(params.wonumber));
+    wodetailReducer.result = null;
     // setWoDetail(data);
   }, []);
 
   useEffect(() => {
-    // if (wodetailReducer.length > 0) {
     if (wodetailReducer.result) {
+      // console.log("wodetailReducer.result: true");
       dispatch(companyActions.setCompanys(wodetailReducer.result[0].CCCONM));
       dispatch(wonumberActions.setWoNumbers(wodetailReducer.result[0].M7MWNO));
       setWoDetail(wodetailReducer.result);
@@ -117,6 +118,9 @@ export default (props) => {
 
   useEffect(() => {
     if (rowdata.length === 0) {
+      // console.log("rowdata.length: true");
+      // console.log("wodetail.length: " + wodetail.length);
+
       wodetail.map((item, index) => {
         setRowData(
           ...rowdata,
@@ -124,6 +128,7 @@ export default (props) => {
         );
       });
     }
+    console.log(rowdata);
     console.log(wodetail);
   }, [wodetail]);
 
@@ -132,7 +137,7 @@ export default (props) => {
   };
 
   const handlePMRadioChange = (index, values) => {
-    // console.log("index: " + index + " values: " + values);
+    console.log("index: " + index + " values: " + values);
     // const updatepm = update(wodetail[index], {
     //   $merge: { M7RVAL: values },
     // });
@@ -257,7 +262,7 @@ export default (props) => {
                       <FormLabel component="legend">Check Value</FormLabel>
                       <RadioGroup
                         row
-                        name={`radio${index}`}
+                        name={`radiogroup${index}`}
                         aria-label="position"
                         name="position"
                         value={item.M7RVAL}
@@ -464,12 +469,11 @@ export default (props) => {
           i + " " + rowdata.PJSPOS + " " + rowdata.PJTX40 + " " + rowdata.M7RVAL
         )
       )} */}
-      {/* {console.log("rowdata: " + JSON.stringify(rowdata))} */}
 
       <Formik
         initialValues={{ rowdata }}
         onSubmit={(values, { setSubmitting }) => {
-          // alert(JSON.stringify(wodetail));
+          // alert(JSON.stringify(values));
           setLoadingSave(true);
           let formData = new FormData();
           formData.append("values", JSON.stringify(wodetail));
@@ -479,9 +483,9 @@ export default (props) => {
       >
         {wodetailReducer.result ? (props) => showForm(props) : ""}
       </Formik>
-      {/* {loading && (
+      {loading && (
         <CircularProgress size={24} className={classes.buttonProgress} />
-      )} */}
+      )}
     </div>
   );
 };

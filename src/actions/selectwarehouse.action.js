@@ -26,7 +26,6 @@ const setStateSelectWarehouseToClear = () => ({
 });
 
 export const addSelectWarehouses = (warehouse) => {
-  console.log("addSelectWarehouses");
   return async (dispatch) => {
     dispatch(setStateSelectWarehouseToFetching());
     dispatch(setStateSelectWarehouseToSuccess(warehouse));
